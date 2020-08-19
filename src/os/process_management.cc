@@ -14,27 +14,19 @@
  *    - Iker Galardi
  */
 
-#pragma once 
+#include "process_management.hh"
 
-#include <sys/types.h>
-
-#include <string>
+#include <unistd.h>
 
 namespace os {
-    using process = pid_t;
+    process run_process(const std::string& prog, const std::string& args) {
+        // fork 
+        // exec with argv and prog
+        // return process handle
+    }
 
-    /* Executes the specified program with the specified command line
-     * arguments.
-     * 
-     * @param prog: the path to the program
-     * @param args: the arguments that are going to be passed to the process 
-     */
-    process run_process(const std::string& prog, const std::string& args);
+    int wait_process(process proc) {
 
-    /* Blocks the process untill the specified process.
-     * 
-     * @param proc: process to wait
-     * @return: exit code of the process
-     */
-    int wait_process(process proc);
+    }
+
 }
