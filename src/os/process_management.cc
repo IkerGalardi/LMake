@@ -16,17 +16,32 @@
 
 #include "process_management.hh"
 
+#include <sys/types.h>
+#include <sys/wait.h>
 #include <unistd.h>
 
 namespace os {
     process run_process(const std::string& prog, const std::string& args) {
-        // fork 
-        // exec with argv and prog
-        // return process handle
+        pid_t pid = fork();
+        if(pid == 0) // child process
+            execl(prog.c_str(), args.c_str());
+
+        return pid;
     }
 
     int wait_process(process proc) {
+        int exit_code = -1;
+        while(true) {
+            int status;
+            pid_t pid = static_cast<pid_t>(proc);
+            waitpid(pid, &status, 0);
 
+            if(WIFEXITED(status)) {
+                exit_code = WEXITSTATUS(status);
+                break;
+            }
+        }
+
+        return exit_code;
     }
-
 }
