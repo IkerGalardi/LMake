@@ -1,54 +1,25 @@
 #include "lmake.hh"
 
-#include <string>
+lmake* lmake::instance = nullptr;
 
-namespace lmake {
+lmake* lmake::get() {
+    if(!instance) 
+        instance = new lmake();
 
-    struct compile_context {
-        std::string compiler_path;
-        std::string compiler_flags;
-    };
-    struct link_context {
-        std::string linker_path;
-        std::string linker_flags;
-    };
+    return instance;
+}
 
-    static compile_context current_compile_context;
-    static link_context current_link_context;
+bool lmake::build(const std::string config_path) {
+    // Reads the configuration file from the filesystem
+    FILE* config_file = fopen(config_path.c_str(), "r");
+    fseek(config_file, 0, SEEK_END);
+    int length = ftell(config_file);
+    char* config = static_cast<char*>(std::malloc(length + 1));
+    fread(config, 1, length, config_file);
+    config[length] = '\0';
 
-    build_result build(const char* lmake_config) {
+    // TODO: setup native methods for the luavm
+    // TODO: run the script
 
-    }
-
-    void set_compiler(const char* compiler) {
-        current_compile_context.compiler_path = std::string(compiler);
-    }
-
-    std::string get_compiler() {
-        return current_compile_context.compiler_path;
-    }
-    
-    void set_compiler_flags(const char* flags) {
-        current_compile_context.compiler_flags = std::string(flags);
-    }
-    
-    std::string get_compiler_flags(const char* flags) {
-        return current_compile_context.compiler_flags;
-    }
-    
-    void set_linker(const char* linker) {
-        current_link_context.linker_path = std::string(linker);
-    }
-    
-    std::string get_linker() {
-        return current_link_context.linker_path;
-    }
-
-    void set_linker_flags(const char* flags) {
-        current_link_context.linker_flags = std::string(flags);
-    }
-    
-    std::string get_linker_flags() {
-        return current_link_context.linker_flags;
-    }
+    std::free(config);
 }

@@ -1,78 +1,20 @@
-#pragma once
+#pragma once 
 
 #include <string>
 
-namespace lmake {    
-    using build_result = int;
-    using parse_result = int;
+#include "luavm.hh"
 
-    /*
-     * Builds the target specified by the lmake configuration
-     * file.
-     * 
-     * @param lmake_config: path to the lmake config file
-     * @return: the result from building the target
-     */
-    build_result build(const char* lmake_config);
+class lmake {
+public:
+    static lmake* get();
 
-    /*
-     * Sets the absolute path to the compiler executable.
-     * 
-     * @param compiler: path to the compiler executable
-     */
-    void set_compiler(const char* compiler);
+    bool build(const std::string config_path);
+private:
+    lmake() = default;
+    ~lmake() = default;
 
-     /*
-     * Gets the absolute path to the compiler executable.
-     * 
-     * @return: path to the compiler executable
-     */
-    std::string get_compiler();
+    static lmake* instance;
     
-    /*
-     * Sets the compiler flags that are going to be used when 
-     * compiling.
-     * 
-     * @flags: compiler flags
-     */
-    void set_compiler_flags(const char* flags);
-    
-    /*
-     * Gets the compiler flags set before. Empty if none
-     * where specified.
-     * 
-     * @return: compiler flags
-     */
-    std::string get_compiler_flags(const char* flags);
-    
-     /*
-     * Sets the absolute path to the linker executable.
-     * 
-     * @return: path to the linker executable
-     */
-    void set_linker(const char* linker);
-    
-    /*
-     * Gets the absolute path to the linker executable.
-     * 
-     * @return: path to the compiler executable
-     */
-    std::string get_linker();
-
-    /*
-     * Sets the linker flags that are going to be used when 
-     * linking.
-     * 
-     * @param flags: linker flags
-     */
-    void set_linker_flags(const char* flags);
-    
-    /*
-     * Gets the linker flags that are going to be used on the
-     * linking phase.
-     * 
-     * @return: linker flags
-     */
-    std::string get_linker_flags();
-
-}
+    luavm vm;
+protected:
+};
