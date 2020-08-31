@@ -15,9 +15,32 @@
  */
 
 #include <iostream>
+#include <cstring>
 
 #include <lua.hpp>
 
+#include "os/filesystem.hh"
+#include "lmake.hh"
+
+void print_usage(const char* reason) {
+    std::cout << "[+] " << reason << std::endl;
+    std::cout << "\t build: builds using the LMakefile file on the directory\n";
+    std::cout << "\t clean: cleans all intermediate files\n";
+    std::cout << "\t help: prints this helpfull message\n";
+}
+
 int main(int argc, char** argv) {
     std::cout << "[+] Using " << LUA_VERSION << std::endl;
+
+    if(argc <= 1 || std::strcmp(argv[1], "help") == 0) {
+        print_usage("No arguments specified, you can specify one of the next:");
+        std::exit(0);
+    }
+
+    if(!os::file_exists("./LMakefile")) {
+        std::cout << "[E] No LMakefile file found.\n";
+        std::exit(1);
+    }
+
+    lmake::get()->build("./LMakefile");
 }
