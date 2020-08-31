@@ -14,6 +14,7 @@ void luavm::add_native_function(luafunc func, const char* name) {
 }
 
 bool luavm::execute_script(const std::string& script) {
-    luaL_dostring(vm, script.c_str());
-    int error = lua_error(vm);
+    bool res = luaL_dostring(vm, script.c_str());
+    // TODO: get error type
+    return res;
 }
