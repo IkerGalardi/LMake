@@ -21,6 +21,7 @@
 
 #include "os/filesystem.hh"
 #include "lmake.hh"
+#include "test/test.hh"
 
 void print_usage(const char* reason) {
     std::cout << "[+] " << reason << std::endl;
@@ -35,6 +36,10 @@ int main(int argc, char** argv) {
     if(argc <= 1 || std::strcmp(argv[1], "help") == 0) {
         print_usage("No arguments specified, you can specify one of the next:");
         std::exit(0);
+    }
+
+    if(std::strcmp(argv[1], "--run-tests") == 0) {
+        test::luavm();
     }
 
     if(!os::file_exists("./LMakefile")) {

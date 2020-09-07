@@ -13,7 +13,7 @@ project "lmake"
     objdir("build/obj/")
 
     files {"src/**.cc", "src/**.hh"}
-    includedirs {"lib/include"}
+    includedirs {"lib/include", "src"}
 
     libdirs {"lib/bin"}
     links {"lua53"}
