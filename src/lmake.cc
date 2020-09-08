@@ -22,4 +22,6 @@ bool lmake::build(const std::string config_path) {
     // TODO: run the script
 
     std::free(config);
+
+    return true;
 }
