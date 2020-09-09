@@ -12,7 +12,7 @@ public:
     ~luavm();
 
     void add_native_function(luafunc func, const char* name);
-    bool execute_script(const std::string& script);
+    bool execute_script(const char* script);
 
     const std::string& get_last_error();
 private:
