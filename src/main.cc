@@ -33,14 +33,19 @@ void print_usage(const char* reason) {
 int main(int argc, char** argv) {
     std::cout << "[+] Using " << LUA_VERSION << std::endl;
 
-    if(argc <= 1 || std::strcmp(argv[1], "help") == 0) {
+    // Executes all the tests
+    if(std::strcmp(argv[1], "--run-tests") == 0) {
+        std::cout << "[+] Starting tests...\n";
+        test::run();
+        std::exit(0);
+    }
+
+
+    if(argc <= 1 || std::strcmp(argv[1], "--help") == 0) {
         print_usage("No arguments specified, you can specify one of the next:");
         std::exit(0);
     }
 
-    if(std::strcmp(argv[1], "--run-tests") == 0) {
-        test::luavm();
-    }
 
     if(!os::file_exists("./LMakefile")) {
         std::cout << "[E] No LMakefile file found.\n";

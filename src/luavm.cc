@@ -4,7 +4,7 @@
 
 luavm::luavm() {
     vm = luaL_newstate();
-    
+
     if(vm == NULL)
         std::cout << "Error while creating the lua virtual machine\n";
 }
@@ -20,7 +20,7 @@ void luavm::add_native_function(luafunc func, const char* name) {
 
 bool luavm::execute_script(const char* script) {
     luaL_loadstring(vm, script);
-    if (lua_pcall(vm, 2, 0, 0) != LUA_OK) {
+    if (lua_pcall(vm, 0, 0, 0) != LUA_OK) {
         last_error = std::string(lua_tostring(vm, -1));
         return false;
     }
