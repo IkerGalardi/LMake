@@ -1,7 +1,12 @@
 #include "luavm.hh"
 
+#include <iostream>
+
 luavm::luavm() {
     vm = luaL_newstate();
+    
+    if(vm == NULL)
+        std::cout << "Error while creating the lua virtual machine\n";
 }
 
 luavm::~luavm() {
