@@ -14,10 +14,13 @@ void luavm::add_native_function(luafunc func, const char* name) {
 }
 
 bool luavm::execute_script(const char* script) {
-    bool res = luaL_dostring(vm, script);
-    // TODO: get error type
-    last_error = "Lua execution error";
-    return res;
+    luaL_loadstring(vm, script);
+    if (lua_pcall(vm, 2, 0, 0) != LUA_OK) {
+        last_error = std::string(lua_tostring(vm, -1));
+        return false;
+    }
+    
+    return true;
 }
 
 const std::string& luavm::get_last_error() {
