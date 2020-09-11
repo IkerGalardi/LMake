@@ -23,6 +23,8 @@
 #include "lmake.hh"
 #include "test/test.hh"
 
+#define LMAKE_VERSION "0.3 DEV"
+
 void print_usage(const char* reason) {
     std::cout << "[+] " << reason << std::endl;
     std::cout << "\t build: builds using the LMakefile file on the directory\n";
@@ -42,6 +44,9 @@ int main(int argc, char** argv) {
     if(std::strcmp(argv[1], "--run-tests") == 0) {
         std::cout << "[+] Starting tests...\n";
         test::run();
+        std::exit(0);
+    } else if(std::strcmp(argv[1], "--version") || std::strcmp(argv[1], "-v")) {
+        std::cout << "[+] LMake version " LMAKE_VERSION "\n";
         std::exit(0);
     }
 
