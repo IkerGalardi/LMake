@@ -16,6 +16,10 @@
 
 #include "lmake.hh"
 
+#include <iostream>
+
+#include "os/filesystem.hh"
+
 lmake* lmake::instance = nullptr;
 
 lmake* lmake::get() {
@@ -26,18 +30,17 @@ lmake* lmake::get() {
 }
 
 bool lmake::build(const std::string config_path) {
-    // Reads the configuration file from the filesystem
-    FILE* config_file = fopen(config_path.c_str(), "r");
-    fseek(config_file, 0, SEEK_END);
-    int length = ftell(config_file);
-    char* config = static_cast<char*>(std::malloc(length + 1));
-    fread(config, 1, length, config_file);
-    config[length] = '\0';
+    auto buffer = os::read_file(config_path.c_str());
 
     // TODO: setup native methods for the luavm
-    // TODO: run the script
+    
+    if(!vm.execute_script(buffer.get())) {
+        std::string err = vm.get_last_error();
+        std::cout << "[E] Lua error\n";
+        std::cout << "\t" << err << std::endl;
 
-    std::free(config);
+        return false;
+    }
 
     return true;
 }
