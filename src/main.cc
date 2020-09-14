@@ -33,7 +33,6 @@ void print_usage(const char* reason) {
 }
 
 int main(int argc, char** argv) {
-    std::cout << "[+] Using " << LUA_VERSION << std::endl;
 
     if(argc <= 1 || std::strcmp(argv[1], "--help") == 0) {
         print_usage("No arguments specified, you can specify one of the next:");
@@ -46,6 +45,7 @@ int main(int argc, char** argv) {
         test::run();
         std::exit(0);
     } else if(std::strcmp(argv[1], "--version") || std::strcmp(argv[1], "-v")) {
+        std::cout << "[+] Lua version   " << LUA_VERSION_MAJOR "." LUA_VERSION_MINOR << std::endl;
         std::cout << "[+] LMake version " LMAKE_VERSION "\n";
         std::exit(0);
     }
