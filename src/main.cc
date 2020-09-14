@@ -51,9 +51,12 @@ int main(int argc, char** argv) {
     }
 
     if(!os::file_exists("./LMakefile")) {
-        std::cout << "[E] No LMakefile file found.\n";
+        std::cerr << "[E] No LMakefile file found.\n";
         std::exit(1);
     }
 
-    lmake::get()->build("./LMakefile");
+    if(!lmake::get()->build("./LMakefile")) {
+        std::cerr << "[E] Unknown error ocurred when compiling\n";
+        std::exit(-1);
+    }
 }
