@@ -17,6 +17,7 @@
 #pragma once 
 
 #include <string>
+#include <vector>
 
 #include "luavm.hh"
 
@@ -27,6 +28,7 @@ public:
     static lmake* get();
 
     bool build(const std::string config_path);
+    inline std::string& get_last_error() { return last_error; }
 private:
     lmake() = default;
     ~lmake() = default;
@@ -34,5 +36,16 @@ private:
     static lmake* instance;
     
     luavm vm;
+
+    struct {
+        std::string compiler;
+        std::string compiler_flags;
+    } context;
+
+    std::string last_error;
+
+    friend void lmake_set_compiler(const char* comp);
+    friend void lmake_set_compiler_flags(const char* flags);
+    friend bool lmake_compile(const char* res_name, const char* obj_files);
 protected:
 };

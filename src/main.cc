@@ -56,7 +56,7 @@ int main(int argc, char** argv) {
     }
 
     if(!lmake::get()->build("./LMakefile")) {
-        std::cerr << "[E] Unknown error ocurred when compiling\n";
+        std::cerr << "[E] " << lmake::get()->get_last_error() << std::endl;
         std::exit(-1);
     }
 }
