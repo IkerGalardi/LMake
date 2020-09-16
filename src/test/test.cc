@@ -64,6 +64,6 @@ namespace test {
 
         p = os::run_process("/bin/gcc", "-c build/test/incorrect.c -o build/test/incorrect.c.o");
         exit_code = os::wait_process(p);
-        std::cout << "Correct program exit code: " << exit_code << std::endl;
+        std::cout << "Incorrect program exit code: " << exit_code << std::endl;
     }
 }
