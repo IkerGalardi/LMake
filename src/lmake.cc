@@ -17,10 +17,36 @@
 #include "lmake.hh"
 
 #include <iostream>
+#include <sstream>
+
+#include <stringtoolbox/stringtoolbox.hh>
 
 #include "os/filesystem.hh"
+#include "os/process_management.hh"
 
 lmake* lmake::instance = nullptr;
+
+void lmake_set_compiler(const char* comp) {
+    lmake::get()->context.compiler = comp;
+}
+
+void lmake_set_compiler_flags(const char* comp) {
+    lmake::get()->context.compiler_flags = comp;
+}
+
+bool lmake_compile(const char* res_name, const char* obj_files) {
+    std::string& compiler = lmake::get()->context.compiler;
+    std::string& compiler_flags = lmake::get()->context.compiler_flags;
+
+    /// TODO: build the compiler flags from the regex provided (replace % with name)
+
+    auto files = stringtoolbox::split(obj_files, ' ');
+    for(auto& file : files) {
+        // os::process p = os::run_process()
+    }
+
+    return true;
+}
 
 lmake* lmake::get() {
     if(!instance) 
@@ -35,10 +61,7 @@ bool lmake::build(const std::string config_path) {
     // TODO: setup native methods for the luavm
     
     if(!vm.execute_script(buffer.get())) {
-        std::string err = vm.get_last_error();
-        std::cout << "[E] Lua error\n";
-        std::cout << "\t" << err << std::endl;
-
+        last_error = vm.get_last_error();
         return false;
     }
 
