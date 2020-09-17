@@ -29,8 +29,8 @@ namespace os {
     }
 
     std::shared_ptr<char> read_file(const char* path) {
-        FILE* file_path = fopen(path, "r");
-        fseek(file_path, 0, SEEK_END);
+        FILE* file_path = std::fopen(path, "r");
+        std::fseek(file_path, 0, SEEK_END);
         int length = ftell(file_path);
 
         std::shared_ptr<char> buffer(new char[length + 1], std::default_delete<char[]>());
