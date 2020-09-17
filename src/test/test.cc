@@ -57,7 +57,7 @@ namespace test {
     }
 
     void compilation() {
-        os::process p = os::run_process("/bin/gcc", "-c /home/iker/Projects/LMake/build/test/correct.c -o build/test/correct.c.o");
+        os::process p = os::run_process("/bin/gcc", "/home/iker/Projects/LMake/build/test/correct.c -o build/test/correct.c.o");
         int exit_code = os::wait_process(p);
         std::cout << "Correct program exit code: " << exit_code << std::endl;
     

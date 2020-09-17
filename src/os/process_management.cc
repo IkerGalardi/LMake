@@ -21,6 +21,7 @@
 #include <unistd.h>
 
 #include <iostream>
+#include <cstring>
 
 #include <stringtoolbox/stringtoolbox.hh>
 
@@ -28,8 +29,21 @@ namespace os {
     process run_process(const char* prog, const char* args) {
         pid_t pid = fork();
         auto arguments_vector = stringtoolbox::split(std::string(args), ' ');
+        
+        // Transform the std::vector of std::strings to a std::vector of char*
+        std::vector<char*> arguments;
+        arguments.reserve(arguments_vector.size());
+        for(int i = 0; i < arguments_vector.size(); i++) {
+            size_t str_size = arguments_vector[i].size();
+            arguments[i] = (char*)std::malloc(str_size + 1);
+            std::strcpy(arguments[i], arguments_vector[i].c_str());
+        }
+
         if(pid == 0) { // child process
-            execv(prog, reinterpret_cast<char* const*>(arguments_vector.data()));
+            int err = execv(prog, arguments.data());
+            std::cerr << "[E] Cannot execute process\n";
+            std::cout << errno << " " << err << std::endl;
+            std::exit(5);
         }
         return static_cast<process>(pid);
     }
@@ -44,7 +58,7 @@ namespace os {
             return WEXITSTATUS(status);
         
         std::cerr << "[E] No exit code\n";
-        std::exit(2);
+        std::exit(0);
         return 1215752192;
     }
 }
