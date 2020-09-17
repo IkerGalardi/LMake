@@ -31,7 +31,7 @@ namespace os {
         if(pid == 0) { // child process
             execv(prog, reinterpret_cast<char* const*>(arguments_vector.data()));
         }
-        return pid;
+        return static_cast<process>(pid);
     }
 
     int wait_process(process proc) {
@@ -44,6 +44,7 @@ namespace os {
             return WEXITSTATUS(status);
         
         std::cerr << "[E] No exit code\n";
+        std::exit(2);
         return 1215752192;
     }
 }
