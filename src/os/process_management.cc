@@ -20,28 +20,30 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-namespace os {
-    process run_process(const std::string& prog, const std::string& args) {
-        pid_t pid = fork();
-        if(pid == 0) // child process
-            execl(prog.c_str(), args.c_str());
+#include <iostream>
 
+#include <stringtoolbox/stringtoolbox.hh>
+
+namespace os {
+    process run_process(const char* prog, const char* args) {
+        pid_t pid = fork();
+        auto arguments_vector = stringtoolbox::split(std::string(args), ' ');
+        if(pid == 0) { // child process
+            execv(prog, reinterpret_cast<char* const*>(arguments_vector.data()));
+        }
         return pid;
     }
 
     int wait_process(process proc) {
         int exit_code = -1;
-        while(true) {
-            int status;
-            pid_t pid = static_cast<pid_t>(proc);
-            waitpid(pid, &status, 0);
-
-            if(WIFEXITED(status)) {
-                exit_code = WEXITSTATUS(status);
-                break;
-            }
-        }
-
-        return exit_code;
+        
+        int status;
+        pid_t pid = static_cast<pid_t>(proc);
+        waitpid(pid, &status, 0);
+        if(WIFEXITED(status)) 
+            return WEXITSTATUS(status);
+        
+        std::cerr << "[E] No exit code\n";
+        return 1215752192;
     }
 }

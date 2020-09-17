@@ -29,7 +29,7 @@ namespace test {
         test::os();
         std::cout << "* Ended OS tests\n* LuaVM tests\n";
         test::luavm();
-        std::cout << "* Ended LuaVM tests\n compilation tests\n";
+        std::cout << "* Ended LuaVM tests\n* Compilation tests\n";
         test::compilation();
         std::cout << "* Ended compilation tests\n";
     }
@@ -57,7 +57,7 @@ namespace test {
     }
 
     void compilation() {
-        os::process p = os::run_process("/bin/gcc", "-c build/test/correct.c -o build/test/correct.c.o");
+        os::process p = os::run_process("/bin/gcc", "-c /home/iker/Projects/LMake/build/test/correct.c -o build/test/correct.c.o");
         int exit_code = os::wait_process(p);
         std::cout << "Correct program exit code: " << exit_code << std::endl;
     
