@@ -41,25 +41,23 @@ namespace os {
         arguments.emplace_back(nullptr);
 
         if(pid == 0) { // child process
-            int err = execvp(prog, arguments.data());
+            int err = execv(prog, arguments.data());
             std::cerr << "[E] Cannot execute process\n";
             std::cout << errno << " " << err << std::endl;
             std::exit(5);
         }
-        return static_cast<process>(pid);
+        return pid;
     }
 
     int wait_process(process proc) {
-        int exit_code = -1;
-        
         int status;
-        pid_t pid = static_cast<pid_t>(proc);
-        waitpid(pid, &status, 0);
-        if(WIFEXITED(status)) 
-            return WEXITSTATUS(status);
-        
-        std::cerr << "[E] No exit code\n";
-        std::exit(0);
-        return 1215752192;
+        int exited; 
+
+        do {
+            waitpid(proc, &status, WUNTRACED);
+            exited = WIFEXITED(status);
+        } while(!exited);
+
+        return WEXITSTATUS(status);
     }
 }
