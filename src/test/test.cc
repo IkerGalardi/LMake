@@ -57,12 +57,13 @@ namespace test {
     }
 
     void compilation() {
-        os::process p = os::run_process("/bin/gcc", "/home/iker/Projects/LMake/build/test/correct.c -o build/test/correct.c.o");
+        std::cout << "Compiling the correct file\n";
+        os::process p = os::run_process("gcc", "/home/iker/Projects/LMake/build/test/correct.c -o build/test/correct.c.o");
         int exit_code = os::wait_process(p);
         std::cout << "Correct program exit code: " << exit_code << std::endl;
     
-
-        p = os::run_process("/bin/gcc", "-c build/test/incorrect.c -o build/test/incorrect.c.o");
+        std::cout << "Compiling the incorrect file\n";
+        p = os::run_process("gcc", "-c build/test/incorrect.c -o build/test/incorrect.c.o");
         exit_code = os::wait_process(p);
         std::cout << "Incorrect program exit code: " << exit_code << std::endl;
     }

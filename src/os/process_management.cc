@@ -35,12 +35,13 @@ namespace os {
         arguments.reserve(arguments_vector.size());
         for(int i = 0; i < arguments_vector.size(); i++) {
             size_t str_size = arguments_vector[i].size();
-            arguments[i] = (char*)std::malloc(str_size + 1);
+            arguments[i] = (char*)std::calloc(str_size, sizeof(char));
             std::strcpy(arguments[i], arguments_vector[i].c_str());
         }
+        arguments.emplace_back(nullptr);
 
         if(pid == 0) { // child process
-            int err = execv(prog, arguments.data());
+            int err = execvp(prog, arguments.data());
             std::cerr << "[E] Cannot execute process\n";
             std::cout << errno << " " << err << std::endl;
             std::exit(5);
