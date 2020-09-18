@@ -23,15 +23,12 @@
 
 #include "luavm.hh"
 
+#define DEFINE_TEST(name, func) std::cout << "* " << name << std::endl; func(); std::cout << "* Ended " << name << std::endl
+
 namespace test {
     void run() {
-        std::cout << "* OS tests\n";
-        test::os();
-        std::cout << "* Ended OS tests\n* LuaVM tests\n";
-        test::luavm();
-        std::cout << "* Ended LuaVM tests\n* Compilation tests\n";
-        test::compilation();
-        std::cout << "* Ended compilation tests\n";
+        DEFINE_TEST("OS", test::os);
+        DEFINE_TEST("LuaVM", test::luavm);
     }
 
     void luavm() {
