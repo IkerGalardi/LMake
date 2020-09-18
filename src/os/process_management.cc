@@ -27,6 +27,8 @@
 
 namespace os {
     process run_process(const char* prog, const char* args) {
+        /// TODO: clean this code pls
+        
         pid_t pid = fork();
         auto arguments_vector = stringtoolbox::split(std::string(args), ' ');
         

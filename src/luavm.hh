@@ -22,6 +22,7 @@
 
 typedef int(*luafunc)(lua_State*);
 
+/// TODO: add documentation to functions
 class luavm {
 public:
     luavm();
@@ -30,6 +31,7 @@ public:
     void add_native_function(luafunc func, const char* name);
     bool execute_script(const char* script);
 
+    /// TODO: errors as enums instead of strings
     const std::string& get_last_error();
 private:
     lua_State* vm;

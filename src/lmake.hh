@@ -21,7 +21,9 @@
 
 #include "luavm.hh"
 
-class lmake {
+/// TODO: convert this into a namespace with separated functions
+/// TODO: add documentation
+class lmake { 
 public:
     lmake(const lmake&) = delete;
 
@@ -30,6 +32,7 @@ public:
     bool build(const std::string config_path);
     inline std::string& get_last_error() { return last_error; }
 private:
+    /// TODO: implement constructor (add native functions)
     lmake() = default;
     ~lmake() = default;
 
@@ -42,6 +45,7 @@ private:
         std::string compiler_flags;
     } context;
 
+    /// TODO: implement an error enum instead of strings
     std::string last_error;
 
     friend void lmake_set_compiler(const char* comp);
