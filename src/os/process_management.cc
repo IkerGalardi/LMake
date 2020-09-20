@@ -34,10 +34,12 @@ namespace os {
         
         // Transform the std::vector of std::strings to a std::vector of char*
         std::vector<char*> arguments;
-        arguments.reserve(arguments_vector.size());
+        arguments.reserve(arguments_vector.size() + 2);
+        arguments[0] = (char*)std::calloc(std::strlen(prog) + 1, sizeof(char));
+        std::strcpy(arguments[0], prog);
         for(int i = 0; i < arguments_vector.size(); i++) {
             size_t str_size = arguments_vector[i].size();
-            arguments[i] = (char*)std::calloc(str_size, sizeof(char));
+            arguments[i] = (char*)std::calloc(str_size + 1, sizeof(char));
             std::strcpy(arguments[i], arguments_vector[i].c_str());
         }
         arguments.emplace_back(nullptr);

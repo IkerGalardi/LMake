@@ -29,7 +29,7 @@ namespace test {
     void run() {
         DEFINE_TEST("OS", test::os);
         DEFINE_TEST("LuaVM", test::luavm);
-        DEFINE_TEST("Compilation", test::compilation);
+        // DEFINE_TEST("Compilation", test::compilation);
     }
 
     void luavm() {
@@ -58,6 +58,11 @@ namespace test {
     
         std::cout << "Running return_1\n";
         p = os::run_process("./build/test/return_1", "bbb");
+        exit_code = os::wait_process(p);
+        std::cout << "Exit code: " << exit_code << std::endl;
+
+        std::cout << "Running args\n";
+        p = os::run_process("./build/test/args", "arg1 arg2 arg3");
         exit_code = os::wait_process(p);
         std::cout << "Exit code: " << exit_code << std::endl;
     }
