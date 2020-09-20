@@ -29,6 +29,7 @@ namespace test {
     void run() {
         DEFINE_TEST("OS", test::os);
         DEFINE_TEST("LuaVM", test::luavm);
+        DEFINE_TEST("Compilation", test::compilation);
     }
 
     void luavm() {
@@ -51,17 +52,20 @@ namespace test {
 
     void os() {
         std::cout << "Running return_0\n";
-        os::process p = os::run_process("./build/test/return_0", "");
+        os::process p = os::run_process("./build/test/return_0", "aaa");
         int exit_code = os::wait_process(p);
         std::cout << "Exit code: " << exit_code << std::endl;
     
         std::cout << "Running return_1\n";
-        p = os::run_process("./build/test/return_1", "");
+        p = os::run_process("./build/test/return_1", "bbb");
         exit_code = os::wait_process(p);
         std::cout << "Exit code: " << exit_code << std::endl;
     }
 
     void compilation() {
-
+        std::cout << "Trying to compile ./build/test/correct.c\n";
+        os::process p = os::run_process("/bin/echo", "build/test/correcto.c");
+        int exit_code = os::wait_process(p);
+        std::cout << "Exited with code: " << exit_code << std::endl;
     }
 }
