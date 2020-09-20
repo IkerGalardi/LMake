@@ -16,54 +16,62 @@
 
 #include "lmake.hh"
 
-#include <iostream>
-#include <sstream>
+#include <memory>
 
-#include <stringtoolbox/stringtoolbox.hh>
-
+#include "luavm.hh"
 #include "os/filesystem.hh"
-#include "os/process_management.hh"
 
-lmake* lmake::instance = nullptr;
+static struct {
+    luavm vm;
 
-void lmake_set_compiler(const char* comp) {
-    lmake::get()->context.compiler = comp;
+    struct {
+        std::string compiler;
+        std::string compiler_flags;
+
+        std::string linker;
+        std::string linker_flags;
+    } context;
+
+    bool initialized = false;
+
+    std::string last_error;
+} lmake_data;
+
+std::string process_script(const char* file_contents, const char* containing_dir) {
+    /// TODO: preprocess all the lmake_include (mimic #include of c)    
+    return std::string(file_contents);
 }
 
-void lmake_set_compiler_flags(const char* comp) {
-    lmake::get()->context.compiler_flags = comp;
-}
+namespace lmake {
+    void initialize() {
+        /// TODO: add native functions
 
-bool lmake_compile(const char* res_name, const char* obj_files) {
-    std::string& compiler = lmake::get()->context.compiler;
-    std::string& compiler_flags = lmake::get()->context.compiler_flags;
-
-    /// TODO: build the compiler flags from the regex provided (replace % with name)
-
-    auto files = stringtoolbox::split(obj_files, ' ');
-    for(auto& file : files) {
-        // os::process p = os::run_process()
+        lmake_data.initialized = true;
     }
 
-    return true;
-}
+    bool build_from_file(const char* config_path) {
+        if(!lmake_data.initialized) 
+            return false;
 
-lmake* lmake::get() {
-    if(!instance) 
-        instance = new lmake();
+        auto file_buffer = os::read_file(config_path);
+        std::string processed = process_script(file_buffer.get(), config_path);
 
-    return instance;
-}
-
-bool lmake::build(const std::string config_path) {
-    auto buffer = os::read_file(config_path.c_str());
-
-    // TODO: setup native methods for the luavm
-    
-    if(!vm.execute_script(buffer.get())) {
-        last_error = vm.get_last_error();
-        return false;
+        return lmake::build_from_string(processed.c_str());
     }
 
-    return true;
+    bool build_from_string(const char* config_string) {
+        if(!lmake_data.initialized) 
+            return false;
+
+        if(!lmake_data.vm.execute_script(config_string)) {
+            lmake_data.last_error = lmake_data.vm.get_last_error();
+            return false;
+        }
+
+        return true;
+    }
+
+    std::string& get_last_error() {
+        return lmake_data.last_error;
+    }
 }

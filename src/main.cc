@@ -25,6 +25,8 @@
 
 #define LMAKE_VERSION "0.3 DEV"
 
+#define LMAKE_CONFIG_PATH "./LMakeFile"
+
 void print_usage(const char* reason) {
     std::cout << "[+] " << reason << std::endl;
     std::cout << "\t build: builds using the LMakefile file on the directory\n";
@@ -50,13 +52,16 @@ int main(int argc, char** argv) {
         std::exit(0);
     }
 
-    if(!os::file_exists("./LMakefile")) {
+    if(!os::file_exists(LMAKE_CONFIG_PATH)) {
         std::cerr << "[E] No LMakefile file found.\n";
         std::exit(1);
     }
 
-    if(!lmake::get()->build("./LMakefile")) {
-        std::cerr << "[E] " << lmake::get()->get_last_error() << std::endl;
-        std::exit(-1);
+    lmake::initialize();
+
+    if(!lmake::build_from_file(LMAKE_CONFIG_PATH)) {
+        std::cerr << "[E] " << lmake::get_last_error() << std::endl;
+        std::exit(3);
     }
+    
 }

@@ -17,39 +17,13 @@
 #pragma once 
 
 #include <string>
-#include <vector>
 
-#include "luavm.hh"
+namespace lmake {
+    void initialize();
 
-/// TODO: convert this into a namespace with separated functions
-/// TODO: add documentation
-class lmake { 
-public:
-    lmake(const lmake&) = delete;
+    bool build_from_file(const char* config_path);
 
-    static lmake* get();
+    bool build_from_string(const char* config_string);
 
-    bool build(const std::string config_path);
-    inline std::string& get_last_error() { return last_error; }
-private:
-    /// TODO: implement constructor (add native functions)
-    lmake() = default;
-    ~lmake() = default;
-
-    static lmake* instance;
-    
-    luavm vm;
-
-    struct {
-        std::string compiler;
-        std::string compiler_flags;
-    } context;
-
-    /// TODO: implement an error enum instead of strings
-    std::string last_error;
-
-    friend void lmake_set_compiler(const char* comp);
-    friend void lmake_set_compiler_flags(const char* flags);
-    friend bool lmake_compile(const char* res_name, const char* obj_files);
-protected:
-};
+    std::string& get_last_error();
+}
