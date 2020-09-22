@@ -25,27 +25,80 @@
 
 #include <stringtoolbox/stringtoolbox.hh>
 
+int split (const char *str, char c, char ***arr)
+{
+    int count = 1;
+    int token_len = 1;
+    int i = 0;
+    char *p;
+    char *t;
+
+    p = (char*)str;
+    while (*p != '\0')
+    {
+        if (*p == c)
+            count++;
+        p++;
+    }
+
+    size_t size = sizeof(char*) * count + sizeof(nullptr);
+    *arr = (char**) malloc(size);
+    memset(*arr, 0, size);
+    if (*arr == NULL)
+        exit(1);
+
+    p = (char*)str;
+    while (*p != '\0')
+    {
+        if (*p == c)
+        {
+            (*arr)[i] = (char*) malloc( sizeof(char) * token_len );
+            if ((*arr)[i] == NULL)
+                exit(1);
+
+            token_len = 0;
+            i++;
+        }
+        p++;
+        token_len++;
+    }
+    (*arr)[i] = (char*) malloc( sizeof(char) * token_len );
+    if ((*arr)[i] == NULL)
+        exit(1);
+
+    i = 0;
+    p = (char*)str;
+    t = ((*arr)[i]);
+    while (*p != '\0')
+    {
+        if (*p != c && *p != '\0')
+        {
+            *t = *p;
+            t++;
+        }
+        else
+        {
+            *t = '\0';
+            i++;
+            t = ((*arr)[i]);
+        }
+        p++;
+    }
+
+    return count;
+}
+
 namespace os {
     process run_process(const char* prog, const char* args) {
         /// TODO: clean this code pls
-        
+
         pid_t pid = fork();
-        auto arguments_vector = stringtoolbox::split(std::string(args), ' ');
-        
-        // Transform the std::vector of std::strings to a std::vector of char*
-        std::vector<char*> arguments;
-        arguments.reserve(arguments_vector.size() + 2);
-        arguments[0] = (char*)std::calloc(std::strlen(prog) + 1, sizeof(char));
-        std::strcpy(arguments[0], prog);
-        for(int i = 0; i < arguments_vector.size(); i++) {
-            size_t str_size = arguments_vector[i].size();
-            arguments[i] = (char*)std::calloc(str_size + 1, sizeof(char));
-            std::strcpy(arguments[i], arguments_vector[i].c_str());
-        }
-        arguments.emplace_back(nullptr);
 
         if(pid == 0) { // child process
-            int err = execv(prog, arguments.data());
+            char** arguments;
+            split(args, ' ', &arguments);
+
+            int err = execv(prog, arguments);
             std::cerr << "[E] Cannot execute process\n";
             std::cout << errno << " " << err << std::endl;
             std::exit(5);

@@ -16,7 +16,11 @@
 
 #include "test.hh"
 
+#include <unistd.h>
+#include <wait.h>
+
 #include <iostream>
+#include <vector>
 
 #include "os/filesystem.hh"
 #include "os/process_management.hh"
@@ -29,7 +33,7 @@ namespace test {
     void run() {
         DEFINE_TEST("OS", test::os);
         DEFINE_TEST("LuaVM", test::luavm);
-        // DEFINE_TEST("Compilation", test::compilation);
+        DEFINE_TEST("Compilation", test::compilation);
     }
 
     void luavm() {
@@ -68,9 +72,8 @@ namespace test {
     }
 
     void compilation() {
-        std::cout << "Trying to compile ./build/test/correct.c\n";
-        os::process p = os::run_process("/bin/echo", "build/test/correcto.c");
-        int exit_code = os::wait_process(p);
-        std::cout << "Exited with code: " << exit_code << std::endl;
+        
     }
+
+
 }
