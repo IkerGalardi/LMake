@@ -95,8 +95,9 @@ namespace os {
         pid_t pid = fork();
 
         if(pid == 0) { // child process
+            std::string temp = std::string(prog) + " " + args;
             char** arguments;
-            split(args, ' ', &arguments);
+            split(temp.c_str(), ' ', &arguments);
 
             int err = execv(prog, arguments);
             std::cerr << "[E] Cannot execute process\n";

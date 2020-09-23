@@ -72,7 +72,8 @@ namespace test {
     }
 
     void compilation() {
-        
+        os::process p = os::run_process("/bin/gcc", "-c ./build/test/correct.c -o ./build/test/correct.o");
+        std::cout << "Exit code: " << os::wait_process(p) << std::endl;
     }
 
 
