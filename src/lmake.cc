@@ -45,6 +45,25 @@ std::string process_script(const char* file_contents, const char* containing_dir
 namespace lmake {
     void initialize() {
         /// TODO: add native functions
+        lmake_data.vm.add_native_function([](lua_State* vm) -> int {
+            lmake_data.context.compiler = std::string(lua_tostring(vm, -1));
+            return 1;
+        }, "lmake_set_compiler");
+
+        lmake_data.vm.add_native_function([](lua_State* vm) -> int {
+            lmake_data.context.compiler_flags = std::string(lua_tostring(vm, -1));
+            return 1;
+        }, "lmake_set_compiler_flags");
+
+        lmake_data.vm.add_native_function([](lua_State* vm) -> int {
+            std::string name_regex = std::string(lua_tostring(vm, -1));
+            std::string source_files = std::string(lua_tostring(vm, -2));
+
+            /// TODO: name_regex: substitute % with the source name
+            /// TODO: compile all the source files
+
+            return 1;
+        }, "lmake_compile");
 
         lmake_data.initialized = true;
     }
