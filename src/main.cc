@@ -23,7 +23,7 @@
 #include "lmake.hh"
 #include "test/test.hh"
 
-#define LMAKE_VERSION "0.3 DEV"
+#define LMAKE_VERSION "0.4 DEV"
 
 #define LMAKE_CONFIG_PATH "./LMakeFile"
 
