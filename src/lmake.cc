@@ -17,9 +17,15 @@
 #include "lmake.hh"
 
 #include <memory>
+#include <cstring>
+#include <filesystem>
+#include <iostream>
+
+#include <stringtoolbox/stringtoolbox.hh>
 
 #include "luavm.hh"
 #include "os/filesystem.hh"
+#include "os/process_management.hh"
 
 static struct {
     luavm vm;
@@ -27,6 +33,7 @@ static struct {
     struct {
         std::string compiler;
         std::string compiler_flags;
+        std::string compiler_output;
 
         std::string linker;
         std::string linker_flags;
@@ -40,6 +47,15 @@ static struct {
 std::string process_script(const char* file_contents, const char* containing_dir) {
     /// TODO: preprocess all the lmake_include (mimic #include of c)    
     return std::string(file_contents);
+}
+
+std::string string_replace(std::string str, const std::string& from, const std::string& to) {
+    size_t start_pos = 0;
+    while((start_pos = str.find(from, start_pos)) != std::string::npos) {
+        str.replace(start_pos, from.length(), to);
+        start_pos += to.length(); // Handles case where 'to' is a substring of 'from'
+    }
+    return str;
 }
 
 namespace lmake {
@@ -56,12 +72,45 @@ namespace lmake {
         }, "lmake_set_compiler_flags");
 
         lmake_data.vm.add_native_function([](lua_State* vm) -> int {
+            lmake_data.context.compiler_output = std::string(lua_tostring(vm, -1));
+            return 1;
+        }, "lmake_set_compiler_output");
+
+        lmake_data.vm.add_native_function([](lua_State* vm) -> int {
             std::string name_regex = std::string(lua_tostring(vm, -1));
             std::string source_files = std::string(lua_tostring(vm, -2));
+    
+            // Create output paths from file
+            std::vector<std::string> files = stringtoolbox::split(source_files, ' ');
+            std::vector<std::string> obj_file_names;
+            std::vector<std::string> src_files;
+            obj_file_names.reserve(files.size());
+            for(int i = 0; i < files.size(); i++) {
+                std::string& file = files[i];
+                std::filesystem::path filepath(file);
+                std::string filename_without_path = filepath.filename().string();
+                src_files.push_back(filename_without_path);
+                std::string full_obj_path = lmake_data.context.compiler_output
+                                          + string_replace(filename_without_path, "%", filename_without_path);
+                obj_file_names.emplace_back(full_obj_path);
+            }
 
-            /// TODO: name_regex: substitute % with the source name
-            /// TODO: compile all the source files
+            // Compile all the files
+            for(int i = 0; i < files.size(); i++) {
+                std::cout << "[+] Compiling " << src_files[i] << std::endl;
+                std::string& compiler = lmake_data.context.compiler;
+                std::string& flags = lmake_data.context.compiler_flags;
 
+                // Run the compiler and get exit code
+                std::string args = flags + "-o " + obj_file_names[i];
+                os::process p = os::run_process(compiler.c_str(), args.c_str());
+                int exit = os::wait_process(p);
+
+                // if compilation gone wrong exit the program
+                if(exit == 0) 
+                    std::exit(1);
+            }
+            
             return 1;
         }, "lmake_compile");
 
