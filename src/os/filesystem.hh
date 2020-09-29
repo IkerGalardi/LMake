@@ -33,4 +33,11 @@ namespace os {
      * @param path: path to the file
      */
     std::shared_ptr<char> read_file(const char* path);
+
+    /*
+     * Changes the directory of the process
+     * 
+     * @param path: path to the directory
+     */
+    bool change_dir(const char* dir);
 }

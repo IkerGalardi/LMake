@@ -17,6 +17,7 @@
 #include "filesystem.hh"
 
 #include <cstdio>
+#include <unistd.h>
 
 namespace os {
     bool file_exists(const char* path) {
@@ -40,5 +41,9 @@ namespace os {
         buffer.get()[length] = '\0';
 
         return buffer;
+    }
+
+    bool change_dir(const char* dir) {
+         return chdir(dir) == 0;
     }
 }
