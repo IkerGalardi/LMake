@@ -18,7 +18,7 @@
 
 #include <string>
 
-#include "lua.hpp"
+#include <lua/lua.hpp>
 
 typedef int(*luafunc)(lua_State*);
 

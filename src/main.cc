@@ -17,7 +17,7 @@
 #include <iostream>
 #include <cstring>
 
-#include <lua.hpp>
+#include <lua/lua.hpp>
 
 #include "os/filesystem.hh"
 #include "lmake.hh"
