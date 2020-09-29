@@ -20,9 +20,11 @@
 
 #include <lua/lua.hpp>
 
+
+/* Function signature of native functions
+*/
 typedef int(*luafunc)(lua_State*);
 
-/// TODO: add documentation to functions
 class luavm {
 public:
     /* Constructs all the necesary things to execute lua scripts
