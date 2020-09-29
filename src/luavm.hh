@@ -25,13 +25,32 @@ typedef int(*luafunc)(lua_State*);
 /// TODO: add documentation to functions
 class luavm {
 public:
+    /* Constructs all the necesary things to execute lua scripts
+     */
     luavm();
+    
+    /* Finalizes the virtual machine and cleans up heap memory
+     */
     ~luavm();
 
+    /* Adds the native function to the lua virtual machine
+     * 
+     * @param func: function to be executed by the virtual machine
+     * @param name: the name of the function
+     */
     void add_native_function(luafunc func, const char* name);
+
+    /* Executes the script on the lua virtual machine
+     * 
+     * @param script: the script to be executed
+     */
     bool execute_script(const char* script);
 
     /// TODO: errors as enums instead of strings
+    /* Returns the last error given by the virtual machine
+     * 
+     * @return: error description
+     */
     const std::string& get_last_error();
 private:
     lua_State* vm;
