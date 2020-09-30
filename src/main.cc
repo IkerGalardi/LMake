@@ -25,7 +25,7 @@
 
 #define LMAKE_VERSION "0.4 DEV"
 
-#define LMAKE_CONFIG_PATH "./LMakeFile"
+#define LMAKE_CONFIG_PATH "./LMakefile"
 
 void print_usage(const char* reason) {
     std::cout << "[+] " << reason << std::endl;
@@ -42,10 +42,16 @@ int main(int argc, char** argv) {
     }
     
     // Executes all the tests
-    if(std::strcmp(argv[1], "--run-tests") == 0) {
-        std::cout << "[+] Starting tests...\n";
-        test::run();
-        std::exit(0);
+    if(std::strcmp(argv[1], "--test") == 0) {
+        if(std::strcmp(argv[2], "all") == 0) {
+            std::cout << "[+] Starting tests...\n";
+            test::run();
+            std::exit(0);
+        } else if(std::strcmp(argv[2], "lmake") == 0) {
+            std::cout << "[+] Starting lmake test...\n";
+            test::lmake();
+            std::exit(0);
+        }
     } else if(std::strcmp(argv[1], "--version") || std::strcmp(argv[1], "-v")) {
         std::cout << "[+] Lua version   " << LUA_VERSION_MAJOR "." LUA_VERSION_MINOR << std::endl;
         std::cout << "[+] LMake version " LMAKE_VERSION "\n";
