@@ -30,16 +30,18 @@ namespace os {
         return false;
     }
 
-    char* read_file(const char* path) {
+    std::shared_ptr<char> read_file(const char* path) {
         FILE* file_path = std::fopen(path, "r");
+
         std::fseek(file_path, 0, SEEK_END);
         int length = std::ftell(file_path);
         std::fseek(file_path, 0, SEEK_SET);
-        char* buffer = new char[length + 1];
-        std::fread(buffer, length, 1, file_path);
+        
+        std::shared_ptr<char> buffer(new char[length + 1], std::default_delete<char[]>());
+        std::fread(buffer.get(), length, 1, file_path);
         std::fclose(file_path);
 
-        buffer[length + 1] = '\0';
+        buffer.get()[length + 1] = '\0';
 
         return buffer;
     }
