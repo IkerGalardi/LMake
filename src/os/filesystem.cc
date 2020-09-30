@@ -18,6 +18,7 @@
 
 #include <cstdio>
 #include <unistd.h>
+#include <iostream>
 
 namespace os {
     bool file_exists(const char* path) {
@@ -29,16 +30,16 @@ namespace os {
         return false;
     }
 
-    std::shared_ptr<char> read_file(const char* path) {
+    char* read_file(const char* path) {
         FILE* file_path = std::fopen(path, "r");
         std::fseek(file_path, 0, SEEK_END);
-        int length = ftell(file_path);
-
-        std::shared_ptr<char> buffer(new char[length + 1], std::default_delete<char[]>());
-        std::fread(buffer.get(), 1, length, file_path);
+        int length = std::ftell(file_path);
+        std::fseek(file_path, 0, SEEK_SET);
+        char* buffer = new char[length + 1];
+        std::fread(buffer, length, 1, file_path);
         std::fclose(file_path);
 
-        buffer.get()[length] = '\0';
+        buffer[length + 1] = '\0';
 
         return buffer;
     }
