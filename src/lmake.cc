@@ -62,8 +62,19 @@ std::string string_replace(std::string str, const std::string& from, const std::
 
 namespace lmake {
     void initialize() {
-        DEBUG("Adding native functions");
         /// TODO: add native functions
+
+        lmake_data.vm.add_native_function([](lua_State* vm) -> int {
+            std::string version = std::string(lua_tostring(vm, -1));
+            std::string ver = std::string(LMAKE_VERSION);
+            
+            if(ver.find(version) == std::string::npos) {
+                std::cerr << "[E] Incompatible lmake version\n";
+            }
+
+            return 1;
+        }, "lmake_compatibility_version");
+
         lmake_data.vm.add_native_function([](lua_State* vm) -> int {
             lmake_data.context.compiler = std::string(lua_tostring(vm, -1));
             DEBUG(lmake_data.context.compiler);
@@ -96,7 +107,7 @@ namespace lmake {
                 std::filesystem::path filepath(file);
                 std::string filename_without_path = filepath.filename().string();
                 src_files.push_back(filename_without_path);
-                std::string full_obj_path = lmake_data.context.compiler_output
+                std::string full_obj_path = lmake_data.context.compiler_output + "/" 
                                           + string_replace(filename_without_path, "%", filename_without_path);
                 obj_file_names.emplace_back(full_obj_path);
             }
@@ -108,7 +119,8 @@ namespace lmake {
                 std::string& flags = lmake_data.context.compiler_flags;
 
                 // Run the compiler and get exit code
-                std::string args = flags + "-o " + obj_file_names[i];
+                std::string args = flags + " -o " + obj_file_names[i] + ".o " + files[i];
+                std::cout << args << std::endl;
                 os::process p = os::run_process(compiler.c_str(), args.c_str());
                 int exit = os::wait_process(p);
 
@@ -119,7 +131,6 @@ namespace lmake {
             
             return 1;
         }, "lmake_compile");
-        DEBUG("Native functions added");
 
         lmake_data.initialized = true;
     }

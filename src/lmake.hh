@@ -18,6 +18,8 @@
 
 #include <string>
 
+#define LMAKE_VERSION "0.4 DEV"
+
 namespace lmake {
     void initialize();
 
