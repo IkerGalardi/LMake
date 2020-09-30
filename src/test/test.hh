@@ -23,4 +23,5 @@ namespace test {
     void luavm();
     void os();
     void compilation();
+    void lmake();
 }

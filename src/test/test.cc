@@ -24,16 +24,17 @@
 
 #include "os/filesystem.hh"
 #include "os/process_management.hh"
-
 #include "luavm.hh"
+#include "lmake.hh"
 
-#define DEFINE_TEST(name, func) std::cout << "* " << name << std::endl; func(); std::cout << "* Ended " << name << std::endl
+#define RUN_TEST(name, func) std::cout << "* " << name << std::endl; func(); std::cout << "* Ended " << name << std::endl
 
 namespace test {
     void run() {
-        DEFINE_TEST("OS", test::os);
-        DEFINE_TEST("LuaVM", test::luavm);
-        DEFINE_TEST("Compilation", test::compilation);
+        RUN_TEST("OS", test::os);
+        RUN_TEST("LuaVM", test::luavm);
+        RUN_TEST("Compilation", test::compilation);
+        RUN_TEST("lmake", test::lmake);
     }
 
     void luavm() {
@@ -69,6 +70,10 @@ namespace test {
         p = os::run_process("./build/test/args", "arg1 arg2 arg3");
         exit_code = os::wait_process(p);
         std::cout << "Exit code: " << exit_code << std::endl;
+
+        std::cout << "Reading clear_makefiles.sh file...\n";
+        auto file = os::read_file("clear_makefiles.sh"); 
+        std::cout << file << std::endl;
     }
 
     void compilation() {
@@ -76,5 +81,13 @@ namespace test {
         std::cout << "Exit code: " << os::wait_process(p) << std::endl;
     }
 
-
+    void lmake() {
+        std::cout << "Building using ./build/test/full_test/LMakefile\n";
+        os::change_dir("./build/test/full_test/");
+        lmake::initialize();
+        if(!lmake::build_from_file("./LMakefile")) {
+            std::string& err = lmake::get_last_error();
+            std::cerr << err << std::endl;
+        }
+    }
 }
