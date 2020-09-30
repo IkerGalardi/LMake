@@ -27,6 +27,8 @@
 #include "os/filesystem.hh"
 #include "os/process_management.hh"
 
+#define DEBUG(x) std::cout << "[D] " << x << std::endl
+
 static struct {
     luavm vm;
 
@@ -60,25 +62,29 @@ std::string string_replace(std::string str, const std::string& from, const std::
 
 namespace lmake {
     void initialize() {
+        DEBUG("Adding native functions");
         /// TODO: add native functions
         lmake_data.vm.add_native_function([](lua_State* vm) -> int {
             lmake_data.context.compiler = std::string(lua_tostring(vm, -1));
+            DEBUG(lmake_data.context.compiler);
             return 1;
         }, "lmake_set_compiler");
 
         lmake_data.vm.add_native_function([](lua_State* vm) -> int {
             lmake_data.context.compiler_flags = std::string(lua_tostring(vm, -1));
+            DEBUG(lmake_data.context.compiler_flags);
             return 1;
         }, "lmake_set_compiler_flags");
 
         lmake_data.vm.add_native_function([](lua_State* vm) -> int {
             lmake_data.context.compiler_output = std::string(lua_tostring(vm, -1));
+            DEBUG(lmake_data.context.compiler_output);
             return 1;
         }, "lmake_set_compiler_output");
 
         lmake_data.vm.add_native_function([](lua_State* vm) -> int {
-            std::string name_regex = std::string(lua_tostring(vm, -1));
-            std::string source_files = std::string(lua_tostring(vm, -2));
+            std::string source_files = std::string(lua_tostring(vm, -1));
+            DEBUG(source_files);
     
             // Create output paths from file
             std::vector<std::string> files = stringtoolbox::split(source_files, ' ');
@@ -113,6 +119,7 @@ namespace lmake {
             
             return 1;
         }, "lmake_compile");
+        DEBUG("Native functions added");
 
         lmake_data.initialized = true;
     }
@@ -121,9 +128,10 @@ namespace lmake {
         if(!lmake_data.initialized) 
             return false;
 
+        DEBUG("Processing script");
         auto file_buffer = os::read_file(config_path);
         std::string processed = process_script(file_buffer.get(), config_path);
-
+        DEBUG(processed);
         return lmake::build_from_string(processed.c_str());
     }
 
