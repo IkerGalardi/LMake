@@ -60,6 +60,8 @@
         "stop_token": "cpp",
         "thread": "cpp",
         "*.inc": "cpp",
-        "filesystem": "cpp"
+        "filesystem": "cpp",
+        "codecvt": "cpp",
+        "iomanip": "cpp"
     }
 }
