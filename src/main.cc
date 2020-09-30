@@ -23,8 +23,6 @@
 #include "lmake.hh"
 #include "test/test.hh"
 
-#define LMAKE_VERSION "0.4 DEV"
-
 #define LMAKE_CONFIG_PATH "./LMakefile"
 
 void print_usage(const char* reason) {
