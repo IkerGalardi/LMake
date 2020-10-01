@@ -70,6 +70,7 @@ namespace lmake {
             
             if(ver.find(version) == std::string::npos) {
                 std::cerr << "[E] Incompatible lmake version\n";
+                std::exit(2);
             }
 
             return 1;
