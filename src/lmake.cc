@@ -89,19 +89,16 @@ namespace lmake {
 
         lmake_data.vm.add_native_function([](lua_State* vm) -> int {
             lmake_data.context.compiler = std::string(lua_tostring(vm, -1));
-            DEBUG(lmake_data.context.compiler);
             return 1;
         }, "lmake_set_compiler");
 
         lmake_data.vm.add_native_function([](lua_State* vm) -> int {
             lmake_data.context.compiler_flags = std::string(lua_tostring(vm, -1));
-            DEBUG(lmake_data.context.compiler_flags);
             return 1;
         }, "lmake_set_compiler_flags");
 
         lmake_data.vm.add_native_function([](lua_State* vm) -> int {
             lmake_data.context.compiler_output = std::string(lua_tostring(vm, -1));
-            DEBUG(lmake_data.context.compiler_output);
             return 1;
         }, "lmake_set_compiler_output");
 
@@ -139,7 +136,7 @@ namespace lmake {
                 int exit = os::wait_process(p);
 
                 // if compilation gone wrong exit the program
-                if(exit == 0) 
+                if(exit != 0) 
                     std::exit(1);
             }
             
@@ -153,10 +150,8 @@ namespace lmake {
         if(!lmake_data.initialized) 
             return false;
 
-        DEBUG("Processing script");
         auto file_buffer = os::read_file(config_path);
         std::string processed = process_script(file_buffer.get(), config_path);
-        DEBUG(processed);
         return lmake::build_from_string(processed.c_str());
     }
 
