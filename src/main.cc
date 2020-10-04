@@ -50,7 +50,7 @@ int main(int argc, char** argv) {
             test::lmake();
             std::exit(0);
         }
-    } else if(std::strcmp(argv[1], "--version") || std::strcmp(argv[1], "-v")) {
+    } else if(std::strcmp(argv[1], "--version") || std::strcmp(argv[1], "-v") == 0) {
         std::cout << "[+] Lua version   " << LUA_VERSION_MAJOR "." LUA_VERSION_MINOR << std::endl;
         std::cout << "[+] LMake version " LMAKE_VERSION "\n";
         std::exit(0);
