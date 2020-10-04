@@ -51,6 +51,17 @@ std::string process_script(const char* file_contents, const char* containing_dir
     return std::string(file_contents);
 }
 
+std::vector<std::string> string_split(const std::string& str, char delimeter) {
+    std::vector<std::string> res;
+    std::string temp;
+    std::istringstream stream(str.c_str());
+
+    while(std::getline(stream, temp, delimeter))
+        res.push_back(temp);
+
+    return res;
+}
+
 std::string string_replace(std::string str, const std::string& from, const std::string& to) {
     size_t start_pos = 0;
     while((start_pos = str.find(from, start_pos)) != std::string::npos) {
@@ -99,7 +110,7 @@ namespace lmake {
             DEBUG(source_files);
     
             // Create output paths from file
-            std::vector<std::string> files = stringtoolbox::split(source_files, ' ');
+            std::vector<std::string> files = string_split(source_files, ' ');
             std::vector<std::string> obj_file_names;
             std::vector<std::string> src_files;
             obj_file_names.reserve(files.size());
@@ -111,6 +122,8 @@ namespace lmake {
                 std::string full_obj_path = lmake_data.context.compiler_output + "/" 
                                           + string_replace(filename_without_path, "%", filename_without_path);
                 obj_file_names.emplace_back(full_obj_path);
+
+                std::cout << files[i] << std::endl;
             }
 
             // Compile all the files
@@ -120,8 +133,8 @@ namespace lmake {
                 std::string& flags = lmake_data.context.compiler_flags;
 
                 // Run the compiler and get exit code
-                std::string args = flags + " -o " + obj_file_names[i] + ".o " + files[i];
-                std::cout << args << std::endl;
+                std::string args =  files[i] + " -c " + flags + " -o " + obj_file_names[i] + ".o";
+                std::cout << args.c_str() << std::endl;
                 os::process p = os::run_process(compiler.c_str(), args.c_str());
                 int exit = os::wait_process(p);
 
