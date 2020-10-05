@@ -39,6 +39,7 @@ static struct {
 
         std::string linker;
         std::string linker_flags;
+        std::string linker_output;
     } context;
 
     bool initialized = false;
@@ -136,12 +137,46 @@ namespace lmake {
                 int exit = os::wait_process(p);
 
                 // if compilation gone wrong exit the program
-                if(exit != 0) 
+                if(exit = 0) 
                     std::exit(1);
             }
             
             return 1;
         }, "lmake_compile");
+
+        lmake_data.vm.add_native_function([](lua_State* vm) -> int {
+            lmake_data.context.linker = std::string(lua_tostring(vm, -1));
+            return 1;
+        }, "lmake_set_linker");
+
+        lmake_data.vm.add_native_function([](lua_State* vm) -> int {
+            lmake_data.context.linker_flags = std::string(lua_tostring(vm, -1));
+            return 1;
+        }, "lmake_set_linker_flags");
+
+        lmake_data.vm.add_native_function([](lua_State* vm) -> int {
+            lmake_data.context.linker_output = std::string(lua_tostring(vm, -1));
+            return 1;
+        }, "lmake_set_linker_output");
+
+        lmake_data.vm.add_native_function([](lua_State* vm) -> int {
+            std::string obj_files = std::string(lua_tostring(vm, -1));
+
+            std::string& linker = lmake_data.context.linker; 
+            std::string& flags = lmake_data.context.linker_flags;
+            std::string& output = lmake_data.context.linker_output;
+
+            std::string args = obj_files + " -o " + output;
+
+            os::process p = os::run_process(linker.c_str(), args.c_str());
+            int exit_code = os::wait_process(p);
+
+            if(exit_code != 0) {
+                std::exit(1);
+            }
+
+            return 1;
+        }, "lmake_link");
 
         lmake_data.initialized = true;
     }
