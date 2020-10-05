@@ -18,7 +18,7 @@
 
 #include <string>
 
-#define LMAKE_VERSION "0.4 DEV"
+#define LMAKE_VERSION "0.5 DEV"
 
 namespace lmake {
     void initialize();

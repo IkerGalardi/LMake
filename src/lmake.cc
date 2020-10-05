@@ -27,8 +27,6 @@
 #include "os/filesystem.hh"
 #include "os/process_management.hh"
 
-#define DEBUG(x) std::cout << "[D] " << x << std::endl
-
 static struct {
     luavm vm;
 
@@ -39,7 +37,7 @@ static struct {
 
         std::string linker;
         std::string linker_flags;
-        std::string linker_output;
+        std::string linker_output = "unnamed";
     } context;
 
     bool initialized = false;
@@ -52,7 +50,7 @@ std::string process_script(const char* file_contents, const char* containing_dir
     return std::string(file_contents);
 }
 
-std::vector<std::string> string_split(const std::string& str, char delimeter) {
+static std::vector<std::string> string_split(const std::string& str, char delimeter) {
     std::vector<std::string> res;
     std::string temp;
     std::istringstream stream(str.c_str());
@@ -105,7 +103,6 @@ namespace lmake {
 
         lmake_data.vm.add_native_function([](lua_State* vm) -> int {
             std::string source_files = std::string(lua_tostring(vm, -1));
-            DEBUG(source_files);
     
             // Create output paths from file
             std::vector<std::string> files = string_split(source_files, ' ');
@@ -120,8 +117,6 @@ namespace lmake {
                 std::string full_obj_path = lmake_data.context.compiler_output + "/" 
                                           + string_replace(filename_without_path, "%", filename_without_path);
                 obj_file_names.emplace_back(full_obj_path);
-
-                std::cout << files[i] << std::endl;
             }
 
             // Compile all the files
@@ -132,7 +127,7 @@ namespace lmake {
 
                 // Run the compiler and get exit code
                 std::string args =  files[i] + " -c " + flags + " -o " + obj_file_names[i] + ".o";
-                std::cout << args.c_str() << std::endl;
+                //std::cout << args.c_str() << std::endl;
                 os::process p = os::run_process(compiler.c_str(), args.c_str());
                 int exit = os::wait_process(p);
 
@@ -166,8 +161,13 @@ namespace lmake {
             std::string& flags = lmake_data.context.linker_flags;
             std::string& output = lmake_data.context.linker_output;
 
-            std::string args = obj_files + " -o " + output;
+            std::filesystem::path output_path(output);
+            std::cout << "[+] Linking " << output_path.filename().string() << std::endl;
 
+            // Construct the args
+            std::string args = "-o " + output + " " + obj_files + " " + flags;
+
+            // Execute the linker with the constructed args
             os::process p = os::run_process(linker.c_str(), args.c_str());
             int exit_code = os::wait_process(p);
 

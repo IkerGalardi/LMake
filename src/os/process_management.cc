@@ -22,84 +22,36 @@
 
 #include <iostream>
 #include <cstring>
+#include <sstream>
 
 #include <stringtoolbox/stringtoolbox.hh>
 
-int split (const char *str, char c, char ***arr)
-{
-    int count = 1;
-    int token_len = 1;
-    int i = 0;
-    char *p;
-    char *t;
+static std::vector<char*> string_split_null_terminated(const std::string& str, char delimeter) {
+    std::vector<char*> res;
+    std::string temp;
+    std::istringstream stream(str.c_str());
 
-    p = (char*)str;
-    while (*p != '\0')
-    {
-        if (*p == c)
-            count++;
-        p++;
+    while(std::getline(stream, temp, delimeter)) {
+        //res.push_back(std::malloc((temp.size() + 1) * sizeof(char)));
+        void* mem = std::calloc(temp.size() + 1, sizeof(char));
+        res.push_back(static_cast<char*>(mem));
+        std::strcpy(res[res.size() - 1], temp.c_str());
     }
 
-    size_t size = sizeof(char*) * count + sizeof(nullptr);
-    *arr = (char**) malloc(size);
-    memset(*arr, 0, size);
-    if (*arr == NULL)
-        exit(1);
+    res.push_back(static_cast<char*>(nullptr));
 
-    p = (char*)str;
-    while (*p != '\0')
-    {
-        if (*p == c)
-        {
-            (*arr)[i] = (char*) malloc( sizeof(char) * token_len );
-            if ((*arr)[i] == NULL)
-                exit(1);
-
-            token_len = 0;
-            i++;
-        }
-        p++;
-        token_len++;
-    }
-    (*arr)[i] = (char*) malloc( sizeof(char) * token_len );
-    if ((*arr)[i] == NULL)
-        exit(1);
-
-    i = 0;
-    p = (char*)str;
-    t = ((*arr)[i]);
-    while (*p != '\0')
-    {
-        if (*p != c && *p != '\0')
-        {
-            *t = *p;
-            t++;
-        }
-        else
-        {
-            *t = '\0';
-            i++;
-            t = ((*arr)[i]);
-        }
-        p++;
-    }
-
-    return count;
+    return res;
 }
 
 namespace os {
     process run_process(const char* prog, const char* args) {
-        /// TODO: clean this code pls
-
         pid_t pid = fork();
 
         if(pid == 0) { // child process
             std::string temp = std::string(prog) + " " + args;
-            char** arguments;
-            split(temp.c_str(), ' ', &arguments);
+            auto args = string_split_null_terminated(temp, ' ');
 
-            int err = execv(prog, arguments);
+            int err = execv(prog, args.data());
             std::cerr << "[E] Cannot execute process\n";
             std::cout << errno << " " << err << std::endl;
             std::exit(5);
