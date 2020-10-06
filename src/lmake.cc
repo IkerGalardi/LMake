@@ -72,8 +72,6 @@ std::string string_replace(std::string str, const std::string& from, const std::
 
 namespace lmake {
     void initialize() {
-        /// TODO: add native functions
-
         lmake_data.vm.add_native_function([](lua_State* vm) -> int {
             std::string version = std::string(lua_tostring(vm, -1));
             std::string ver = std::string(LMAKE_VERSION);
@@ -132,9 +130,12 @@ namespace lmake {
                 int exit = os::wait_process(p);
 
                 // if compilation gone wrong exit the program
-                if(exit = 0) 
+                if(exit != 0) 
                     std::exit(1);
+
             }
+
+            std::cout << std::endl;
             
             return 1;
         }, "lmake_compile");
@@ -174,6 +175,8 @@ namespace lmake {
             if(exit_code != 0) {
                 std::exit(1);
             }
+
+            std::cout << std::endl;
 
             return 1;
         }, "lmake_link");

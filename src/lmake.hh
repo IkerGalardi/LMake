@@ -21,11 +21,32 @@
 #define LMAKE_VERSION "0.5 DEV"
 
 namespace lmake {
+    /*
+     * Initializes de luavm and adds all the necesary native functions.
+     */
     void initialize();
 
+    /*
+     * Loads the file from the filesystem system, preprocesses it (replaces 
+     * all the lmake_include...), and executes it.
+     * 
+     * @param config_path: path to the configuration file
+     * @return: true if success, false if something went wrong
+     */
     bool build_from_file(const char* config_path);
 
+    /*
+     * Executes the provided string without any processing.
+     * 
+     * @param config_path: path to the configuration file
+     * @return: true if success, false if something went wrong
+     */
     bool build_from_string(const char* config_string);
 
+    /*
+     * Returns the last error that occured.
+     * 
+     * @return: string explaining the error
+     */
     std::string& get_last_error();
 }

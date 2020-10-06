@@ -21,7 +21,8 @@
 namespace os {
     using process = pid_t;
 
-    /* Executes the specified program with the specified command line
+    /* 
+     * Executes the specified program with the specified command line
      * arguments.
      * 
      * @param prog: the path to the program
@@ -29,7 +30,8 @@ namespace os {
      */
     process run_process(const char* prog, const char* args);
 
-    /* Blocks the process untill the specified process.
+    /* 
+     * Blocks the process untill the specified process.
      * 
      * @param proc: process to wait
      * @return: exit code of the process
