@@ -20,6 +20,7 @@
 #include <cstring>
 #include <filesystem>
 #include <iostream>
+#include <stack>
 
 #include <stringtoolbox/stringtoolbox.hh>
 
@@ -40,13 +41,35 @@ static struct {
         std::string linker_output = "unnamed";
     } context;
 
+    std::stack<std::string> been_dirs;
+
     bool initialized = false;
 
     std::string last_error;
 } lmake_data;
 
+#define DEBUG(x) std::cout << "[D] " << x << std::endl
+
 std::string process_script(const char* file_contents, const char* containing_dir) {
-    /// TODO: preprocess all the lmake_include (mimic #include of c)    
+    /// TODO: preprocess all the lmake_include (mimic #include of c)
+    std::stringstream stream(file_contents);
+    std::string res;
+
+    std::string temp;
+    while(std::getline(stream, temp)) {
+        if(temp.find("lmake_include") != std::string::npos) {
+            size_t bracket_left_index = temp.find("(\"");
+            size_t bracket_right_index = temp.find("\")");
+            std::string substring = temp.substr(bracket_left_index, bracket_right_index);
+            DEBUG(substring);
+        } else {
+            res.append(temp);
+            res.append("\n");
+        }
+    }
+
+    DEBUG(res);
+
     return std::string(file_contents);
 }
 
@@ -172,6 +195,7 @@ namespace lmake {
             os::process p = os::run_process(linker.c_str(), args.c_str());
             int exit_code = os::wait_process(p);
 
+            /// TODO: stop executing and error
             if(exit_code != 0) {
                 std::exit(1);
             }
@@ -180,6 +204,14 @@ namespace lmake {
 
             return 1;
         }, "lmake_link");
+
+        lmake_data.vm.add_native_function([](lua_State* vm) -> int {
+            std::string dir = std::string(lua_tostring(vm, -1));
+            lmake_data.been_dirs.push(os::get_dir());
+            bool err = os::change_dir(dir.c_str());
+            /// TODO: if error -> stop executing and set last error 
+            return 1;
+        }, "lmake_set_linker_output");
 
         lmake_data.initialized = true;
     }
