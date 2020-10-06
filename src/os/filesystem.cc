@@ -49,4 +49,8 @@ namespace os {
     bool change_dir(const char* dir) {
          return chdir(dir) == 0;
     }
+
+    std::string get_dir() {
+        return std::string(getcwd(NULL, 0));
+    }
 }

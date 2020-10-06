@@ -40,4 +40,11 @@ namespace os {
      * @param path: path to the directory
      */
     bool change_dir(const char* dir);
+
+    /*
+     * Gets the working directory
+     * 
+     * @return: working directory path
+     */
+    std::string get_dir();
 }
