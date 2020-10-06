@@ -16,12 +16,30 @@
 
 #pragma once 
 
-
-/// TODO: add documentation
 namespace test {
+
+    /*
+     * Runs all the tests
+     */
     void run();
+
+    /*
+     * Tests the luavm
+     */
     void luavm();
+
+    /*
+     * Tests the os specific functions
+     */
     void os();
+    
+    /*
+     * A little compilation test
+     */
     void compilation();
+    
+    /*
+     * Tests lmake by compiling a little project
+     */
     void lmake();
 }
