@@ -33,7 +33,7 @@ namespace lmake {
      * @param config_path: path to the configuration file
      * @return: true if success, false if something went wrong
      */
-    bool build_from_file(const char* config_path);
+    bool load_from_file(const char* config_path);
 
     /*
      * Executes the provided string without any processing.
@@ -41,7 +41,15 @@ namespace lmake {
      * @param config_path: path to the configuration file
      * @return: true if success, false if something went wrong
      */
-    bool build_from_string(const char* config_string);
+    bool load_from_string(const char* config_string);
+
+    /*
+     * Executes the function specified
+     * 
+     * @param fn_name: name of the functions
+     * @return: true if success, false if something went wrong
+     */
+    bool execute_function(const char* fn_name);
 
     /*
      * Returns the last error that occured.

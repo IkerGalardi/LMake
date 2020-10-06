@@ -44,6 +44,7 @@ static struct {
     std::stack<std::string> been_dirs;
 
     bool initialized = false;
+    bool config_executed = false;
 
     std::string last_error;
 } lmake_data;
@@ -71,6 +72,7 @@ std::string process_script(const char* file_contents, const char* containing_dir
     DEBUG(res);
 
     return std::string(file_contents);
+
 }
 
 static std::vector<std::string> string_split(const std::string& str, char delimeter) {
@@ -214,18 +216,19 @@ namespace lmake {
         }, "lmake_set_linker_output");
 
         lmake_data.initialized = true;
+        lmake_data.config_executed = false;
     }
 
-    bool build_from_file(const char* config_path) {
+    bool load_from_file(const char* config_path) {
         if(!lmake_data.initialized) 
             return false;
 
         auto file_buffer = os::read_file(config_path);
         std::string processed = process_script(file_buffer.get(), config_path);
-        return lmake::build_from_string(processed.c_str());
+        return lmake::load_from_string(processed.c_str());
     }
 
-    bool build_from_string(const char* config_string) {
+    bool load_from_string(const char* config_string) {
         if(!lmake_data.initialized) 
             return false;
 
@@ -233,6 +236,19 @@ namespace lmake {
             lmake_data.last_error = lmake_data.vm.get_last_error();
             return false;
         }
+
+        lmake_data.config_executed = true;
+
+        return true;
+    }
+
+    bool execute_function(const char* fn_name) {
+        if(!lmake_data.config_executed) {
+            lmake_data.last_error = "No configuration executed";
+            return false;
+        }
+
+        
 
         return true;
     }
