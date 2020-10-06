@@ -63,7 +63,7 @@ int main(int argc, char** argv) {
 
     lmake::initialize();
 
-    if(!lmake::build_from_file(LMAKE_CONFIG_PATH)) {
+    if(!lmake::load_from_file(LMAKE_CONFIG_PATH)) {
         std::cerr << "[E] " << lmake::get_last_error() << std::endl;
         std::exit(3);
     }
