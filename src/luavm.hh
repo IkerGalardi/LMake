@@ -21,35 +21,56 @@
 #include <lua/lua.hpp>
 
 
-/* Function signature of native functions
-*/
+/* 
+ * Function signature of native functions
+ */
 typedef int(*luafunc)(lua_State*);
 
 class luavm {
 public:
-    /* Constructs all the necesary things to execute lua scripts
+    /* 
+     * Constructs all the necesary things to execute lua scripts
      */
     luavm();
     
-    /* Finalizes the virtual machine and cleans up heap memory
+    /* 
+     * Finalizes the virtual machine and cleans up heap memory
      */
     ~luavm();
 
-    /* Adds the native function to the lua virtual machine
+    /* 
+     * Adds the native function to the lua virtual machine
      * 
      * @param func: function to be executed by the virtual machine
      * @param name: the name of the function
      */
     void add_native_function(luafunc func, const char* name);
 
-    /* Executes the script on the lua virtual machine
+    /* 
+     * Executes the script on the lua virtual machine
      * 
      * @param script: the script to be executed
      */
     bool execute_script(const char* script);
 
+    /* 
+     * Checks if the function exists
+     * 
+     * @param fn_name: name of the functions
+     * @return: true if the function exists, false if not
+     */
+    bool function_exists(const char* fn_name);
+    
+    /* 
+     * Executes the script on the lua virtual machine
+     * 
+     * @param fn_name: name of the function to be executed
+     */
+    void execute_function(const char* fn_name);
+
     /// TODO: errors as enums instead of strings
-    /* Returns the last error given by the virtual machine
+    /* 
+     * Returns the last error given by the virtual machine
      * 
      * @return: error description
      */

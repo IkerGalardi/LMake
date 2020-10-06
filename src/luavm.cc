@@ -44,6 +44,21 @@ bool luavm::execute_script(const char* script) {
     return true;
 }
 
+bool luavm::function_exists(const char* fn_name) {
+    lua_getglobal(vm, fn_name);
+    if(lua_isfunction(vm, -1)) {
+        return true;
+    }
+
+    return false;
+}
+
+void luavm::execute_function(const char* fn_name) {
+    lua_getglobal(vm, fn_name);
+    lua_pcall(vm, 0, 0, 0);
+}
+
+
 const std::string& luavm::get_last_error() {
     return last_error;
 }
