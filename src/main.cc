@@ -35,8 +35,7 @@ void print_usage(const char* reason) {
 int main(int argc, char** argv) {
 
     if(argc <= 1 || std::strcmp(argv[1], "--help") == 0) {
-        print_usage("No arguments specified, you can specify one of the next:");
-        std::exit(0);
+
     }
     
     // Executes all the tests
@@ -66,6 +65,13 @@ int main(int argc, char** argv) {
     if(!lmake::load_from_file(LMAKE_CONFIG_PATH)) {
         std::cerr << "[E] " << lmake::get_last_error() << std::endl;
         std::exit(3);
+    }
+
+    if(argc <= 1) {
+        lmake::execute_target(argv[1]);
+    } else {
+        std::cout << "[I] No target specified\n";
+        std::exit(1);
     }
     
 }
