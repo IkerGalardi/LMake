@@ -28,6 +28,8 @@
 #include "os/filesystem.hh"
 #include "os/process_management.hh"
 
+/// TODO: std::exit() wrong, stop executing script and set last error
+
 static struct {
     luavm vm;
 
@@ -250,7 +252,10 @@ namespace lmake {
 
         if(!lmake_data.vm.function_exists(target)) {
             lmake_data.last_error = "Specified target does not exist";
+            return false;
         }
+
+        lmake_data.vm.execute_function(target);
 
         return true;
     }
