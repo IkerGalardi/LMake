@@ -23,7 +23,7 @@
 #include "lmake.hh"
 #include "test/test.hh"
 
-#define LMAKE_CONFIG_PATH "./LMakefile"
+#define LMAKE_CONFIG_PATH "./lmake.lua"
 
 void print_usage(const char* reason) {
     std::cout << "[+] " << reason << std::endl;

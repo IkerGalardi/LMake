@@ -85,9 +85,11 @@ namespace test {
         std::cout << "Building using ./build/test/full_test/LMakefile\n";
         os::change_dir("./build/test/full_test/");
         lmake::initialize();
-        if(!lmake::load_from_file("./LMakefile")) {
+        if(!lmake::load_from_file("./lmake.lua")) {
             std::string& err = lmake::get_last_error();
             std::cerr << err << std::endl;
         }
+
+        lmake::execute_target("build");
     }
 }
