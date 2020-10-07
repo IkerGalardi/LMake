@@ -242,13 +242,15 @@ namespace lmake {
         return true;
     }
 
-    bool execute_function(const char* fn_name) {
+    bool execute_target(const char* target) {
         if(!lmake_data.config_executed) {
             lmake_data.last_error = "No configuration executed";
             return false;
         }
 
-        
+        if(!lmake_data.vm.function_exists(target)) {
+            lmake_data.last_error = "Specified target does not exist";
+        }
 
         return true;
     }

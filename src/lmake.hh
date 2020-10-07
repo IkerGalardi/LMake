@@ -44,12 +44,12 @@ namespace lmake {
     bool load_from_string(const char* config_string);
 
     /*
-     * Executes the function specified
+     * Executes the specified target function
      * 
-     * @param fn_name: name of the functions
+     * @param target: name of the target
      * @return: true if success, false if something went wrong
      */
-    bool execute_function(const char* fn_name);
+    bool execute_target(const char* target);
 
     /*
      * Returns the last error that occured.
