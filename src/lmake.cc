@@ -52,6 +52,10 @@ static struct {
     std::string last_error;
 } lmake_data;
 
+bool needs_to_be_compiled(const char* obj, const char* src) {
+    return true;
+}
+
 #define DEBUG(x) std::cout << "[D] " << x << std::endl
 
 std::string process_script(const char* file_contents, const char* containing_dir) {
@@ -144,6 +148,9 @@ namespace lmake {
 
             // Compile all the files
             for(int i = 0; i < files.size(); i++) {
+                if(!needs_to_be_compiled(obj_file_names[i].c_str(), files[i].c_str()))
+                    continue;
+                
                 std::cout << "[+] Compiling " << src_files[i] << std::endl;
                 std::string& compiler = lmake_data.context.compiler;
                 std::string& flags = lmake_data.context.compiler_flags;
