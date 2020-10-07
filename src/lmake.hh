@@ -19,6 +19,7 @@
 #include <string>
 
 #define LMAKE_VERSION "0.6 DEV"
+#define LMAKE_COMPAT_VERSION 1.0
 
 namespace lmake {
     /*

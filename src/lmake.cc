@@ -27,6 +27,7 @@
 #include "luavm.hh"
 #include "os/filesystem.hh"
 #include "os/process_management.hh"
+#include "lmake.hh"
 
 /// TODO: std::exit() wrong, stop executing script and set last error
 
@@ -40,7 +41,7 @@ static struct {
 
         std::string linker;
         std::string linker_flags;
-        std::string linker_output = "unnamed";
+        std::string linker_output;
     } context;
 
     std::stack<std::string> been_dirs;
@@ -71,7 +72,7 @@ std::string process_script(const char* file_contents, const char* containing_dir
         }
     }
 
-    DEBUG(res);
+    //DEBUG(res);
 
     return std::string(file_contents);
 
@@ -100,14 +101,11 @@ std::string string_replace(std::string str, const std::string& from, const std::
 namespace lmake {
     void initialize() {
         lmake_data.vm.add_native_function([](lua_State* vm) -> int {
-            std::string version = std::string(lua_tostring(vm, -1));
-            std::string ver = std::string(LMAKE_VERSION);
-            
-            if(ver.find(version) == std::string::npos) {
-                std::cerr << "[E] Incompatible lmake version\n";
-                std::exit(2);
+            auto compatibility_version = lua_tonumber(vm, -1);
+            if(compatibility_version != LMAKE_COMPAT_VERSION) {
+                std::cerr << "[E] Incompatible version\n";
+                std::exit(0);
             }
-
             return 1;
         }, "lmake_compatibility_version");
 
@@ -174,13 +172,16 @@ namespace lmake {
 
         lmake_data.vm.add_native_function([](lua_State* vm) -> int {
             lmake_data.context.linker_flags = std::string(lua_tostring(vm, -1));
+            //DEBUG(lmake_data.context.linker_flags);
             return 1;
         }, "lmake_set_linker_flags");
 
         lmake_data.vm.add_native_function([](lua_State* vm) -> int {
+            DEBUG("debus desl test");
             lmake_data.context.linker_output = std::string(lua_tostring(vm, -1));
+            DEBUG(lmake_data.context.linker_output);
             return 1;
-        }, "lmake_set_linker_output");
+        }, "lmake_set_linker_out");
 
         lmake_data.vm.add_native_function([](lua_State* vm) -> int {
             std::string obj_files = std::string(lua_tostring(vm, -1));
