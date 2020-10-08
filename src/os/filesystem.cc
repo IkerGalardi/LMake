@@ -19,6 +19,7 @@
 #include <cstdio>
 #include <unistd.h>
 #include <iostream>
+#include <filesystem>
 
 namespace os {
     bool file_exists(std::string path) {
@@ -53,4 +54,12 @@ namespace os {
     std::string get_dir() {
         return std::string(getcwd(NULL, 0));
     }
+
+    bool compare_file_dates(const std::string& file_a, const std::string& file_b) {
+        auto edited_a = std::filesystem::last_write_time(file_a);
+        auto edited_b = std::filesystem::last_write_time(file_b);
+
+        return edited_a < edited_b;
+    }
+
 }

@@ -47,4 +47,11 @@ namespace os {
      * @return: working directory path
      */
     std::string get_dir();
+
+    /*
+     * Compares the dates of two files
+     * 
+     * @return: true if file_a is older than file_b, false if not
+     */
+    bool compare_file_dates(const std::string& file_a, const std::string& file_b);
 }
