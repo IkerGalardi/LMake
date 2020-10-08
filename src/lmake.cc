@@ -106,24 +106,25 @@ namespace lmake {
 
         lmake_data.vm.add_native_function([](lua_State* vm) -> int {
             lmake_data.context.compiler = std::string(lua_tostring(vm, -1));
-            print_context();
+            std::cout << "Compiler set to " << lmake_data.context.compiler << std::endl;
             return 1;
         }, "lmake_set_compiler");
 
         lmake_data.vm.add_native_function([](lua_State* vm) -> int {
             lmake_data.context.compiler_flags = std::string(lua_tostring(vm, -1));
-            print_context();
+            std::cout << "Compiler flags set to " << lmake_data.context.compiler_flags << std::endl;
             return 1;
         }, "lmake_set_compiler_flags");
 
         lmake_data.vm.add_native_function([](lua_State* vm) -> int {
             lmake_data.context.compiler_output = std::string(lua_tostring(vm, -1));
-            print_context();
+            std::cout << "Compiler out set to " << lmake_data.context.compiler_output << std::endl;
             return 1;
-        }, "lmake_set_compiler_output");
+        }, "lmake_set_compiler_out");
 
         lmake_data.vm.add_native_function([](lua_State* vm) -> int {
             std::string source_files = std::string(lua_tostring(vm, -1));
+            std::cout << "FILES = " << source_files << std::endl;
     
             // Compile the file
             std::vector<std::string> files = utils::string_split(source_files, ' ');
@@ -132,10 +133,15 @@ namespace lmake {
                 std::string& flags = lmake_data.context.compiler_flags;
                 std::string& out = lmake_data.context.compiler_output;
 
+                std::cout << "[+] Compiling " << files[i] << std::endl;
+
+                std::filesystem::path file_path(files[i]);
+                std::string file_without_path = file_path.stem().string() + file_path.extension().string();
+
                 std::string obj_name = utils::string_replace(
                     out,
                     "%",
-                    files[i] + ".o"
+                    file_without_path
                 );
 
                 bool ok = utils::compile(

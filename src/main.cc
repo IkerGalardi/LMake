@@ -56,7 +56,7 @@ int main(int argc, char** argv) {
     }
 
     if(!os::file_exists(LMAKE_CONFIG_PATH)) {
-        std::cerr << "[E] No LMakefile file found.\n";
+        std::cerr << "[E] No lmake.lua file found.\n";
         std::exit(1);
     }
 
