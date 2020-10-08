@@ -17,6 +17,7 @@
 #pragma once
 
 #include <string>
+#include <memory>
 
 #include <lua/lua.hpp>
 
@@ -44,14 +45,14 @@ public:
      * @param func: function to be executed by the virtual machine
      * @param name: the name of the function
      */
-    void add_native_function(luafunc func, const char* name);
+    void add_native_function(luafunc func, std::string name);
 
     /* 
      * Executes the script on the lua virtual machine
      * 
      * @param script: the script to be executed
      */
-    bool execute_script(const char* script);
+    bool execute_script(std::string script);
 
     /* 
      * Checks if the function exists
@@ -59,14 +60,14 @@ public:
      * @param fn_name: name of the functions
      * @return: true if the function exists, false if not
      */
-    bool function_exists(const char* fn_name);
+    bool function_exists(std::string fn_name);
     
     /* 
      * Executes the script on the lua virtual machine
      * 
      * @param fn_name: name of the function to be executed
      */
-    void execute_function(const char* fn_name);
+    void execute_function(std::string fn_name);
 
     /// TODO: errors as enums instead of strings
     /* 
@@ -74,9 +75,10 @@ public:
      * 
      * @return: error description
      */
-    const std::string& get_last_error();
+    std::string get_last_error();
 private:
     lua_State* vm;
     std::string last_error;
+    std::string script;
 protected:
 };

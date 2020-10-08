@@ -2,6 +2,6 @@
 
 #include <stdio.h>
 
-void external_print(const char* msg) {
+void external_print(std::string msg) {
     printf("%s\n", msg);
 }

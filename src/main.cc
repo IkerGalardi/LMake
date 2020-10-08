@@ -25,7 +25,7 @@
 
 #define LMAKE_CONFIG_PATH "./lmake.lua"
 
-void print_usage(const char* reason) {
+void print_usage(std::string reason) {
     std::cout << "[+] " << reason << std::endl;
     std::cout << "\t build: builds using the LMakefile file on the directory\n";
     std::cout << "\t clean: cleans all intermediate files\n";
@@ -67,7 +67,7 @@ int main(int argc, char** argv) {
         std::exit(3);
     }
 
-    if(argc <= 1) {
+    if(argc >= 1) {
         lmake::execute_target(argv[1]);
     } else {
         std::cout << "[I] No target specified\n";

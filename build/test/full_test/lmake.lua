@@ -1,5 +1,7 @@
 lmake_compatibility_version(1)
 
+lmake_include("vars.lua")
+
 function build()
     lmake_set_compiler("/bin/gcc")
     lmake_set_compiler_flags("-O3")

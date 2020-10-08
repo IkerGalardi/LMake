@@ -29,13 +29,14 @@ luavm::~luavm() {
     lua_close(vm);
 }
 
-void luavm::add_native_function(luafunc func, const char* name) {
+void luavm::add_native_function(luafunc func, std::string name) {
     lua_pushcfunction(vm, func);
-    lua_setglobal(vm, name);
+    lua_setglobal(vm, name.c_str());
 }
 
-bool luavm::execute_script(const char* script) {
-    luaL_loadstring(vm, script);
+bool luavm::execute_script(std::string script) {
+    this->script = script;
+    luaL_loadstring(vm, script.c_str());
     if (lua_pcall(vm, 0, 0, 0) != LUA_OK) {
         last_error = std::string(lua_tostring(vm, -1));
         return false;
@@ -44,8 +45,8 @@ bool luavm::execute_script(const char* script) {
     return true;
 }
 
-bool luavm::function_exists(const char* fn_name) {
-    lua_getglobal(vm, fn_name);
+bool luavm::function_exists(std::string fn_name) {
+    lua_getglobal(vm, fn_name.c_str());
     if(lua_isfunction(vm, -1)) {
         return true;
     }
@@ -53,12 +54,12 @@ bool luavm::function_exists(const char* fn_name) {
     return false;
 }
 
-void luavm::execute_function(const char* fn_name) {
-    lua_getglobal(vm, fn_name);
+void luavm::execute_function(std::string fn_name) {
+    lua_getglobal(vm, fn_name.c_str());
     lua_pcall(vm, 0, 0, 0);
 }
 
 
-const std::string& luavm::get_last_error() {
-    return last_error;
+std::string luavm::get_last_error() {
+    return std::string("[LVM] ") + last_error;
 }

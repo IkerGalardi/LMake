@@ -38,8 +38,8 @@ namespace test {
     }
 
     void luavm() {
-        const char* error_script = "//jañ";
-        const char* correct_script = "test()";
+        std::string error_script = "//jañ";
+        std::string correct_script = "test()";
 
         std::cout << "Adding native function\n";
         ::luavm vm;

@@ -28,6 +28,7 @@
 #include "os/filesystem.hh"
 #include "os/process_management.hh"
 #include "lmake.hh"
+#include "utils.hh"
 
 /// TODO: std::exit() wrong, stop executing script and set last error
 
@@ -52,13 +53,22 @@ static struct {
     std::string last_error;
 } lmake_data;
 
-bool needs_to_be_compiled(const char* obj, const char* src) {
-    return true;
+void print_context() {
+    std::cout << "CONTEXT\n";
+    std::cout << "  Compiler  = " << lmake_data.context.compiler << std::endl;
+    std::cout << "     Flags  = " << lmake_data.context.compiler_flags << std::endl;
+    std::cout << "     Output = " << lmake_data.context.compiler_output << std::endl;
+
+    std::cout << "  Linker = " << lmake_data.context.linker << std::endl;
+    std::cout << "     Flags = " << lmake_data.context.linker_flags << std::endl;
+    std::cout << "     Output = " << lmake_data.context.linker_output << std::endl;
+
+    std::cout << "END CONTEXT\n";
 }
 
 #define DEBUG(x) std::cout << "[D] " << x << std::endl
 
-std::string process_script(const char* file_contents, const char* containing_dir) {
+static std::string process_script(std::string file_contents, std::string containing_dir) {
     /// TODO: preprocess all the lmake_include (mimic #include of c)
     std::stringstream stream(file_contents);
     std::string res;
@@ -82,26 +92,6 @@ std::string process_script(const char* file_contents, const char* containing_dir
 
 }
 
-static std::vector<std::string> string_split(const std::string& str, char delimeter) {
-    std::vector<std::string> res;
-    std::string temp;
-    std::istringstream stream(str.c_str());
-
-    while(std::getline(stream, temp, delimeter))
-        res.push_back(temp);
-
-    return res;
-}
-
-std::string string_replace(std::string str, const std::string& from, const std::string& to) {
-    size_t start_pos = 0;
-    while((start_pos = str.find(from, start_pos)) != std::string::npos) {
-        str.replace(start_pos, from.length(), to);
-        start_pos += to.length(); // Handles case where 'to' is a substring of 'from'
-    }
-    return str;
-}
-
 namespace lmake {
     void initialize() {
         lmake_data.vm.add_native_function([](lua_State* vm) -> int {
@@ -110,61 +100,53 @@ namespace lmake {
                 std::cerr << "[E] Incompatible version\n";
                 std::exit(0);
             }
+            print_context();
             return 1;
         }, "lmake_compatibility_version");
 
         lmake_data.vm.add_native_function([](lua_State* vm) -> int {
             lmake_data.context.compiler = std::string(lua_tostring(vm, -1));
+            print_context();
             return 1;
         }, "lmake_set_compiler");
 
         lmake_data.vm.add_native_function([](lua_State* vm) -> int {
             lmake_data.context.compiler_flags = std::string(lua_tostring(vm, -1));
+            print_context();
             return 1;
         }, "lmake_set_compiler_flags");
 
         lmake_data.vm.add_native_function([](lua_State* vm) -> int {
             lmake_data.context.compiler_output = std::string(lua_tostring(vm, -1));
+            print_context();
             return 1;
         }, "lmake_set_compiler_output");
 
         lmake_data.vm.add_native_function([](lua_State* vm) -> int {
             std::string source_files = std::string(lua_tostring(vm, -1));
     
-            // Create output paths from file
-            std::vector<std::string> files = string_split(source_files, ' ');
-            std::vector<std::string> obj_file_names;
-            std::vector<std::string> src_files;
-            obj_file_names.reserve(files.size());
+            // Compile the file
+            std::vector<std::string> files = utils::string_split(source_files, ' ');
             for(int i = 0; i < files.size(); i++) {
-                std::string& file = files[i];
-                std::filesystem::path filepath(file);
-                std::string filename_without_path = filepath.filename().string();
-                src_files.push_back(filename_without_path);
-                std::string full_obj_path = lmake_data.context.compiler_output + "/" 
-                                          + string_replace(filename_without_path, "%", filename_without_path);
-                obj_file_names.emplace_back(full_obj_path);
-            }
-
-            // Compile all the files
-            for(int i = 0; i < files.size(); i++) {
-                if(!needs_to_be_compiled(obj_file_names[i].c_str(), files[i].c_str()))
-                    continue;
-                
-                std::cout << "[+] Compiling " << src_files[i] << std::endl;
                 std::string& compiler = lmake_data.context.compiler;
                 std::string& flags = lmake_data.context.compiler_flags;
+                std::string& out = lmake_data.context.compiler_output;
 
-                // Run the compiler and get exit code
-                std::string args =  files[i] + " -c " + flags + " -o " + obj_file_names[i] + ".o";
-                //std::cout << args.c_str() << std::endl;
-                os::process p = os::run_process(compiler.c_str(), args.c_str());
-                int exit = os::wait_process(p);
+                std::string obj_name = utils::string_replace(
+                    out,
+                    "%",
+                    files[i] + ".o"
+                );
 
-                // if compilation gone wrong exit the program
-                if(exit != 0) 
+                bool ok = utils::compile(
+                    compiler.c_str(),
+                    flags.c_str(),
+                    files[i].c_str(),
+                    obj_name.c_str()
+                );
+
+                if(!ok) 
                     std::exit(1);
-
             }
 
             std::cout << std::endl;
@@ -229,7 +211,7 @@ namespace lmake {
         lmake_data.config_executed = false;
     }
 
-    bool load_from_file(const char* config_path) {
+    bool load_from_file(std::string config_path) {
         if(!lmake_data.initialized) 
             return false;
 
@@ -238,7 +220,7 @@ namespace lmake {
         return lmake::load_from_string(processed.c_str());
     }
 
-    bool load_from_string(const char* config_string) {
+    bool load_from_string(std::string config_string) {
         if(!lmake_data.initialized) 
             return false;
 
@@ -252,7 +234,7 @@ namespace lmake {
         return true;
     }
 
-    bool execute_target(const char* target) {
+    bool execute_target(std::string target) {
         if(!lmake_data.config_executed) {
             lmake_data.last_error = "No configuration executed";
             return false;

@@ -28,7 +28,7 @@ namespace os {
      * @param prog: the path to the program
      * @param args: the arguments that are going to be passed to the process 
      */
-    process run_process(const char* prog, const char* args);
+    process run_process(std::string prog, std::string args);
 
     /* 
      * Blocks the process untill the specified process.
