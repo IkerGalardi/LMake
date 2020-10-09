@@ -133,8 +133,6 @@ namespace lmake {
                 std::string& flags = lmake_data.context.compiler_flags;
                 std::string& out = lmake_data.context.compiler_output;
 
-
-
                 std::filesystem::path file_path(files[i]);
                 std::string file_without_path = file_path.stem().string() + file_path.extension().string();
 
@@ -144,8 +142,12 @@ namespace lmake {
                     file_without_path
                 );
 
-                if(!os::file_exists(obj_name) && os::compare_file_dates(obj_name, files[i])) {
-                    continue;
+                bool exists = os::file_exists(obj_name);
+
+                if(os::file_exists(obj_name)) {
+                    if(!os::compare_file_dates(obj_name, files[0])) {
+                        continue;
+                    }
                 }
 
                 std::cout << "[+] Compiling " << files[i] << std::endl;
