@@ -53,6 +53,8 @@ static struct {
     std::string last_error;
 } lmake_data;
 
+#define PRINT_IF(m, b) if(b) std::cout << m << std::endl
+
 void print_context() {
     std::cout << "CONTEXT\n";
     std::cout << "  Compiler  = " << lmake_data.context.compiler << std::endl;
@@ -100,31 +102,30 @@ namespace lmake {
                 std::cerr << "[E] Incompatible version\n";
                 std::exit(0);
             }
-            print_context();
             return 1;
         }, "lmake_compatibility_version");
 
         lmake_data.vm.add_native_function([](lua_State* vm) -> int {
             lmake_data.context.compiler = std::string(lua_tostring(vm, -1));
-            std::cout << "Compiler set to " << lmake_data.context.compiler << std::endl;
+            PRINT_IF("Compiler set to " << lmake_data.context.compiler, false);
             return 1;
         }, "lmake_set_compiler");
 
         lmake_data.vm.add_native_function([](lua_State* vm) -> int {
             lmake_data.context.compiler_flags = std::string(lua_tostring(vm, -1));
-            std::cout << "Compiler flags set to " << lmake_data.context.compiler_flags << std::endl;
+            PRINT_IF("Compiler flags set to " << lmake_data.context.compiler_flags, false);
             return 1;
         }, "lmake_set_compiler_flags");
 
         lmake_data.vm.add_native_function([](lua_State* vm) -> int {
             lmake_data.context.compiler_output = std::string(lua_tostring(vm, -1));
-            std::cout << "Compiler out set to " << lmake_data.context.compiler_output << std::endl;
+            PRINT_IF("Compiler out set to " << lmake_data.context.compiler_output, false);
             return 1;
         }, "lmake_set_compiler_out");
 
         lmake_data.vm.add_native_function([](lua_State* vm) -> int {
             std::string source_files = std::string(lua_tostring(vm, -1));
-            std::cout << "FILES = " << source_files << std::endl;
+            PRINT_IF("FILES = " << source_files, false);
     
             // Compile the file
             std::vector<std::string> files = utils::string_split(source_files, ' ');
@@ -141,8 +142,6 @@ namespace lmake {
                     "%",
                     file_without_path
                 );
-
-                bool exists = os::file_exists(obj_name);
 
                 if(os::file_exists(obj_name)) {
                     if(!os::compare_file_dates(obj_name, files[0])) {
@@ -179,9 +178,7 @@ namespace lmake {
         }, "lmake_set_linker_flags");
 
         lmake_data.vm.add_native_function([](lua_State* vm) -> int {
-            DEBUG("debus desl test");
             lmake_data.context.linker_output = std::string(lua_tostring(vm, -1));
-            DEBUG(lmake_data.context.linker_output);
             return 1;
         }, "lmake_set_linker_out");
 
