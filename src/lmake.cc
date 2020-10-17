@@ -161,8 +161,6 @@ namespace lmake {
                     std::exit(1);
             }
 
-            std::cout << std::endl;
-            
             return 1;
         }, "lmake_compile");
 
@@ -203,8 +201,6 @@ namespace lmake {
             if(exit_code != 0) {
                 std::exit(1);
             }
-
-            std::cout << std::endl;
 
             return 1;
         }, "lmake_link");
