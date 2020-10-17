@@ -62,6 +62,7 @@
         "*.inc": "cpp",
         "filesystem": "cpp",
         "codecvt": "cpp",
-        "iomanip": "cpp"
+        "iomanip": "cpp",
+        "valarray": "cpp"
     }
 }
