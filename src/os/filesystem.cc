@@ -52,7 +52,10 @@ namespace os {
     }
 
     std::string get_dir() {
-        return std::string(getcwd(NULL, 0));
+        char* tmp = getcwd(NULL, 0);
+        std::string res(tmp);
+        std::free(tmp);
+        return res;
     }
 
     bool compare_file_dates(const std::string& file_a, const std::string& file_b) {
