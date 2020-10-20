@@ -1,7 +1,6 @@
 #!/bin/sh
 
 # Compile if necessary
-premake5 gmake2
 make 
 
 # Copy the binary to /bin
