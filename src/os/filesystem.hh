@@ -25,21 +25,21 @@ namespace os {
      * 
      * @param path: path to the file
      */
-    bool file_exists(std::string path);
+    bool file_exists(const std::string& path);
 
     /*
      * Reads the file and returns the buffer
      * 
      * @param path: path to the file
      */
-    std::shared_ptr<char> read_file(std::string path);
+    std::shared_ptr<char> read_file(const std::string& path);
 
     /*
      * Changes the directory of the process
      * 
      * @param path: path to the directory
      */
-    bool change_dir(std::string dir);
+    bool change_dir(const std::string& dir);
 
     /*
      * Gets the working directory

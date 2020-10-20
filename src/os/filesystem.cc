@@ -22,7 +22,7 @@
 #include <filesystem>
 
 namespace os {
-    bool file_exists(std::string path) {
+    bool file_exists(const std::string& path) {
         FILE *file;
         if ((file = fopen(path.c_str(), "r"))) {
             fclose(file);
@@ -31,7 +31,7 @@ namespace os {
         return false;
     }
 
-    std::shared_ptr<char> read_file(std::string path) {
+    std::shared_ptr<char> read_file(const std::string& path) {
         FILE* file_path = std::fopen(path.c_str(), "r");
 
         std::fseek(file_path, 0, SEEK_END);
@@ -47,7 +47,7 @@ namespace os {
         return buffer;
     }
 
-    bool change_dir(std::string dir) {
+    bool change_dir(const std::string& dir) {
          return chdir(dir.c_str()) == 0;
     }
 
