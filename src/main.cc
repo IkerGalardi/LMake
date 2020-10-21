@@ -25,20 +25,16 @@
 
 #define LMAKE_CONFIG_PATH "./lmake.lua"
 
-void print_usage() {
-    std::cout << "[+] Usage: lmake <target> <flags>\n";
-    std::cout << "    · target: lua function to be executed.\n";
-    std::cout << "    · flags: aditional flags.\n";
-    std::cout << "[+] Usage: lmake --help\n";
-    std::cout << "    Shows this very helpful message\n";
-    std::cout << "[+] Usage: lmake --version\n";
-    std::cout << "    Shows lmake and luavm versions\n";
-}
-
 int main(int argc, char** argv) {
 
     if(argc <= 1 || std::strcmp(argv[1], "--help") == 0) {
-        print_usage();
+        std::cout << "[+] Usage: lmake <target> <flags>\n";
+        std::cout << "    · target: lua function to be executed.\n";
+        std::cout << "    · flags: aditional flags.\n";
+        std::cout << "[+] Usage: lmake --help\n";
+        std::cout << "    Shows this very helpful message\n";
+        std::cout << "[+] Usage: lmake --version\n";
+        std::cout << "    Shows lmake and luavm versions\n";
         std::exit(0);
     }
     
