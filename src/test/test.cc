@@ -70,8 +70,8 @@ namespace test {
         exit_code = os::wait_process(p);
         std::cout << "Exit code: " << exit_code << std::endl;
 
-        std::cout << "Reading clear_makefiles.sh file...\n";
-        auto file = os::read_file("clear_makefiles.sh"); 
+        std::cout << "Reading install.sh...\n";
+        auto file = os::read_file("install.sh"); 
         std::cout << file << std::endl;
     }
 
