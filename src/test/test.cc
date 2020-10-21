@@ -34,7 +34,6 @@ namespace test {
         RUN_TEST("OS", test::os);
         RUN_TEST("LuaVM", test::luavm);
         RUN_TEST("Compilation", test::compilation);
-        RUN_TEST("lmake", test::lmake);
     }
 
     void luavm() {
@@ -79,17 +78,5 @@ namespace test {
     void compilation() {
         os::process p = os::run_process("/bin/gcc", "-c ./build/test/correct.c -o ./build/test/correct.o");
         std::cout << "Exit code: " << os::wait_process(p) << std::endl;
-    }
-
-    void lmake() {
-        std::cout << "Building using ./build/test/full_test/LMakefile\n";
-        os::change_dir("./build/test/full_test/");
-        lmake::initialize();
-        if(!lmake::load_from_file("./lmake.lua")) {
-            std::string& err = lmake::get_last_error();
-            std::cerr << err << std::endl;
-        }
-
-        lmake::execute_target("build");
     }
 }
