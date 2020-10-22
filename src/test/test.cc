@@ -34,7 +34,6 @@ namespace test {
         RUN_TEST("OS", test::os);
         RUN_TEST("LuaVM", test::luavm);
         RUN_TEST("Compilation", test::compilation);
-        RUN_TEST("lmake", test::lmake);
     }
 
     void luavm() {
@@ -57,39 +56,27 @@ namespace test {
 
     void os() {
         std::cout << "Running return_0\n";
-        os::process p = os::run_process("./build/test/return_0", "aaa");
+        os::process p = os::run_process("./build/test/os/return_0", "aaa");
         int exit_code = os::wait_process(p);
         std::cout << "Exit code: " << exit_code << std::endl;
     
         std::cout << "Running return_1\n";
-        p = os::run_process("./build/test/return_1", "bbb");
+        p = os::run_process("./build/test/os/return_1", "bbb");
         exit_code = os::wait_process(p);
         std::cout << "Exit code: " << exit_code << std::endl;
 
         std::cout << "Running args\n";
-        p = os::run_process("./build/test/args", "arg1 arg2 arg3");
+        p = os::run_process("./build/test/os/args", "arg1 arg2 arg3");
         exit_code = os::wait_process(p);
         std::cout << "Exit code: " << exit_code << std::endl;
 
-        std::cout << "Reading clear_makefiles.sh file...\n";
-        auto file = os::read_file("clear_makefiles.sh"); 
+        std::cout << "Reading install.sh...\n";
+        auto file = os::read_file("install.sh"); 
         std::cout << file << std::endl;
     }
 
     void compilation() {
-        os::process p = os::run_process("/bin/gcc", "-c ./build/test/correct.c -o ./build/test/correct.o");
+        os::process p = os::run_process("/bin/gcc", "-c ./build/test/os/correct.c -o ./build/test/os/correct.o");
         std::cout << "Exit code: " << os::wait_process(p) << std::endl;
-    }
-
-    void lmake() {
-        std::cout << "Building using ./build/test/full_test/LMakefile\n";
-        os::change_dir("./build/test/full_test/");
-        lmake::initialize();
-        if(!lmake::load_from_file("./lmake.lua")) {
-            std::string& err = lmake::get_last_error();
-            std::cerr << err << std::endl;
-        }
-
-        lmake::execute_target("build");
     }
 }

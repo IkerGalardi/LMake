@@ -1,1 +1,0 @@
-void external_print(std::string msg);

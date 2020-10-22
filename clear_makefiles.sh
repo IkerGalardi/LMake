@@ -1,1 +1,0 @@
-rm -rf lmake.make Makefile
