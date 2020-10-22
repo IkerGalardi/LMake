@@ -1,11 +1,9 @@
 lmake_compatibility_version(1)
 
-lmake_include("vars.lua")
-
 function build()
     lmake_set_compiler("/bin/gcc")
     lmake_set_compiler_flags("-O3")
-    lmake_set_compiler_out("build")
+    lmake_set_compiler_out("build/%.o")
     lmake_compile("src/main.c src/print.c")
 
     lmake_set_linker("/bin/gcc")

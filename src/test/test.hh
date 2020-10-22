@@ -37,9 +37,4 @@ namespace test {
      * A little compilation test
      */
     void compilation();
-    
-    /*
-     * Tests lmake by compiling a little project
-     */
-    void lmake();
 }
