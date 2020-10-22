@@ -7,6 +7,6 @@ build/lmake --internal-test
 
 # Do complete test
 cd build/test/lmake
-../../lmake build >> ../test_res
+../../lmake build
 
 # TODO: Compare the results
