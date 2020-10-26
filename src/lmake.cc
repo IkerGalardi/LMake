@@ -91,7 +91,6 @@ static std::string process_script(std::string file_contents, std::string contain
     //DEBUG(res);
 
     return std::string(file_contents);
-
 }
 
 namespace lmake {
@@ -118,7 +117,15 @@ namespace lmake {
         }, "lmake_set_compiler_flags");
 
         lmake_data.vm.add_native_function([](lua_State* vm) -> int {
-            lmake_data.context.compiler_output = std::string(lua_tostring(vm, -1));
+            std::string out_regex = std::string(lua_tostring(vm, -1));
+            
+            if(out_regex.find('%') == std::string::npos) {
+                std::cerr << "[E] No regex added.\n";
+                std::exit(1);
+            }
+
+            lmake_data.context.compiler_output = out_regex;
+
             PRINT_IF("Compiler out set to " << lmake_data.context.compiler_output, false);
             return 1;
         }, "lmake_set_compiler_out");
