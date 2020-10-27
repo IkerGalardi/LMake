@@ -51,6 +51,8 @@ static struct {
     bool config_executed = false;
 
     std::string last_error;
+
+    lmake::settings settings;
 } lmake_data;
 
 #define PRINT_IF(m, b) if(b) std::cout << m << std::endl
@@ -91,11 +93,12 @@ static std::string process_script(std::string file_contents, std::string contain
     //DEBUG(res);
 
     return std::string(file_contents);
-
 }
 
 namespace lmake {
-    void initialize() {
+    void initialize(const settings& settings) {
+        lmake_data.settings = settings;
+
         lmake_data.vm.add_native_function([](lua_State* vm) -> int {
             auto compatibility_version = lua_tonumber(vm, -1);
             if(compatibility_version != LMAKE_COMPAT_VERSION) {
@@ -118,7 +121,15 @@ namespace lmake {
         }, "lmake_set_compiler_flags");
 
         lmake_data.vm.add_native_function([](lua_State* vm) -> int {
-            lmake_data.context.compiler_output = std::string(lua_tostring(vm, -1));
+            std::string out_regex = std::string(lua_tostring(vm, -1));
+            
+            if(out_regex.find('%') == std::string::npos) {
+                std::cerr << "[E] No regex added.\n";
+                std::exit(1);
+            }
+
+            lmake_data.context.compiler_output = out_regex;
+
             PRINT_IF("Compiler out set to " << lmake_data.context.compiler_output, false);
             return 1;
         }, "lmake_set_compiler_out");
@@ -143,9 +154,12 @@ namespace lmake {
                     file_without_path
                 );
 
-                if(os::file_exists(obj_name)) {
-                    if(!os::compare_file_dates(obj_name, files[0])) {
-                        continue;
+                /// TODO: rewrite this pls
+                if(!lmake_data.settings.force_recompile) {
+                    if(os::file_exists(obj_name)) {
+                        if(!os::compare_file_dates(obj_name, files[0])) {
+                            continue;
+                        }
                     }
                 }
 
