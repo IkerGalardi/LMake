@@ -90,8 +90,16 @@ static std::string process_script(std::string file_contents, std::string contain
                 std::exit(1);
             }
 
-            // Read the file to the postprocessed script contents
             auto file_contents = os::read_file(substring);
+
+            // Get the path to the included file
+            std::string directory;
+            const size_t last_slash_idx = substring.rfind('\\');
+            if (std::string::npos != last_slash_idx)
+            {
+                directory = substring.substr(0, last_slash_idx);
+            }
+
             res.append("\n");
             res.append(std::string(file_contents.get()));
             res.append("\n");
@@ -238,6 +246,30 @@ namespace lmake {
 
             return 1;
         }, "lmake_chdir");
+
+        lmake_data.vm.add_native_function([](lua_State* vm) -> int {
+            std::string dir = std::string(lua_tostring(vm, -1));
+            std::stack<std::string>& been_dirs = lmake_data.been_dirs;
+            
+            // Check if it can go back a directory
+            if(been_dirs.empty() || been_dirs.size() == 1) {
+                std::cerr << "[E] Can't go back a directory\n";
+                std::exit(1);
+            }
+
+            // Take the previous directory
+            been_dirs.pop();
+            std::string prev_dir = been_dirs.top();
+            
+            // Change to the previous directory
+            if(!os::change_dir(prev_dir)) {
+                std::cerr << "[E] Specified directory can't be entered.\n";
+                std::exit(1);
+            }
+
+            return 1;
+        }, "lmake_chdir_last");
+
 
         lmake_data.initialized = true;
         lmake_data.config_executed = false;
