@@ -36,7 +36,6 @@ void print_usage() {
 }
 
 int main(int argc, char** argv) {
-
     if(argc <= 1 || std::strcmp(argv[1], "--help") == 0) {
         print_usage();
         std::exit(0);
@@ -59,10 +58,13 @@ int main(int argc, char** argv) {
     }
 
     lmake::settings settings;
-    settings.force_recompile = true;
+    for(int i = 0; i < argc; i++) {
+        if(std::string(argv[i]) == std::string("--recompile")) {
+            settings.force_recompile = true;
+        }
+    }
 
     lmake::initialize(settings);
-
     if(!lmake::load_from_file(LMAKE_CONFIG_PATH)) {
         std::cerr << "[E] " << lmake::get_last_error() << std::endl;
         std::exit(3);
@@ -71,7 +73,7 @@ int main(int argc, char** argv) {
     if(argc >= 1) {
         lmake::execute_target(argv[1]);
     } else {
-        std::cout << "[I] No target specified\n";
+        std::cout << "[E] No target specified\n";
         std::exit(1);
     }
     
