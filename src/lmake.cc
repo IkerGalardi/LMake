@@ -109,7 +109,7 @@ static std::string process_script(std::string file_contents, std::string contain
         }
     }
 
-    return std::string(file_contents);
+    return std::string(res);
 }
 
 namespace lmake {
