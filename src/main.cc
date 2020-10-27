@@ -58,7 +58,10 @@ int main(int argc, char** argv) {
         std::exit(1);
     }
 
-    lmake::initialize();
+    lmake::settings settings;
+    settings.force_recompile = true;
+
+    lmake::initialize(settings);
 
     if(!lmake::load_from_file(LMAKE_CONFIG_PATH)) {
         std::cerr << "[E] " << lmake::get_last_error() << std::endl;
