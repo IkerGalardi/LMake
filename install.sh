@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Compile if necessary
-make 
+make config=release 
 
 # Copy the binary to /bin
 sudo cp build/lmake /usr/bin/lmake
