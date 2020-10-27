@@ -95,6 +95,9 @@ static std::string process_script(std::string file_contents, std::string contain
 
 namespace lmake {
     void initialize() {
+        std::string current_dir = os::get_dir();
+        lmake_data.been_dirs.push(current_dir);
+
         lmake_data.vm.add_native_function([](lua_State* vm) -> int {
             auto compatibility_version = lua_tonumber(vm, -1);
             if(compatibility_version != LMAKE_COMPAT_VERSION) {
@@ -214,11 +217,16 @@ namespace lmake {
 
         lmake_data.vm.add_native_function([](lua_State* vm) -> int {
             std::string dir = std::string(lua_tostring(vm, -1));
-            lmake_data.been_dirs.push(os::get_dir());
-            bool err = os::change_dir(dir.c_str());
-            /// TODO: if error -> stop executing and set last error 
+            
+            if(os::change_dir(dir.c_str())) {
+                lmake_data.been_dirs.push(os::get_dir());
+            } else {
+                std::cerr << "[E] Specified directory can't be entered.\n";
+                std::exit(1);
+            }
+
             return 1;
-        }, "lmake_set_linker_output");
+        }, "lmake_chdir");
 
         lmake_data.initialized = true;
         lmake_data.config_executed = false;
