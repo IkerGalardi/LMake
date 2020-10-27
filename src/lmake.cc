@@ -51,6 +51,8 @@ static struct {
     bool config_executed = false;
 
     std::string last_error;
+
+    lmake::settings settings;
 } lmake_data;
 
 #define PRINT_IF(m, b) if(b) std::cout << m << std::endl
@@ -94,7 +96,9 @@ static std::string process_script(std::string file_contents, std::string contain
 }
 
 namespace lmake {
-    void initialize() {
+    void initialize(const settings& settings) {
+        lmake_data.settings = settings;
+
         lmake_data.vm.add_native_function([](lua_State* vm) -> int {
             auto compatibility_version = lua_tonumber(vm, -1);
             if(compatibility_version != LMAKE_COMPAT_VERSION) {
@@ -150,9 +154,12 @@ namespace lmake {
                     file_without_path
                 );
 
-                if(os::file_exists(obj_name)) {
-                    if(!os::compare_file_dates(obj_name, files[0])) {
-                        continue;
+                /// TODO: rewrite this pls
+                if(!lmake_data.settings.force_recompile) {
+                    if(os::file_exists(obj_name)) {
+                        if(!os::compare_file_dates(obj_name, files[0])) {
+                            continue;
+                        }
                     }
                 }
 
