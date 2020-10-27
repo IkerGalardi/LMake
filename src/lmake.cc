@@ -95,14 +95,14 @@ static std::string process_script(std::string file_contents, std::string contain
             // Get the path to the included file
             std::string directory;
             const size_t last_slash_idx = substring.rfind('\\');
-            if (std::string::npos != last_slash_idx)
-            {
+            if (std::string::npos != last_slash_idx) {
                 directory = substring.substr(0, last_slash_idx);
             }
-
+            res.append("lmake_chdir(" + directory + ")\n");
             res.append("\n");
             res.append(std::string(file_contents.get()));
             res.append("\n");
+            res.append("lmake_chdir_last()\n");
         } else {
             res.append(temp);
             res.append("\n");
