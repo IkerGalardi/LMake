@@ -78,17 +78,28 @@ static std::string process_script(std::string file_contents, std::string contain
     std::string temp;
     while(std::getline(stream, temp)) {
         if(temp.find("lmake_include") != std::string::npos) {
+            // Get the parameter passed to lmake_include command
             size_t bracket_left_index = temp.find("(\"");
             size_t bracket_right_index = temp.find("\")");
             std::string substring = temp.substr(bracket_left_index, bracket_right_index);
-            DEBUG(substring);
+
+            // Check if file exists, if not, throw an error and quit
+            if(!os::file_exists(substring.c_str())) {
+                /// TODO: maybe print the line in which the file is trying to be included
+                std::cerr << "[E] The file " << substring << " can't be opened.\n"; 
+                std::exit(1);
+            }
+
+            // Read the file to the postprocessed script contents
+            auto file_contents = os::read_file(substring);
+            res.append("\n");
+            res.append(std::string(file_contents.get()));
+            res.append("\n");
         } else {
             res.append(temp);
             res.append("\n");
         }
     }
-
-    //DEBUG(res);
 
     return std::string(file_contents);
 }
@@ -217,7 +228,7 @@ namespace lmake {
 
         lmake_data.vm.add_native_function([](lua_State* vm) -> int {
             std::string dir = std::string(lua_tostring(vm, -1));
-            
+
             if(os::change_dir(dir.c_str())) {
                 lmake_data.been_dirs.push(os::get_dir());
             } else {
