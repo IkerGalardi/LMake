@@ -254,9 +254,9 @@ namespace lmake {
             }
 
             os::process p = os::run_process(real_prog, params);
-            os::wait_process(p);
+            int exit = os::wait_process(p);
 
-            /// TODO: return value??
+            lua_pushnumber(vm, (lua_Number)exit);
 
             return 1;
         }, "lmake_exec");
