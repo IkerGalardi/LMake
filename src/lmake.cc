@@ -227,6 +227,40 @@ namespace lmake {
             return 1;
         }, "lmake_set_linker_output");
 
+        lmake_data.vm.add_native_function([](lua_State* vm) -> int {
+            std::string prog_params = std::string(lua_tostring(vm, -1));
+            auto splited_params = utils::string_split(prog_params, ' ');
+
+            if(splited_params.size() == 0) {
+                std::cerr << "[E] Unknown syntax.\n";
+                std::exit(1);
+            }
+
+            /// TODO: maybe look inside PATH instead of manual checks
+            std::string real_prog;
+            if(os::file_exists(splited_params[0])) {
+                real_prog = splited_params[0];
+            } else if(os::file_exists("/bin/" + splited_params[0])) {
+                real_prog = "/bin/" + splited_params[0];
+            } else if(os::file_exists("/usr/bin/" + splited_params[0])) {
+                real_prog = "/usr/bin/" + splited_params[0];
+            } else {
+                std::cerr << "[E] " << splited_params[0] << " was not found\n";
+            }
+
+            std::string params;
+            for(int i = 1; i < splited_params.size(); i++) {
+                params.append(splited_params[i]);
+            }
+
+            os::process p = os::run_process(real_prog, params);
+            int exit = os::wait_process(p);
+
+            lua_pushnumber(vm, (lua_Number)exit);
+
+            return 1;
+        }, "lmake_exec");
+
         lmake_data.initialized = true;
         lmake_data.config_executed = false;
     }
