@@ -227,6 +227,30 @@ namespace lmake {
             return 1;
         }, "lmake_set_linker_output");
 
+        lmake_data.vm.add_native_function([](lua_State* vm) -> int {
+            std::string prog_params = std::string(lua_tostring(vm, -1));
+            auto splited_params = utils::string_split(prog_params, ' ');
+
+            if(splited_params.size() == 0) {
+                std::cerr << "[E] Unknown syntax.\n";
+                std::exit(1);
+            }
+
+            /// TODO: Check if relative or PATH program is wanted to be executed  
+
+            std::string params;
+            for(int i = 1; i < splited_params.size(); i++) {
+                params.append(splited_params[i]);
+            }
+
+            os::process p = os::run_process(splited_params[0], params);
+            os::wait_process(p);
+
+            /// TODO: return value??
+
+            return 1;
+        }, "lmake_exec");
+
         lmake_data.initialized = true;
         lmake_data.config_executed = false;
     }
