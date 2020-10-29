@@ -79,9 +79,10 @@ static std::string process_script(std::string file_contents, std::string contain
     while(std::getline(stream, temp)) {
         if(temp.find("lmake_include") != std::string::npos) {
             // Get the parameter passed to lmake_include command
-            size_t bracket_left_index = temp.find("(\"");
-            size_t bracket_right_index = temp.find("\")");
+            size_t bracket_left_index = temp.find("(\"") + 2;
+            size_t bracket_right_index = temp.find("\")")  - bracket_left_index;
             std::string substring = temp.substr(bracket_left_index, bracket_right_index);
+            DEBUG(substring);
 
             // Check if file exists, if not, throw an error and quit
             if(!os::file_exists(substring.c_str())) {
@@ -91,6 +92,7 @@ static std::string process_script(std::string file_contents, std::string contain
             }
 
             auto file_contents = os::read_file(substring);
+            DEBUG(file_contents.get());
 
             // Get the path to the included file
             std::string directory;
@@ -98,16 +100,15 @@ static std::string process_script(std::string file_contents, std::string contain
             if (std::string::npos != last_slash_idx) {
                 directory = substring.substr(0, last_slash_idx);
             }
-            res.append("lmake_chdir(" + directory + ")\n");
-            res.append("\n");
+
             res.append(std::string(file_contents.get()));
-            res.append("\n");
-            res.append("lmake_chdir_last()\n");
         } else {
             res.append(temp);
             res.append("\n");
         }
     }
+
+    DEBUG("\n" + res);
 
     return std::string(res);
 }
