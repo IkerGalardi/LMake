@@ -250,7 +250,7 @@ namespace lmake {
 
             std::string params;
             for(int i = 1; i < splited_params.size(); i++) {
-                params.append(splited_params[i]);
+                params.append(splited_params[i] + " ");
             }
 
             os::process p = os::run_process(real_prog, params);
