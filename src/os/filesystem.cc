@@ -65,4 +65,16 @@ namespace os {
         return edited_a < edited_b;
     }
 
+    std::vector<std::string> list_dir(const std::string& dir) {
+        // Create the result vector (and resize to 6 elements, kinda random number)
+        std::vector<std::string> res;
+        res.resize(6);
+        
+        std::filesystem::directory_iterator iterator(dir);
+        for(auto& entry : iterator) {
+            res.push_back(entry.path().string());
+        }
+
+        return res;
+    }
 }

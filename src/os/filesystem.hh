@@ -17,6 +17,7 @@
 #pragma once 
 
 #include <memory>
+#include <vector>
 
 namespace os {
 
@@ -54,4 +55,13 @@ namespace os {
      * @return: true if file_a is older than file_b, false if not
      */
     bool compare_file_dates(const std::string& file_a, const std::string& file_b);
+
+    /*
+     * Returns an array of files and folders of a directory
+     * 
+     * @param dir: directory of folder to search
+     * 
+     * @return: Array of files and folders
+     */
+    std::vector<std::string> list_dir(const std::string& dir);
 }
