@@ -108,8 +108,6 @@ static std::string process_script(std::string file_contents, std::string contain
         }
     }
 
-    DEBUG("\n" + res);
-
     return std::string(res);
 }
 
