@@ -80,24 +80,43 @@ static std::string process_script(std::string file_contents, std::string contain
     std::string temp;
     while(std::getline(stream, temp)) {
         if(temp.find("lmake_include") != std::string::npos) {
-            size_t bracket_left_index = temp.find("(\"");
-            size_t bracket_right_index = temp.find("\")");
-            std::string substring = temp.substr(bracket_left_index, bracket_right_index);
-            DEBUG(substring);
+            // Get the parameter passed to lmake_include command
+            size_t bracket_left_index = temp.find("(\"") + 2;
+            size_t substring_size = temp.find("\")")  - bracket_left_index;
+            std::string substring = temp.substr(bracket_left_index, substring_size);
+
+            // Check if file exists, if not, throw an error and quit
+            if(!os::file_exists(substring.c_str())) {
+                /// TODO: maybe print the line in which the file is trying to be included
+                std::cerr << "[E] The file " << substring << " can't be opened.\n"; 
+                std::exit(1);
+            }
+
+            auto file_contents = os::read_file(substring);
+
+            // Get the path to the included file
+            std::string directory;
+            const size_t last_slash_idx = substring.rfind('\\');
+            if (std::string::npos != last_slash_idx) {
+                directory = substring.substr(0, last_slash_idx);
+            }
+
+            res.append(std::string(file_contents.get()));
         } else {
             res.append(temp);
             res.append("\n");
         }
     }
 
-    //DEBUG(res);
-
-    return std::string(file_contents);
+    return std::string(res);
 }
 
 namespace lmake {
     void initialize(const settings& settings) {
         lmake_data.settings = settings;
+
+        std::string current_dir = os::get_dir();
+        lmake_data.been_dirs.push(current_dir);
 
         lmake_data.vm.add_native_function([](lua_State* vm) -> int {
             auto compatibility_version = lua_tonumber(vm, -1);
@@ -221,11 +240,40 @@ namespace lmake {
 
         lmake_data.vm.add_native_function([](lua_State* vm) -> int {
             std::string dir = std::string(lua_tostring(vm, -1));
-            lmake_data.been_dirs.push(os::get_dir());
-            bool err = os::change_dir(dir.c_str());
-            /// TODO: if error -> stop executing and set last error 
+
+            if(os::change_dir(dir.c_str())) {
+                lmake_data.been_dirs.push(os::get_dir());
+            } else {
+                std::cerr << "[E] Specified directory can't be entered.\n";
+                std::exit(1);
+            }
+
             return 1;
-        }, "lmake_set_linker_output");
+        }, "lmake_chdir");
+
+        lmake_data.vm.add_native_function([](lua_State* vm) -> int {
+            std::string dir = std::string(lua_tostring(vm, -1));
+            std::stack<std::string>& been_dirs = lmake_data.been_dirs;
+            
+            // Check if it can go back a directory
+            if(been_dirs.empty() || been_dirs.size() == 1) {
+                std::cerr << "[E] Can't go back a directory\n";
+                std::exit(1);
+            }
+
+            // Take the previous directory
+            been_dirs.pop();
+            std::string prev_dir = been_dirs.top();
+            
+            // Change to the previous directory
+            if(!os::change_dir(prev_dir)) {
+                std::cerr << "[E] Specified directory can't be entered.\n";
+                std::exit(1);
+            }
+
+            return 1;
+        }, "lmake_chdir_last");
+
 
         lmake_data.vm.add_native_function([](lua_State* vm) -> int {
             std::string prog_params = std::string(lua_tostring(vm, -1));
