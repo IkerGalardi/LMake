@@ -80,8 +80,8 @@ static std::string process_script(std::string file_contents, std::string contain
         if(temp.find("lmake_include") != std::string::npos) {
             // Get the parameter passed to lmake_include command
             size_t bracket_left_index = temp.find("(\"") + 2;
-            size_t bracket_right_index = temp.find("\")")  - bracket_left_index;
-            std::string substring = temp.substr(bracket_left_index, bracket_right_index);
+            size_t substring_size = temp.find("\")")  - bracket_left_index;
+            std::string substring = temp.substr(bracket_left_index, substring_size);
 
             // Check if file exists, if not, throw an error and quit
             if(!os::file_exists(substring.c_str())) {
