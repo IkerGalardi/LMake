@@ -82,7 +82,6 @@ static std::string process_script(std::string file_contents, std::string contain
             size_t bracket_left_index = temp.find("(\"") + 2;
             size_t bracket_right_index = temp.find("\")")  - bracket_left_index;
             std::string substring = temp.substr(bracket_left_index, bracket_right_index);
-            DEBUG(substring);
 
             // Check if file exists, if not, throw an error and quit
             if(!os::file_exists(substring.c_str())) {
@@ -92,7 +91,6 @@ static std::string process_script(std::string file_contents, std::string contain
             }
 
             auto file_contents = os::read_file(substring);
-            DEBUG(file_contents.get());
 
             // Get the path to the included file
             std::string directory;
