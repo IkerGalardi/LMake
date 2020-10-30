@@ -25,20 +25,15 @@
 
 #define LMAKE_CONFIG_PATH "./lmake.lua"
 
-void print_usage() {
-    std::cout << "[+] Usage: lmake <target> <flags>\n";
-    std::cout << "    · target: lua function to be executed.\n";
-    std::cout << "    · flags: aditional flags.\n";
-    std::cout << "[+] Usage: lmake --help\n";
-    std::cout << "    Shows this very helpful message\n";
-    std::cout << "[+] Usage: lmake --version\n";
-    std::cout << "    Shows lmake and luavm versions\n";
-}
-
 int main(int argc, char** argv) {
-
     if(argc <= 1 || std::strcmp(argv[1], "--help") == 0) {
-        print_usage();
+        std::cout << "[+] Usage: lmake <target> <flags>\n";
+        std::cout << "    · target: lua function to be executed.\n";
+        std::cout << "    · flags: aditional flags.\n";
+        std::cout << "[+] Usage: lmake --help\n";
+        std::cout << "    Shows this very helpful message\n";
+        std::cout << "[+] Usage: lmake --version\n";
+        std::cout << "    Shows lmake and luavm versions\n";
         std::exit(0);
     }
     
@@ -58,8 +53,14 @@ int main(int argc, char** argv) {
         std::exit(1);
     }
 
-    lmake::initialize();
+    lmake::settings settings;
+    for(int i = 0; i < argc; i++) {
+        if(std::string(argv[i]) == std::string("--recompile")) {
+            settings.force_recompile = true;
+        }
+    }
 
+    lmake::initialize(settings);
     if(!lmake::load_from_file(LMAKE_CONFIG_PATH)) {
         std::cerr << "[E] " << lmake::get_last_error() << std::endl;
         std::exit(3);
@@ -68,7 +69,7 @@ int main(int argc, char** argv) {
     if(argc >= 1) {
         lmake::execute_target(argv[1]);
     } else {
-        std::cout << "[I] No target specified\n";
+        std::cout << "[E] No target specified\n";
         std::exit(1);
     }
     

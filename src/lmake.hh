@@ -22,10 +22,16 @@
 #define LMAKE_COMPAT_VERSION 1.0
 
 namespace lmake {
+    struct settings {
+        bool force_recompile = false;
+    };
+
     /*
      * Initializes de luavm and adds all the necesary native functions.
+     * 
+     * @param settings: settings that lmake will use
      */
-    void initialize();
+    void initialize(const settings& settings);
 
     /*
      * Loads the file from the filesystem system, preprocesses it (replaces 
