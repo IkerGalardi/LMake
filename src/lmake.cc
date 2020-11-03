@@ -176,7 +176,7 @@ namespace lmake {
                 /// TODO: rewrite this pls
                 if(!lmake_data.settings.force_recompile) {
                     if(os::file_exists(obj_name)) {
-                        if(!os::compare_file_dates(obj_name, files[0])) {
+                        if(!os::compare_file_dates(obj_name, files[i])) {
                             continue;
                         }
                     }
