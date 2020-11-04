@@ -21,6 +21,7 @@
 #include <filesystem>
 #include <iostream>
 #include <stack>
+#include <regex>
 
 #include <stringtoolbox/stringtoolbox.hh>
 
@@ -107,7 +108,7 @@ static std::string process_script(std::string file_contents, std::string contain
             res.append("\n");
         }
     }
-
+    DEBUG(res);
     return std::string(res);
 }
 
@@ -252,30 +253,6 @@ namespace lmake {
         }, "lmake_chdir");
 
         lmake_data.vm.add_native_function([](lua_State* vm) -> int {
-            std::string dir = std::string(lua_tostring(vm, -1));
-            std::stack<std::string>& been_dirs = lmake_data.been_dirs;
-            
-            // Check if it can go back a directory
-            if(been_dirs.empty() || been_dirs.size() == 1) {
-                std::cerr << "[E] Can't go back a directory\n";
-                std::exit(1);
-            }
-
-            // Take the previous directory
-            been_dirs.pop();
-            std::string prev_dir = been_dirs.top();
-            
-            // Change to the previous directory
-            if(!os::change_dir(prev_dir)) {
-                std::cerr << "[E] Specified directory can't be entered.\n";
-                std::exit(1);
-            }
-
-            return 1;
-        }, "lmake_chdir_last");
-
-
-        lmake_data.vm.add_native_function([](lua_State* vm) -> int {
             std::string prog_params = std::string(lua_tostring(vm, -1));
             auto splited_params = utils::string_split(prog_params, ' ');
 
@@ -308,6 +285,39 @@ namespace lmake {
 
             return 1;
         }, "lmake_exec");
+       
+        lmake_data.vm.add_native_function([](lua_State* vm) -> int {
+            DEBUG("elemake fains");
+            std::string to_match = std::string(lua_tostring(vm, -1));
+            const char* template_regex_starts_with = "";
+            const char* template_regex_ends_with = "";
+            const char* template_regex_complete = "";
+
+            size_t double_pos = to_match.find("**");
+            size_t single_pos = to_match.find("*");
+            if(double_pos != std::string::npos) {
+
+            } else if(single_pos != std::string::npos) {
+               // std::regex regex(template_regex_complete);
+                std::smatch match;
+                
+                std::string path = os::file_dir(to_match);
+
+                // When path is returned empty that means that is the current path
+                // if not specified by "." a filesystem exception is thrown
+                if(path.empty()) {
+                    path = "./";
+                }
+
+                auto files = os::list_dir(path);
+
+                /// TODO: check with regex
+            } else {
+                std::cerr << "[E] There is no regex in: " << to_match << std::endl;
+                std::exit(1);
+            }
+            return 1;
+        }, "lmake_find");
 
         lmake_data.initialized = true;
         lmake_data.config_executed = false;
