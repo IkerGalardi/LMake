@@ -66,9 +66,7 @@ namespace os {
     }
 
     std::vector<std::string> list_dir(const std::string& dir) {
-        // Create the result vector (and resize to 6 elements, kinda random number)
         std::vector<std::string> res;
-        res.resize(6);
         
         std::filesystem::directory_iterator iterator(dir);
         for(auto& entry : iterator) {
@@ -76,5 +74,17 @@ namespace os {
         }
 
         return res;
+    }
+
+
+    std::string file_dir(const std::string& file) {
+        std::string directory;
+        const size_t last_slash_idx = file.rfind('\\');
+        if (std::string::npos != last_slash_idx)
+        {
+            directory = file.substr(0, last_slash_idx);
+        }
+
+        return directory;
     }
 }

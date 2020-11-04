@@ -64,4 +64,13 @@ namespace os {
      * @return: Array of files and folders
      */
     std::vector<std::string> list_dir(const std::string& dir);
+
+    /*
+     * Returns the path to the specified file
+     * 
+     * @param file: path to the file
+     * 
+     * @return: path to the file 
+     */
+    std::string file_dir(const std::string& file);
 }
