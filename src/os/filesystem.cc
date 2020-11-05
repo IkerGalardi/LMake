@@ -65,4 +65,26 @@ namespace os {
         return edited_a < edited_b;
     }
 
+    std::vector<std::string> list_dir(const std::string& dir) {
+        std::vector<std::string> res;
+        
+        std::filesystem::directory_iterator iterator(dir);
+        for(auto& entry : iterator) {
+            res.push_back(entry.path().string());
+        }
+
+        return res;
+    }
+
+
+    std::string file_dir(const std::string& file) {
+        std::string directory;
+        const size_t last_slash_idx = file.rfind('\\');
+        if (std::string::npos != last_slash_idx)
+        {
+            directory = file.substr(0, last_slash_idx);
+        }
+
+        return directory;
+    }
 }

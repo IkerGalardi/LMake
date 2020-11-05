@@ -12,6 +12,7 @@
  *
  * Authors:
  *    - Iker Galardi
+ *    - Iñigo Gastesi
  */
 
 #include "lmake.hh"
@@ -21,6 +22,7 @@
 #include <filesystem>
 #include <iostream>
 #include <stack>
+#include <regex>
 
 #include <stringtoolbox/stringtoolbox.hh>
 
@@ -107,7 +109,6 @@ static std::string process_script(std::string file_contents, std::string contain
             res.append("\n");
         }
     }
-
     return std::string(res);
 }
 
@@ -204,7 +205,6 @@ namespace lmake {
 
         lmake_data.vm.add_native_function([](lua_State* vm) -> int {
             lmake_data.context.linker_flags = std::string(lua_tostring(vm, -1));
-            //DEBUG(lmake_data.context.linker_flags);
             return 1;
         }, "lmake_set_linker_flags");
 
@@ -252,30 +252,6 @@ namespace lmake {
         }, "lmake_chdir");
 
         lmake_data.vm.add_native_function([](lua_State* vm) -> int {
-            std::string dir = std::string(lua_tostring(vm, -1));
-            std::stack<std::string>& been_dirs = lmake_data.been_dirs;
-            
-            // Check if it can go back a directory
-            if(been_dirs.empty() || been_dirs.size() == 1) {
-                std::cerr << "[E] Can't go back a directory\n";
-                std::exit(1);
-            }
-
-            // Take the previous directory
-            been_dirs.pop();
-            std::string prev_dir = been_dirs.top();
-            
-            // Change to the previous directory
-            if(!os::change_dir(prev_dir)) {
-                std::cerr << "[E] Specified directory can't be entered.\n";
-                std::exit(1);
-            }
-
-            return 1;
-        }, "lmake_chdir_last");
-
-
-        lmake_data.vm.add_native_function([](lua_State* vm) -> int {
             std::string prog_params = std::string(lua_tostring(vm, -1));
             auto splited_params = utils::string_split(prog_params, ' ');
 
@@ -308,6 +284,70 @@ namespace lmake {
 
             return 1;
         }, "lmake_exec");
+       
+        lmake_data.vm.add_native_function([](lua_State* vm) -> int {
+            std::string to_match = std::string(lua_tostring(vm, -1));
+            const std::string template_regex_complete = "^%[a-zA-Z0-9_]*?$"; // % by left part, ? by right part
+
+            size_t double_pos = to_match.find("**");
+            size_t single_pos = to_match.find("*");
+            if(double_pos != std::string::npos) {
+                /// TODO: implement recursive function
+                std::cerr << "[E] ** regex not supported for now.\n"; 
+            } else if(single_pos != std::string::npos) {
+                std::string left_part = to_match.substr(0, single_pos);
+                std::string right_part = to_match.substr(single_pos + 1, to_match.size() - single_pos);
+                
+                auto regex_complete = utils::string_replace(
+                    template_regex_complete,
+                    "%",
+                    left_part
+                );
+                regex_complete = utils::string_replace(
+                    regex_complete,
+                    "?",
+                    right_part
+                );
+
+                regex_complete = utils::string_replace(
+                    regex_complete,
+                    ".",
+                    "\\."
+                );
+
+                std::regex regex(regex_complete);
+                std::smatch match;
+                std::string path = os::file_dir(to_match);
+
+                // When path is returned empty that means that is the current path
+                // if not specified by "." a filesystem exception is thrown
+                if(path.empty()) {
+                    path = "./";
+                }
+
+                std::string result;
+                auto files = os::list_dir(path);
+                for(std::string file : files) {
+                    if (std::regex_search(file, match, regex)) {
+                        result.append(file + " ");
+                    }
+                }
+
+                char* res = (char*) std::malloc((result.size() + 1) * sizeof(char));
+                std::strcpy(res, result.c_str());
+                res[result.size()] = '\0';
+
+                lua_pushstring(vm, res);
+
+                return 1;
+
+                /// TODO: check with regex
+            } else {
+                std::cerr << "[E] There is no regex in: " << to_match << std::endl;
+                std::exit(1);
+            }
+            return 1;
+        }, "lmake_find");
 
 
         lmake_data.vm.add_native_function([](lua_State* vm) -> int {
