@@ -309,6 +309,14 @@ namespace lmake {
             return 1;
         }, "lmake_exec");
 
+
+        lmake_data.vm.add_native_function([](lua_State* vm) -> int {
+            std::string msg = std::string(lua_tostring(vm, -1));
+            std::cout << "[E] " << msg << std::endl;
+            std::exit(2);
+            return 1;
+        }, "lmake_error");
+
         lmake_data.initialized = true;
         lmake_data.config_executed = false;
     }
