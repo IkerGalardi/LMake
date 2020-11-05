@@ -12,6 +12,7 @@
  *
  * Authors:
  *    - Iker Galardi
+ *    - Iñigo Gastesi
  */
 
 #include "lmake.hh"
@@ -108,7 +109,6 @@ static std::string process_script(std::string file_contents, std::string contain
             res.append("\n");
         }
     }
-    DEBUG(res);
     return std::string(res);
 }
 
@@ -205,7 +205,6 @@ namespace lmake {
 
         lmake_data.vm.add_native_function([](lua_State* vm) -> int {
             lmake_data.context.linker_flags = std::string(lua_tostring(vm, -1));
-            //DEBUG(lmake_data.context.linker_flags);
             return 1;
         }, "lmake_set_linker_flags");
 
@@ -287,20 +286,37 @@ namespace lmake {
         }, "lmake_exec");
        
         lmake_data.vm.add_native_function([](lua_State* vm) -> int {
-            DEBUG("elemake fains");
             std::string to_match = std::string(lua_tostring(vm, -1));
-            const char* template_regex_starts_with = "";
-            const char* template_regex_ends_with = "";
-            const char* template_regex_complete = "";
+            const std::string template_regex_complete = "^%[a-zA-Z0-9_]*?$"; // % by left part, ? by right part
 
             size_t double_pos = to_match.find("**");
             size_t single_pos = to_match.find("*");
             if(double_pos != std::string::npos) {
-
+                /// TODO: implement recursive function
             } else if(single_pos != std::string::npos) {
-               // std::regex regex(template_regex_complete);
-                std::smatch match;
+                std::string left_part = to_match.substr(0, single_pos);
+                std::string right_part = to_match.substr(single_pos + 1, to_match.size() - single_pos);
                 
+                auto regex_complete = utils::string_replace(
+                    template_regex_complete,
+                    "%",
+                    left_part
+                );
+                regex_complete = utils::string_replace(
+                    regex_complete,
+                    "?",
+                    right_part
+                );
+
+                regex_complete = utils::string_replace(
+                    regex_complete,
+                    ".",
+                    "\\."
+                );
+
+                std::string regex_string_test = "^\\./[a-zA-Z0-9_]*\\.lua$";
+                std::regex regex(regex_complete);
+                std::smatch match;
                 std::string path = os::file_dir(to_match);
 
                 // When path is returned empty that means that is the current path
@@ -309,7 +325,21 @@ namespace lmake {
                     path = "./";
                 }
 
+                std::string result;
                 auto files = os::list_dir(path);
+                for(std::string file : files) {
+                    if (std::regex_search(file, match, regex)) {
+                        result.append(file + " ");
+                    }
+                }
+
+                char* res = (char*) std::malloc((result.size() + 1) * sizeof(char));
+                std::strcpy(res, result.c_str());
+                res[result.size()] = '\0';
+
+                lua_pushstring(vm, res);
+
+                return 1;
 
                 /// TODO: check with regex
             } else {
