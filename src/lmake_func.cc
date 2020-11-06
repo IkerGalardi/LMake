@@ -207,7 +207,7 @@ namespace lmake { namespace func {
     }
 
     char* find(const std::string& regex) {
-        const std::string template_regex_complete = "^%[a-zA-Z0-9_]*?$"; // % by left part, ? by right part
+        const std::string template_regex_complete = "^%[a-zA-Z0-9_.]*?$"; // % by left part, ? by right part
 
         size_t single_pos = regex.find("*");
         
@@ -224,13 +224,16 @@ namespace lmake { namespace func {
             "?",
             right_part
         );
-
         regex_complete = utils::string_replace(
             regex_complete,
             ".",
             "\\."
         );
-
+//        regex_complete = utils::string_replace(
+//            regex_complete,
+//            "/",
+//            "\\/"
+//        );
         std::regex regex_obj(regex_complete);
         std::smatch match;
         std::string path = os::file_dir(regex);
