@@ -79,7 +79,7 @@ namespace os {
 
     std::string file_dir(const std::string& file) {
         std::string directory;
-        const size_t last_slash_idx = file.rfind('\\');
+        const size_t last_slash_idx = file.rfind('/');
         if (std::string::npos != last_slash_idx)
         {
             directory = file.substr(0, last_slash_idx);
