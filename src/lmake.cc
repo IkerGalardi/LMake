@@ -202,7 +202,8 @@ namespace lmake {
 
     bool execute_target(std::string target) {
         if(!vm.function_exists(target)) {
-//            lmake_data.last_error = "Specified target does not exist";
+            std::cerr << "[E] Target " << target << " does not exist\n";
+            std::exit(1);
             return false;
         }
 
