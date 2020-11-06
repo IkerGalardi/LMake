@@ -27,50 +27,18 @@
 #include "luavm.hh"
 #include "os/filesystem.hh"
 #include "os/process_management.hh"
-#include "lmake.hh"
 #include "utils.hh"
+#include "lmake_func.hh"
 
 /// TODO: std::exit() wrong, stop executing script and set last error
 
-static struct {
-    luavm vm;
-
-    struct {
-        std::string compiler;
-        std::string compiler_flags;
-        std::string compiler_output;
-
-        std::string linker;
-        std::string linker_flags;
-        std::string linker_output;
-    } context;
-
-    std::stack<std::string> been_dirs;
-
-    bool initialized = false;
-    bool config_executed = false;
-
-    std::string last_error;
-
-    lmake::settings settings;
-} lmake_data;
 
 #define PRINT_IF(m, b) if(b) std::cout << m << std::endl
 
-void print_context() {
-    std::cout << "CONTEXT\n";
-    std::cout << "  Compiler  = " << lmake_data.context.compiler << std::endl;
-    std::cout << "     Flags  = " << lmake_data.context.compiler_flags << std::endl;
-    std::cout << "     Output = " << lmake_data.context.compiler_output << std::endl;
-
-    std::cout << "  Linker = " << lmake_data.context.linker << std::endl;
-    std::cout << "     Flags = " << lmake_data.context.linker_flags << std::endl;
-    std::cout << "     Output = " << lmake_data.context.linker_output << std::endl;
-
-    std::cout << "END CONTEXT\n";
-}
-
 #define DEBUG(x) std::cout << "[D] " << x << std::endl
+
+
+luavm vm;
 
 static std::string process_script(std::string file_contents, std::string containing_dir) {
     /// TODO: preprocess all the lmake_include (mimic #include of c)
@@ -113,254 +81,116 @@ static std::string process_script(std::string file_contents, std::string contain
 
 namespace lmake {
     void initialize(const settings& settings) {
-        lmake_data.settings = settings;
+        lmake::func::set_settings(settings);
 
-        std::string current_dir = os::get_dir();
-        lmake_data.been_dirs.push(current_dir);
+        lmake::func::chdir(os::get_dir());
 
-        lmake_data.vm.add_native_function([](lua_State* vm) -> int {
-            auto compatibility_version = lua_tonumber(vm, -1);
-            if(compatibility_version != LMAKE_COMPAT_VERSION) {
-                std::cerr << "[E] Incompatible version\n";
-                std::exit(0);
-            }
+        vm.add_native_function([](lua_State* vm) -> int {
+            auto version = lua_tonumber(vm, -1);
+            lmake::func::compatibility_version(version);
             return 1;
         }, "lmake_compatibility_version");
 
-        lmake_data.vm.add_native_function([](lua_State* vm) -> int {
-            lmake_data.context.compiler = std::string(lua_tostring(vm, -1));
-            PRINT_IF("Compiler set to " << lmake_data.context.compiler, false);
+        vm.add_native_function([](lua_State* vm) -> int {
+            lmake::func::set_compiler(std::string(lua_tostring(vm, -1)));
             return 1;
         }, "lmake_set_compiler");
 
-        lmake_data.vm.add_native_function([](lua_State* vm) -> int {
-            lmake_data.context.compiler_flags = std::string(lua_tostring(vm, -1));
-            PRINT_IF("Compiler flags set to " << lmake_data.context.compiler_flags, false);
+        vm.add_native_function([](lua_State* vm) -> int {
+            lmake::func::set_compiler_flags(std::string(lua_tostring(vm, -1)));
             return 1;
         }, "lmake_set_compiler_flags");
 
-        lmake_data.vm.add_native_function([](lua_State* vm) -> int {
+        vm.add_native_function([](lua_State* vm) -> int {
             std::string out_regex = std::string(lua_tostring(vm, -1));
-            
-            if(out_regex.find('%') == std::string::npos) {
-                std::cerr << "[E] No regex added.\n";
-                std::exit(1);
-            }
-
-            lmake_data.context.compiler_output = out_regex;
-
-            PRINT_IF("Compiler out set to " << lmake_data.context.compiler_output, false);
+            lmake::func::set_compiler_out(out_regex);
             return 1;
         }, "lmake_set_compiler_out");
 
-        lmake_data.vm.add_native_function([](lua_State* vm) -> int {
+        vm.add_native_function([](lua_State* vm) -> int {
             std::string source_files = std::string(lua_tostring(vm, -1));
-            PRINT_IF("FILES = " << source_files, false);
-    
-            // Compile the file
-            std::vector<std::string> files = utils::string_split(source_files, ' ');
-            for(int i = 0; i < files.size(); i++) {
-                std::string& compiler = lmake_data.context.compiler;
-                std::string& flags = lmake_data.context.compiler_flags;
-                std::string& out = lmake_data.context.compiler_output;
-
-                std::filesystem::path file_path(files[i]);
-                std::string file_without_path = file_path.stem().string() + file_path.extension().string();
-
-                std::string obj_name = utils::string_replace(
-                    out,
-                    "%",
-                    file_without_path
-                );
-
-                /// TODO: rewrite this pls
-                if(!lmake_data.settings.force_recompile) {
-                    if(os::file_exists(obj_name)) {
-                        if(!os::compare_file_dates(obj_name, files[i])) {
-                            continue;
-                        }
-                    }
-                }
-
-                std::cout << "[+] Compiling " << files[i] << std::endl;
-                bool ok = utils::compile(
-                    compiler.c_str(),
-                    flags.c_str(),
-                    files[i].c_str(),
-                    obj_name.c_str()
-                );
-
-                if(!ok) 
-                    std::exit(1);
-            }
-
+            lmake::func::compile(source_files);
             return 1;
         }, "lmake_compile");
 
-        lmake_data.vm.add_native_function([](lua_State* vm) -> int {
-            lmake_data.context.linker = std::string(lua_tostring(vm, -1));
+        vm.add_native_function([](lua_State* vm) -> int {
+            lmake::func::set_linker(std::string(lua_tostring(vm, -1)));
             return 1;
         }, "lmake_set_linker");
 
-        lmake_data.vm.add_native_function([](lua_State* vm) -> int {
-            lmake_data.context.linker_flags = std::string(lua_tostring(vm, -1));
-            //DEBUG(lmake_data.context.linker_flags);
+        vm.add_native_function([](lua_State* vm) -> int {
+            lmake::func::set_linker_flags(std::string(lua_tostring(vm, -1)));
             return 1;
         }, "lmake_set_linker_flags");
 
-        lmake_data.vm.add_native_function([](lua_State* vm) -> int {
-            lmake_data.context.linker_output = std::string(lua_tostring(vm, -1));
+        vm.add_native_function([](lua_State* vm) -> int {
+            lmake::func::set_linker_out(std::string(lua_tostring(vm, -1)));
             return 1;
         }, "lmake_set_linker_out");
 
-        lmake_data.vm.add_native_function([](lua_State* vm) -> int {
+        vm.add_native_function([](lua_State* vm) -> int {
             std::string obj_files = std::string(lua_tostring(vm, -1));
-
-            std::string& linker = lmake_data.context.linker; 
-            std::string& flags = lmake_data.context.linker_flags;
-            std::string& output = lmake_data.context.linker_output;
-
-            std::filesystem::path output_path(output);
-            std::cout << "[+] Linking " << output_path.filename().string() << std::endl;
-
-            // Construct the args
-            std::string args = "-o " + output + " " + obj_files + " " + flags;
-
-            // Execute the linker with the constructed args
-            os::process p = os::run_process(linker.c_str(), args.c_str());
-            int exit_code = os::wait_process(p);
-
-            /// TODO: stop executing and error
-            if(exit_code != 0) {
-                std::exit(1);
-            }
-
+            lmake::func::link(obj_files);
             return 1;
         }, "lmake_link");
 
-        lmake_data.vm.add_native_function([](lua_State* vm) -> int {
+        vm.add_native_function([](lua_State* vm) -> int {
             std::string dir = std::string(lua_tostring(vm, -1));
-
-            if(os::change_dir(dir.c_str())) {
-                lmake_data.been_dirs.push(os::get_dir());
-            } else {
-                std::cerr << "[E] Specified directory can't be entered.\n";
-                std::exit(1);
-            }
-
+            lmake::func::chdir(dir);
             return 1;
         }, "lmake_chdir");
 
-        lmake_data.vm.add_native_function([](lua_State* vm) -> int {
-            std::string dir = std::string(lua_tostring(vm, -1));
-            std::stack<std::string>& been_dirs = lmake_data.been_dirs;
-            
-            // Check if it can go back a directory
-            if(been_dirs.empty() || been_dirs.size() == 1) {
-                std::cerr << "[E] Can't go back a directory\n";
-                std::exit(1);
-            }
-
-            // Take the previous directory
-            been_dirs.pop();
-            std::string prev_dir = been_dirs.top();
-            
-            // Change to the previous directory
-            if(!os::change_dir(prev_dir)) {
-                std::cerr << "[E] Specified directory can't be entered.\n";
-                std::exit(1);
-            }
-
+        vm.add_native_function([](lua_State* vm) -> int {
+            lmake::func::last_dir();
             return 1;
         }, "lmake_chdir_last");
 
 
-        lmake_data.vm.add_native_function([](lua_State* vm) -> int {
-            std::string prog_params = std::string(lua_tostring(vm, -1));
-            auto splited_params = utils::string_split(prog_params, ' ');
-
-            if(splited_params.size() == 0) {
-                std::cerr << "[E] Unknown syntax.\n";
-                std::exit(1);
-            }
-
-            /// TODO: maybe look inside PATH instead of manual checks
-            std::string real_prog;
-            if(os::file_exists(splited_params[0])) {
-                real_prog = splited_params[0];
-            } else if(os::file_exists("/bin/" + splited_params[0])) {
-                real_prog = "/bin/" + splited_params[0];
-            } else if(os::file_exists("/usr/bin/" + splited_params[0])) {
-                real_prog = "/usr/bin/" + splited_params[0];
-            } else {
-                std::cerr << "[E] " << splited_params[0] << " was not found\n";
-            }
-
-            std::string params;
-            for(int i = 1; i < splited_params.size(); i++) {
-                params.append(splited_params[i] + " ");
-            }
-
-            os::process p = os::run_process(real_prog, params);
-            int exit = os::wait_process(p);
-
-            lua_pushnumber(vm, (lua_Number)exit);
+        vm.add_native_function([](lua_State* vm) -> int {
+            std::string command = lua_tostring(vm, -1);
+            int exit_code = lmake::func::exec(command);
+            lua_pushnumber(vm, (lua_Number)exit_code);
 
             return 1;
         }, "lmake_exec");
 
 
-        lmake_data.vm.add_native_function([](lua_State* vm) -> int {
+        vm.add_native_function([](lua_State* vm) -> int {
             std::string msg = std::string(lua_tostring(vm, -1));
-            std::cout << "[E] " << msg << std::endl;
-            std::exit(2);
+            lmake::func::error(msg); 
             return 1;
         }, "lmake_error");
-
-        lmake_data.initialized = true;
-        lmake_data.config_executed = false;
     }
 
     bool load_from_file(std::string config_path) {
-        if(!lmake_data.initialized) 
-            return false;
-
         auto file_buffer = os::read_file(config_path);
         std::string processed = process_script(file_buffer.get(), config_path);
         return lmake::load_from_string(processed.c_str());
     }
 
     bool load_from_string(std::string config_string) {
-        if(!lmake_data.initialized) 
-            return false;
-
-        if(!lmake_data.vm.execute_script(config_string)) {
-            lmake_data.last_error = lmake_data.vm.get_last_error();
+        if(!vm.execute_script(config_string)) {
+//            lmake_data.last_error = vm.get_last_error();
             return false;
         }
 
-        lmake_data.config_executed = true;
+//       lmake_data.config_executed = true;
 
         return true;
     }
 
     bool execute_target(std::string target) {
-        if(!lmake_data.config_executed) {
-            lmake_data.last_error = "No configuration executed";
+        if(!vm.function_exists(target)) {
+//            lmake_data.last_error = "Specified target does not exist";
             return false;
         }
 
-        if(!lmake_data.vm.function_exists(target)) {
-            lmake_data.last_error = "Specified target does not exist";
-            return false;
-        }
-
-        lmake_data.vm.execute_function(target);
+        vm.execute_function(target);
 
         return true;
     }
 
     std::string& get_last_error() {
-        return lmake_data.last_error;
+ //       return lmake_data.last_error;
     }
 }
