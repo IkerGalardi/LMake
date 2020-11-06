@@ -206,7 +206,7 @@ namespace lmake { namespace func {
         std::exit(2);
     }
 
-    char* find(const std::string regex) {
+    char* find(const std::string& regex) {
         const std::string template_regex_complete = "^%[a-zA-Z0-9_]*?$"; // % by left part, ? by right part
 
         size_t single_pos = regex.find("*");
