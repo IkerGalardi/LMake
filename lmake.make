@@ -59,6 +59,7 @@ OBJECTS :=
 
 GENERATED += $(OBJDIR)/filesystem.o
 GENERATED += $(OBJDIR)/lmake.o
+GENERATED += $(OBJDIR)/lmake_func.o
 GENERATED += $(OBJDIR)/luavm.o
 GENERATED += $(OBJDIR)/main.o
 GENERATED += $(OBJDIR)/process_management.o
@@ -66,6 +67,7 @@ GENERATED += $(OBJDIR)/test.o
 GENERATED += $(OBJDIR)/utils.o
 OBJECTS += $(OBJDIR)/filesystem.o
 OBJECTS += $(OBJDIR)/lmake.o
+OBJECTS += $(OBJDIR)/lmake_func.o
 OBJECTS += $(OBJDIR)/luavm.o
 OBJECTS += $(OBJDIR)/main.o
 OBJECTS += $(OBJDIR)/process_management.o
@@ -135,6 +137,9 @@ endif
 # #############################################
 
 $(OBJDIR)/lmake.o: src/lmake.cc
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/lmake_func.o: src/lmake_func.cc
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/luavm.o: src/luavm.cc
