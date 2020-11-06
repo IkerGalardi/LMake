@@ -162,7 +162,7 @@ namespace lmake {
             size_t single_pos = to_match.find("*");
             if(double_pos != std::string::npos) {
                 /// TODO: implement recursive function
-                std::cerr << "[E] ** regex not supported for now.\n"; 
+                std::cerr << "[E] Type of regex not supported now.\n"; 
             } else if(single_pos != std::string::npos) {
                 char* res = lmake::func::find(to_match);
                 lua_pushstring(vm, res);
