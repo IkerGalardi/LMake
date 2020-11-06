@@ -235,6 +235,10 @@ namespace lmake { namespace func {
         std::smatch match;
         std::string path = os::file_dir(regex);
 
+        DEBUG(regex_complete);
+        DEBUG(regex);
+        DEBUG(path);
+
         // When path is returned empty that means that is the current path
         // if not specified by "." a filesystem exception is thrown
         if(path.empty()) {
@@ -244,6 +248,7 @@ namespace lmake { namespace func {
         std::string result;
         auto files = os::list_dir(path);
         for(std::string file : files) {
+            DEBUG(file);
             if (std::regex_search(file, match, regex_obj)) {
                 result.append(file + " ");
             }
