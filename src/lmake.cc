@@ -168,8 +168,6 @@ namespace lmake {
                 lua_pushstring(vm, res);
 
                 return 1;
-
-                /// TODO: check with regex
             } else {
                 std::cerr << "[E] There is no regex in: " << to_match << std::endl;
                 std::exit(1);
