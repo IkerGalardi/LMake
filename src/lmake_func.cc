@@ -5,6 +5,7 @@
 #include <filesystem>
 #include <iostream>
 #include <stack>
+#include <regex>
 
 #include <stringtoolbox/stringtoolbox.hh>
 
@@ -203,6 +204,56 @@ namespace lmake { namespace func {
     void error(const std::string msg) {
         std::cout << "[E] " << msg << std::endl;
         std::exit(2);
+    }
+
+    std::string find(const std::string regex) {
+        const std::string template_regex_complete = "^%[a-zA-Z0-9_]*?$"; // % by left part, ? by right part
+
+        size_t single_pos = regex.find("*");
+        
+        std::string left_part = regex.substr(0, single_pos);
+        std::string right_part = regex.substr(single_pos + 1, regex.size() - single_pos);
+                
+        auto regex_complete = utils::string_replace(
+            template_regex_complete,
+            "%",
+            left_part
+        );
+        regex_complete = utils::string_replace(
+            regex_complete,
+            "?",
+            right_part
+        );
+
+        regex_complete = utils::string_replace(
+            regex_complete,
+            ".",
+            "\\."
+        );
+
+        std::regex regex_obj(regex_complete);
+        std::smatch match;
+        std::string path = os::file_dir(regex);
+
+        // When path is returned empty that means that is the current path
+        // if not specified by "." a filesystem exception is thrown
+        if(path.empty()) {
+            path = "./";
+        }
+
+        std::string result;
+        auto files = os::list_dir(path);
+        for(std::string file : files) {
+            if (std::regex_search(file, match, regex_obj)) {
+                result.append(file + " ");
+            }
+        }
+
+        char* res = (char*) std::malloc((result.size() + 1) * sizeof(char));
+        std::strcpy(res, result.c_str());
+        res[result.size()] = '\0';
+
+        return res;
     }
 
 } }

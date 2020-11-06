@@ -12,6 +12,7 @@
  *
  * Authors:
  *    - Iker Galardi
+ *    - Iñigo Gastesi
  */
 
 #include "lmake.hh"
@@ -21,6 +22,7 @@
 #include <filesystem>
 #include <iostream>
 #include <stack>
+#include <regex>
 
 #include <stringtoolbox/stringtoolbox.hh>
 
@@ -75,7 +77,6 @@ static std::string process_script(std::string file_contents, std::string contain
             res.append("\n");
         }
     }
-
     return std::string(res);
 }
 
@@ -153,6 +154,28 @@ namespace lmake {
 
             return 1;
         }, "lmake_exec");
+       
+        vm.add_native_function([](lua_State* vm) -> int {
+            std::string to_match = std::string(lua_tostring(vm, -1));
+
+            size_t double_pos = to_match.find("**");
+            size_t single_pos = to_match.find("*");
+            if(double_pos != std::string::npos) {
+                /// TODO: implement recursive function
+                std::cerr << "[E] ** regex not supported for now.\n"; 
+            } else if(single_pos != std::string::npos) {
+                char* res = lmake::func::find(to_match);
+                lua_pushstring(vm, res);
+
+                return 1;
+
+                /// TODO: check with regex
+            } else {
+                std::cerr << "[E] There is no regex in: " << to_match << std::endl;
+                std::exit(1);
+            }
+            return 1;
+        }, "lmake_find");
 
 
         vm.add_native_function([](lua_State* vm) -> int {
