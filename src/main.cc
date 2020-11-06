@@ -61,10 +61,7 @@ int main(int argc, char** argv) {
     }
 
     lmake::initialize(settings);
-    if(!lmake::load_from_file(LMAKE_CONFIG_PATH)) {
-        std::cerr << "[E] " << lmake::get_last_error() << std::endl;
-        std::exit(3);
-    }
+    lmake::load_from_file(LMAKE_CONFIG_PATH);
 
     if(argc >= 1) {
         lmake::execute_target(argv[1]);

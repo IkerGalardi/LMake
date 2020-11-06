@@ -162,11 +162,11 @@ namespace lmake {
             size_t single_pos = to_match.find("*");
             if(double_pos != std::string::npos) {
                 /// TODO: implement recursive function
-                std::cerr << "[E] Type of regex not supported now.\n"; 
+                std::cerr << "[E] ** regex not supported for now.\n";
+                std::exit(1);
             } else if(single_pos != std::string::npos) {
                 char* res = lmake::func::find(to_match);
                 lua_pushstring(vm, res);
-
                 return 1;
             } else {
                 std::cerr << "[E] There is no regex in: " << to_match << std::endl;
@@ -183,35 +183,25 @@ namespace lmake {
         }, "lmake_error");
     }
 
-    bool load_from_file(std::string config_path) {
+    void load_from_file(std::string config_path) {
         auto file_buffer = os::read_file(config_path);
         std::string processed = process_script(file_buffer.get(), config_path);
-        return lmake::load_from_string(processed.c_str());
+        lmake::load_from_string(processed.c_str());
     }
 
-    bool load_from_string(std::string config_string) {
+    void load_from_string(std::string config_string) {
         if(!vm.execute_script(config_string)) {
-//            lmake_data.last_error = vm.get_last_error();
-            return false;
+            std::cerr << "[E] An error has ocurred when executing script\n";
+            std::exit(1);
         }
-
-//       lmake_data.config_executed = true;
-
-        return true;
     }
 
-    bool execute_target(std::string target) {
+    void execute_target(std::string target) {
         if(!vm.function_exists(target)) {
-//            lmake_data.last_error = "Specified target does not exist";
-            return false;
+            std::cerr << "[E] Target " << target << " does not exist\n";
+            std::exit(1);
         }
 
         vm.execute_function(target);
-
-        return true;
-    }
-
-    std::string& get_last_error() {
- //       return lmake_data.last_error;
     }
 }

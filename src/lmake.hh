@@ -40,7 +40,7 @@ namespace lmake {
      * @param config_path: path to the configuration file
      * @return: true if success, false if something went wrong
      */
-    bool load_from_file(std::string config_path);
+    void load_from_file(std::string config_path);
 
     /*
      * Executes the provided string without any processing.
@@ -48,7 +48,7 @@ namespace lmake {
      * @param config_path: path to the configuration file
      * @return: true if success, false if something went wrong
      */
-    bool load_from_string(std::string config_string);
+    void load_from_string(std::string config_string);
 
     /*
      * Executes the specified target function
@@ -56,12 +56,5 @@ namespace lmake {
      * @param target: name of the target
      * @return: true if success, false if something went wrong
      */
-    bool execute_target(std::string target);
-
-    /*
-     * Returns the last error that occured.
-     * 
-     * @return: string explaining the error
-     */
-    std::string& get_last_error();
+    void execute_target(std::string target);
 }
