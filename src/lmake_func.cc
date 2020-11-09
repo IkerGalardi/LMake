@@ -270,7 +270,6 @@ namespace lmake { namespace func {
         for(std::string& file : files) {
             if(std::filesystem::is_directory(file)) {
                 std::string new_regex = file + "/**" + right_part;
-                DEBUG(new_regex);
                 result.append(find_recursive(new_regex));
             }
         }
@@ -282,6 +281,6 @@ namespace lmake { namespace func {
             "*"
         );
         result.append(find(new_regex));
-        DEBUG(result);
+        return result;
     }
 } }

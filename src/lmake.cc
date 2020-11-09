@@ -161,10 +161,14 @@ namespace lmake {
             size_t double_pos = to_match.find("**");
             size_t single_pos = to_match.find("*");
             if(double_pos != std::string::npos) {
-                /// TODO: implement recursive function
-                std::string res = lmake::func::find_recursive(to_match);
-                std::cerr << "[E] ** regex not supported for now.\n";
-                std::exit(1);
+                std::string result = lmake::func::find_recursive(to_match);
+
+                char* res = (char*) std::malloc((result.size() + 1) * sizeof(char));
+                std::strcpy(res, result.c_str());
+                res[result.size()] = '\0';
+
+                lua_pushstring(vm, res);
+                return 1;
             } else if(single_pos != std::string::npos) {
                 char* res = lmake::func::find(to_match);
                 lua_pushstring(vm, res);
