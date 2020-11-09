@@ -162,6 +162,7 @@ namespace lmake {
             size_t single_pos = to_match.find("*");
             if(double_pos != std::string::npos) {
                 /// TODO: implement recursive function
+                std::string res = lmake::func::find_recursive(to_match);
                 std::cerr << "[E] ** regex not supported for now.\n";
                 std::exit(1);
             } else if(single_pos != std::string::npos) {
