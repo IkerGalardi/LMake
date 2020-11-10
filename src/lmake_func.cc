@@ -276,4 +276,28 @@ namespace lmake { namespace func {
         return res;
     }
 
+    std::string find_recursive(const std::string& regex) {
+        size_t double_index = regex.find("**");
+        std::string left_part = regex.substr(0, double_index);
+        std::string right_part = regex.substr(double_index + 2, regex.size() - double_index);
+
+        // Find recursivelly the files
+        std::string result = "";
+        auto files = os::list_dir(left_part);
+        for(std::string& file : files) {
+            if(std::filesystem::is_directory(file)) {
+                std::string new_regex = file + "/**" + right_part;
+                result.append(find_recursive(new_regex));
+            }
+        }
+
+        // Find the files in the base directory
+        auto new_regex = utils::string_replace(
+            regex,
+            "**",
+            "*"
+        );
+        result.append(find(new_regex));
+        return result;
+    }
 } }
