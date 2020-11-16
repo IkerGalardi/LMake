@@ -24,6 +24,7 @@
 namespace lmake {
     struct settings {
         bool force_recompile = false;
+        bool verbose = false;
     };
 
     /*

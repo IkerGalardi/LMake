@@ -114,7 +114,11 @@ namespace lmake { namespace func {
                 }
             }
 
-            std::cout << "[+] Compiling " << files[i] << std::endl;
+            if(lmake_data.settings.verbose) {
+                std::cout << "[+]" << compiler + files[i] + " -c " + flags + " -o " + obj_name << std::endl;
+            } else {
+                std::cout << "[+] Compiling " << files[i] << std::endl;
+            }
             bool ok = utils::compile(
                 compiler.c_str(),
                 flags.c_str(),
@@ -145,10 +149,16 @@ namespace lmake { namespace func {
         std::string& output = lmake_data.context.linker_output;
 
         std::filesystem::path output_path(output);
-        std::cout << "[+] Linking " << output_path.filename().string() << std::endl;
 
         // Construct the args
         std::string args = "-o " + output + " " + object_files + " " + flags;
+
+        if(lmake_data.settings.verbose) {
+            std::cout << "[+] " << linker + args << std::endl;
+        } else  {
+            std::cout << "[+] Linking " << output_path.filename().string() << std::endl;
+        }
+
 
         // Execute the linker with the constructed args
         os::process p = os::run_process(linker.c_str(), args.c_str());
@@ -213,7 +223,11 @@ namespace lmake { namespace func {
             params.append(splited_params[i] + " ");
         }
 
-        std::cout << "[+] " << command << std::endl;
+        if(lmake_data.settings.verbose) {
+            std::cout << "[+] " << command << std::endl;
+        } else {
+            std::cout << "[+] Executing " << splited_params[0] << std::endl;
+        }
         os::process p = os::run_process(real_prog, params);
         int exit = os::wait_process(p);
         return exit;
