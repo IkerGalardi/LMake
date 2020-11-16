@@ -23,6 +23,7 @@
 #include <iostream>
 #include <stack>
 #include <regex>
+#include <string.h>
 
 #include <stringtoolbox/stringtoolbox.hh>
 
@@ -49,6 +50,9 @@ static std::string process_script(std::string file_contents, std::string contain
 
     std::string temp;
     while(std::getline(stream, temp)) {
+        if(strncmp(temp.c_str(), "--", strlen("--")) == 0) {
+            continue;
+        }
         if(temp.find("lmake_include") != std::string::npos) {
             // Get the parameter passed to lmake_include command
             size_t bracket_left_index = temp.find("(\"") + 2;
