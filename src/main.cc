@@ -57,6 +57,8 @@ int main(int argc, char** argv) {
     for(int i = 0; i < argc; i++) {
         if(std::string(argv[i]) == std::string("--recompile")) {
             settings.force_recompile = true;
+        } else if(std::string(argv[i]) == std::string("--verbose")) {
+            settings.verbose = true;
         }
     }
 
