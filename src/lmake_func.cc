@@ -213,6 +213,7 @@ namespace lmake { namespace func {
             params.append(splited_params[i] + " ");
         }
 
+        std::cout << "[+] " << command << std::endl;
         os::process p = os::run_process(real_prog, params);
         int exit = os::wait_process(p);
         return exit;
