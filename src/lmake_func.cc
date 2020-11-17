@@ -108,7 +108,8 @@ namespace lmake { namespace func {
             /// TODO: rewrite this pls
             if(!lmake_data.settings.force_recompile) {
                 if(os::file_exists(obj_name)) {
-                    if(!os::compare_file_dates(obj_name, files[i])) {
+                    // Check file dates and if files exists
+                    if(os::file_exists(files[i]) && !os::compare_file_dates(obj_name, files[i])) {
                         continue;
                     }
                 }
