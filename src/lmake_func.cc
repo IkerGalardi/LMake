@@ -199,7 +199,7 @@ namespace lmake { namespace func {
         }
     }
 
-    int exec(const std::string command) {
+    int exec(const std::string& command) {
         auto splited_params = utils::string_split(command, ' ');
 
         if(splited_params.size() == 0) {
@@ -234,7 +234,7 @@ namespace lmake { namespace func {
         return exit;
     }
 
-    void error(const std::string msg) {
+    void error(const std::string& msg) {
         std::cout << "[E] " << msg << std::endl;
         std::exit(2);
     }

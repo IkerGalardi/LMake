@@ -44,9 +44,9 @@ namespace lmake { namespace func {
 
     void last_dir();
 
-    int exec(const std::string command);
+    int exec(const std::string& command);
 
-    void error(const std::string msg);
+    void error(const std::string& msg);
 
     char* find(const std::string& regex);
 
