@@ -48,7 +48,7 @@ namespace lmake { namespace func {
 
     void error(const std::string msg);
 
-    char* find(const std::string& regex);
+    std::string find(const std::string& regex);
 
     std::string find_recursive(const std::string& regex);
 } }
