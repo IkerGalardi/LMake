@@ -50,9 +50,6 @@ static struct {
 
     std::stack<std::string> been_dirs;
 
-    bool initialized = false;
-    bool config_executed = false;
-
     std::string last_error;
 
     lmake::settings settings;
@@ -92,9 +89,9 @@ namespace lmake { namespace func {
     void compile(const std::string& source_files) {
         std::vector<std::string> files = utils::string_split(source_files, ' ');
         for(int i = 0; i < files.size(); i++) {
-            std::string& compiler = lmake_data.context.compiler;
-            std::string& flags = lmake_data.context.compiler_flags;
-            std::string& out = lmake_data.context.compiler_output;
+            const std::string& compiler = lmake_data.context.compiler;
+            const std::string& flags = lmake_data.context.compiler_flags;
+            const std::string& out = lmake_data.context.compiler_output;
 
             std::filesystem::path file_path(files[i]);
             std::string file_without_path = file_path.stem().string() + file_path.extension().string();
@@ -145,9 +142,9 @@ namespace lmake { namespace func {
     }
 
     void link(const std::string& object_files) {
-        std::string& linker = lmake_data.context.linker; 
-        std::string& flags = lmake_data.context.linker_flags;
-        std::string& output = lmake_data.context.linker_output;
+        const std::string& linker = lmake_data.context.linker; 
+        const std::string& flags = lmake_data.context.linker_flags;
+        const std::string& output = lmake_data.context.linker_output;
 
         std::filesystem::path output_path(output);
 
