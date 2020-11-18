@@ -116,7 +116,7 @@ namespace lmake { namespace func {
             }
 
             if(lmake_data.settings.verbose) {
-                std::cout << "[+]" << compiler + files[i] + " -c " + flags + " -o " + obj_name << std::endl;
+                std::cout << "[+]" << compiler + " " + files[i] + " -c " + flags + " -o " + obj_name << std::endl;
             } else {
                 std::cout << "[+] Compiling " << files[i] << std::endl;
             }
@@ -155,17 +155,15 @@ namespace lmake { namespace func {
         std::string args = "-o " + output + " " + object_files + " " + flags;
 
         if(lmake_data.settings.verbose) {
-            std::cout << "[+] " << linker + args << std::endl;
+            std::cout << "[+] " << linker + " " + args << std::endl;
         } else  {
             std::cout << "[+] Linking " << output_path.filename().string() << std::endl;
         }
 
-
         // Execute the linker with the constructed args
-        os::process p = os::run_process(linker.c_str(), args.c_str());
-        int exit_code = os::wait_process(p);
+        bool ok = utils::link(linker, flags, object_files, output);
 
-        if(exit_code != 0) {
+        if(!ok) {
             std::exit(1);
         }
     }
