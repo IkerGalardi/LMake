@@ -1,4 +1,4 @@
-# Versioning
+# Versioning scheme
 
 This project uses the semver versioning system. This versioning system can be found in its [website](https://semver.org/lang/en/). But in summary, these are the points that this projects version follow: 
 
