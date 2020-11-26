@@ -43,7 +43,7 @@
 
 luavm vm;
 
-static std::string process_script(std::string file_contents, std::string containing_dir) {
+static std::string process_script(const std::string& file_contents, const std::string& containing_dir) {
     /// TODO: preprocess all the lmake_include (mimic #include of c)
     std::stringstream stream(file_contents);
     std::string res;
@@ -66,7 +66,7 @@ static std::string process_script(std::string file_contents, std::string contain
                 std::exit(1);
             }
 
-            auto file_contents = os::read_file(substring);
+            auto included_file_contents = os::read_file(substring);
 
             // Get the path to the included file
             std::string directory;
@@ -75,7 +75,7 @@ static std::string process_script(std::string file_contents, std::string contain
                 directory = substring.substr(0, last_slash_idx);
             }
 
-            res.append(std::string(file_contents.get()));
+            res.append(std::string(included_file_contents.get()));
         } else {
             res.append(temp);
             res.append("\n");

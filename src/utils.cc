@@ -10,14 +10,17 @@
 
 namespace utils {
 
-    bool compile(std::string compiler, std::string flags, std::string src, std::string out) {
-        std::string args =  std::string(src) + " -c " + flags + " -o " + out;
+    bool compile(const std::string& compiler, const std::string& flags, const std::string& src, const std::string& out) {
+        /// TODO: check if the files need to be compiled or not
+
+        std::string args = std::string(src) + " -c " + flags + " -o " + out;
+
         os::process p = os::run_process(compiler, args.c_str());
         int exit = os::wait_process(p);
         return exit == 0;
     }
     
-    bool link(std::string linker, std::string flags, std::string obj, std::string out) {
+    bool link(const std::string& linker, const std::string& flags, const std::string& obj, const std::string& out) {
         std::string args = "-o " + out + " " + obj + " " + flags;
         os::process p = os::run_process(linker.c_str(), args.c_str());
         int exit_code = os::wait_process(p);
