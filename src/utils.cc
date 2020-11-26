@@ -1,9 +1,12 @@
 #include "utils.hh"
 
+#include <iostream>
 #include <string>
 #include <sstream>
 
 #include "os/process_management.hh"
+
+#define DEBUG(x) std::cout << "[D] " << x << std::endl;
 
 namespace utils {
 
@@ -11,14 +14,17 @@ namespace utils {
         /// TODO: check if the files need to be compiled or not
 
         std::string args = std::string(src) + " -c " + flags + " -o " + out;
+
         os::process p = os::run_process(compiler, args.c_str());
         int exit = os::wait_process(p);
         return exit == 0;
     }
     
-    bool link(const std::string& linker, const std::string& flags, const std::string& obj, const std::string& out) {
-        
-        return true;
+    bool link(std::string linker, std::string flags, std::string obj, std::string out) {
+        std::string args = "-o " + out + " " + obj + " " + flags;
+        os::process p = os::run_process(linker.c_str(), args.c_str());
+        int exit_code = os::wait_process(p);
+        return exit_code == 0;
     }
 
     std::vector<std::string> string_split(const std::string& str, char delimeter) {
