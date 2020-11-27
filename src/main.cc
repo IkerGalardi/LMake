@@ -39,7 +39,6 @@ int main(int argc, char** argv) {
     
     // Executes all the tests
     if(std::strcmp(argv[1], "--internal-test") == 0) {
-        std::cout << "[+] Starting tests...\n";
         test::run();
         std::exit(0);
     } else if(std::strcmp(argv[1], "--version") == 0 || std::strcmp(argv[1], "-v") == 0) {
