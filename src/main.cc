@@ -58,6 +58,9 @@ int main(int argc, char** argv) {
             settings.force_recompile = true;
         } else if(std::string(argv[i]) == std::string("--verbose")) {
             settings.verbose = true;
+        } else if(std::string(argv[i]) == std::string("--debug")) {
+            settings.verbose = true;
+            settings.debug = true;
         }
     }
 
