@@ -59,7 +59,7 @@ namespace os {
             auto args = string_split_null_terminated(temp, ' ');
 
             int err;
-            if(prog.find("/") == std::string::npos) {
+            if(prog.find("/") != std::string::npos) {
                 err = execv(prog.c_str(), args.data());
             } else {
                 err = execvp(prog.c_str(), args.data());
