@@ -56,27 +56,27 @@ namespace test {
 
     void os() {
         std::cout << "Running return_0\n";
-        os::process p = os::run_process("./build/test/os/return_0", "aaa");
+        os::process p = os::run_process("./return_0", "aaa");
         int exit_code = os::wait_process(p);
         std::cout << "Exit code: " << exit_code << std::endl;
     
         std::cout << "Running return_1\n";
-        p = os::run_process("./build/test/os/return_1", "bbb");
+        p = os::run_process("./return_1", "bbb");
         exit_code = os::wait_process(p);
         std::cout << "Exit code: " << exit_code << std::endl;
 
         std::cout << "Running args\n";
-        p = os::run_process("./build/test/os/args", "arg1 arg2 arg3");
+        p = os::run_process("./args", "arg1 arg2 arg3");
         exit_code = os::wait_process(p);
         std::cout << "Exit code: " << exit_code << std::endl;
 
-        std::cout << "Reading install.sh...\n";
-        auto file = os::read_file("install.sh"); 
+        std::cout << "Reading test file...\n";
+        auto file = os::read_file("test"); 
         std::cout << file << std::endl;
     }
 
     void compilation() {
-        os::process p = os::run_process("/bin/gcc", "-c ./build/test/os/correct.c -o ./build/test/os/correct.o");
+        os::process p = os::run_process("/bin/gcc", "-c ./correct.c -o ./correct.o");
         std::cout << "Exit code: " << os::wait_process(p) << std::endl;
     }
 }
