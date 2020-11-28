@@ -16,7 +16,7 @@ project "lmake"
     includedirs {"lib/include", "src"}
 
     libdirs {"lib/bin"}
-    links {"lua53"}
+    links {"lua53", "dl"}
 
     filter "system:linux"
         defines { "LMAKE_OS_LINUX" }
