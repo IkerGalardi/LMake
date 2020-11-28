@@ -20,6 +20,7 @@
 
 luavm::luavm() {
     vm = luaL_newstate();
+    luaL_openlibs(vm);
 
     if(vm == NULL)
         std::cout << "Error while creating the lua virtual machine\n";
