@@ -21,8 +21,8 @@ namespace utils {
     }
     
     bool link(const std::string& linker, const std::string& flags, const std::string& obj, const std::string& out) {
-        std::string args = "-o " + out + " " + obj + " " + flags;
-        os::process p = os::run_process(linker.c_str(), args.c_str());
+        std::string args = flags + " " + obj + " " + "-o " + out;
+        os::process p = os::run_process(linker, args);
         int exit_code = os::wait_process(p);
         return exit_code == 0;
     }
