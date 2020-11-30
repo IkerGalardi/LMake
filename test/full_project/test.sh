@@ -1,3 +1,5 @@
+mkdir -p build
+
 echo "-- Compiling the project"
 lmake build --verbose
 
