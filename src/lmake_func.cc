@@ -70,14 +70,17 @@ namespace lmake { namespace func {
     }
 
     void set_compiler(const std::string& compiler) {
+        PRINT_IF("[D] Compiler set to " << compiler, lmake_data.settings.debug);
         lmake_data.context.compiler = compiler;        
     }
 
     void set_compiler_flags(const std::string& flags) {
+        PRINT_IF("[D] Compiler flags set to " << flags, lmake_data.settings.debug);
         lmake_data.context.compiler_flags = flags;
     }
 
     void set_compiler_out(const std::string& out_regex) {
+        PRINT_IF("[D] Compiler out set to " << out_regex, lmake_data.settings.debug);
         if(out_regex.find('%') == std::string::npos) {
             std::cerr << "[E] No regex added.\n";
             std::exit(1);
@@ -130,14 +133,17 @@ namespace lmake { namespace func {
     }
 
     void set_linker(const std::string& linker) {
+        PRINT_IF("[D] Linker set to " << linker, lmake_data.settings.debug);
         lmake_data.context.linker = linker;
     }
 
     void set_linker_flags(const std::string& flags) {
+        PRINT_IF("[D] Linker flags set to " << flags, lmake_data.settings.debug);
         lmake_data.context.linker_flags = flags;
     }
 
     void set_linker_out(const std::string& out_regex) {
+        PRINT_IF("[D] Linker out set to " << out_regex, lmake_data.settings.debug);
         lmake_data.context.linker_output = out_regex;
     }
 
@@ -166,6 +172,7 @@ namespace lmake { namespace func {
     }
 
     void chdir(const std::string& dir) {
+        PRINT_IF("[D] Changing the directory to " << dir, lmake_data.settings.debug);
         if(os::change_dir(dir.c_str())) {
             lmake_data.been_dirs.push(os::get_dir());
         } else {
@@ -175,6 +182,7 @@ namespace lmake { namespace func {
     }
 
     void last_dir() {
+        PRINT_IF("[D] Changing to last working directory.", lmake_data.settings.debug);
         std::stack<std::string>& been_dirs = lmake_data.been_dirs;
             
         // Check if it can go back a directory
@@ -235,6 +243,7 @@ namespace lmake { namespace func {
     }
 
     std::string find(const std::string& regex) {
+        PRINT_IF("[D] Finding with regex " << regex, lmake_data.settings.debug);
         const std::string template_regex_complete = "^%[a-zA-Z0-9_.]*?$"; // % by left part, ? by right part
 
         size_t single_pos = regex.find("*");
@@ -284,6 +293,7 @@ namespace lmake { namespace func {
     }
 
     std::string find_recursive(const std::string& regex) {
+        PRINT_IF("[D] Finding recursivelly with regex " << regex, lmake_data.settings.debug);
         size_t double_index = regex.find("**");
         std::string left_part = regex.substr(0, double_index);
         std::string right_part = regex.substr(double_index + 2, regex.size() - double_index);
