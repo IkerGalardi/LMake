@@ -34,6 +34,7 @@ static std::vector<char*> string_split_null_terminated(const std::string& str, c
     std::istringstream stream(str.c_str());
 
     while(std::getline(stream, temp, delimeter)) {
+        if(temp.empty()) continue;
         //res.push_back(std::malloc((temp.size() + 1) * sizeof(char)));
         void* mem = std::calloc(temp.size() + 1, sizeof(char));
         res.push_back(static_cast<char*>(mem));
