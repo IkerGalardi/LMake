@@ -250,7 +250,7 @@ namespace lmake { namespace func {
         
         std::string left_part = regex.substr(0, single_pos);
         std::string right_part = regex.substr(single_pos + 1, regex.size() - single_pos);
-                
+
         auto regex_complete = utils::string_replace(
             template_regex_complete,
             "%",
@@ -283,6 +283,11 @@ namespace lmake { namespace func {
 
         std::string result;
         auto files = os::list_dir(path);
+        if(files.empty()) {
+            std::cerr << "[E] Path of regex does not exist.\n";
+            std::exit(1);
+        }
+
         for(std::string file : files) {
             if (std::regex_search(file, match, regex_obj)) {
                 result.append(file + " ");
