@@ -66,14 +66,20 @@ namespace os {
     }
 
     std::vector<std::string> list_dir(const std::string& dir) {
-        std::vector<std::string> res;
-        
-        std::filesystem::directory_iterator iterator(dir);
-        for(auto& entry : iterator) {
-            res.push_back(entry.path().string());
-        }
+        try {
+            std::vector<std::string> res;
 
-        return res;
+            std::filesystem::directory_iterator iterator(dir);
+            for(auto& entry : iterator) {
+                res.push_back(entry.path().string());
+            }
+
+            return res;
+        } catch(const std::exception& e) {
+            return std::vector<std::string>();
+        }
+        
+
     }
 
 
