@@ -210,18 +210,6 @@ namespace lmake { namespace func {
             std::exit(1);
         }
 
-        /// TODO: maybe look inside PATH instead of manual checks
-        std::string real_prog;
-        if(os::file_exists(splited_params[0])) {
-            real_prog = splited_params[0];
-        } else if(os::file_exists("/bin/" + splited_params[0])) {
-            real_prog = "/bin/" + splited_params[0];
-        } else if(os::file_exists("/usr/bin/" + splited_params[0])) {
-            real_prog = "/usr/bin/" + splited_params[0];
-        } else {
-            std::cerr << "[E] " << splited_params[0] << " was not found\n";
-        }
-
         std::string params;
         for(int i = 1; i < splited_params.size(); i++) {
             params.append(splited_params[i] + " ");
@@ -232,7 +220,7 @@ namespace lmake { namespace func {
         } else {
             std::cout << "[+] Executing " << splited_params[0] << std::endl;
         }
-        os::process p = os::run_process(real_prog, params);
+        os::process p = os::run_process(splited_params[0], params);
         int exit = os::wait_process(p);
         return exit;
     }
