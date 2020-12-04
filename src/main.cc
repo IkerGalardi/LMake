@@ -25,6 +25,8 @@
 
 #define LMAKE_CONFIG_PATH "./lmake.lua"
 
+#define DEBUG(x) std::cout << "[D] " << x << std::endl;
+
 int main(int argc, char** argv) {
     if(argc <= 1 || std::strcmp(argv[1], "--help") == 0) {
         std::cout << "[+] Usage: lmake <target> <flags>\n";
@@ -61,11 +63,23 @@ int main(int argc, char** argv) {
         } else if(std::string(argv[i]) == std::string("--debug")) {
             settings.verbose = true;
             settings.debug = true;
-        }
+        } 
     }
 
     lmake::initialize(settings);
     lmake::load_from_file(LMAKE_CONFIG_PATH);
+
+    for (int i = 0; i < argc; i++) {
+        std::string argvi = std::string(argv[i]);
+        size_t equals_index = argvi.find("=");
+        if(equals_index != std::string::npos) {
+            std::string left_part = argvi.substr(0, equals_index);
+            std::string right_part = argvi.substr(equals_index + 1, argvi.size() - equals_index);
+
+            lmake::change_variable(left_part, right_part);
+        }
+    }
+    
 
     if(argc >= 1) {
         lmake::execute_target(argv[1]);
