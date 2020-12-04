@@ -33,13 +33,13 @@
 #include "utils.hh"
 #include "lmake_func.hh"
 
+#define CONFIG_DEBUG
+#include "debug.hh"
+
 /// TODO: std::exit() wrong, stop executing script and set last error
 
 
 #define PRINT_IF(m, b) if(b) std::cout << m << std::endl
-
-#define DEBUG(x) std::cout << "[D] " << x << std::endl
-
 
 luavm vm;
 
@@ -47,6 +47,8 @@ static std::string process_script(const std::string& file_contents, const std::s
     /// TODO: preprocess all the lmake_include (mimic #include of c)
     std::stringstream stream(file_contents);
     std::string res;
+
+    DEBUG("hola ola %i", 7);
 
     std::string temp;
     while(std::getline(stream, temp)) {
