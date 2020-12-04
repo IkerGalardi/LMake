@@ -4,8 +4,6 @@
 #include <string>
 #include <sstream>
 
-#include <stringtoolbox/stringtoolbox.hh>
-
 #include "os/process_management.hh"
 
 #define DEBUG(x) std::cout << "[D] " << x << std::endl;
