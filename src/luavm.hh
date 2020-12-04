@@ -69,6 +69,8 @@ public:
      */
     void execute_function(std::string fn_name);
 
+    void change_variable(const std::string& name, const std::string& value);
+
     /// TODO: errors as enums instead of strings
     /* 
      * Returns the last error given by the virtual machine

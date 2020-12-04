@@ -59,4 +59,6 @@ namespace lmake {
      * @return: true if success, false if something went wrong
      */
     void execute_target(std::string target);
+
+    void change_variable(const std::string& name, std::string& value);
 }
