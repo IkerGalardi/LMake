@@ -10,7 +10,7 @@ function build()
 
     -- Link the object files
     obj_files = lmake_find("build/*.o")
-    lmake_set_linker("/bin/ld")
+    lmake_set_linker("/bin/gcc")
     lmake_set_linker_flags("")
     lmake_set_linker_out("build/app")
     lmake_link(obj_files)
