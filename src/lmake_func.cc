@@ -155,7 +155,7 @@ namespace lmake { namespace func {
         std::filesystem::path output_path(output);
 
         // Construct the args
-        std::string args = "-o " + output + " " + object_files + " " + flags;
+        std::string args = flags + " " + object_files + " " + "-o " + output;
 
         if(lmake_data.settings.verbose) {
             std::cout << "[+] " << linker + " " + args << std::endl;
