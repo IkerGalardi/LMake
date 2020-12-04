@@ -69,6 +69,13 @@ public:
      */
     void execute_function(std::string fn_name);
 
+    /*
+     * Searches variable 'name' and changes the value on the 
+     * lua stack to 'value'.
+     * 
+     * @param name: name of the lua variable
+     * @param value: new value of variable
+     */
     void change_variable(const std::string& name, const std::string& value);
 
     /// TODO: errors as enums instead of strings
