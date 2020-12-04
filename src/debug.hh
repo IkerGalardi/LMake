@@ -1,8 +1,7 @@
 #pragma once 
 
-#ifdef CONFIG_DEBUG
-    #include <stdio.h>
-    #define DEBUG(x, ...) printf("[D] " x "\n", __VA_ARGS__)
-#else
-    #define DEBUG(x, ...)
-#endif
+#include <stdio.h>
+
+#define DEBUG(...) printf("[E] "); printf(__VA_ARGS__); printf("\n")
+
+#define ERROR(...) fprintf(stderr, "[E] "); fprintf(stderr, __VA_ARGS__); fprintf(stderr, "\n")

@@ -48,8 +48,6 @@ static std::string process_script(const std::string& file_contents, const std::s
     std::stringstream stream(file_contents);
     std::string res;
 
-    DEBUG("hola ola %i", 7);
-
     std::string temp;
     while(std::getline(stream, temp)) {
         if(strncmp(temp.c_str(), "--", strlen("--")) == 0) {
@@ -64,7 +62,7 @@ static std::string process_script(const std::string& file_contents, const std::s
             // Check if file exists, if not, throw an error and quit
             if(!os::file_exists(substring.c_str())) {
                 /// TODO: maybe print the line in which the file is trying to be included
-                std::cerr << "[E] The file " << substring << " can't be opened.\n"; 
+                ERROR("The files %s can't be opened.", substring);
                 std::exit(1);
             }
 
@@ -182,7 +180,7 @@ namespace lmake {
                 lua_pushstring(vm, res);
                 return 1;
             } else {
-                std::cerr << "[E] There is no regex in: " << to_match << std::endl;
+                ERROR("There is no regex in: %s", to_match);
                 std::exit(1);
             }
             return 1;
@@ -204,14 +202,14 @@ namespace lmake {
 
     void load_from_string(std::string config_string) {
         if(!vm.execute_script(config_string)) {
-            std::cerr << "[E] An error has ocurred when executing script\n";
+            ERROR("An error has ocurred when executing script");
             std::exit(1);
         }
     }
 
     void execute_target(std::string target) {
         if(!vm.function_exists(target)) {
-            std::cerr << "[E] Target " << target << " does not exist\n";
+            ERROR("Target %s does not exist.", target);
             std::exit(1);
         }
 
