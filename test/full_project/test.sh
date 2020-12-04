@@ -1,10 +1,10 @@
 mkdir -p build
 
 echo "-- Compiling the project"
-lmake build --verbose
+$1 build --verbose
 
 echo "-- Cleaning up obj files"
-lmake clean
+$1 clean
 
 echo "-- Executing test program"
-lmake exec
+$1 exec
