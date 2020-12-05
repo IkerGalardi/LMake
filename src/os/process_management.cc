@@ -27,6 +27,7 @@
 #include <stringtoolbox/stringtoolbox.hh>
 
 #include "filesystem.hh"
+#include "debug.hh"
 
 static std::vector<char*> string_split_null_terminated(const std::string& str, char delimeter) {
     std::vector<char*> res;
@@ -51,7 +52,7 @@ namespace os {
         pid_t pid = fork();
 
         if(!os::file_exists(prog)) {
-            std::cerr << "[E] Process "  << prog << " doesnt exist.\n";
+            ERROR("Process %s doesn't exist.", prog);
             std::exit(1);
         }
 
@@ -66,7 +67,7 @@ namespace os {
                 err = execvp(prog.c_str(), args.data());
             }
 
-            std::cerr << "[E] Cannot execute process\n";
+            ERROR("Cannot execute process.");
             std::exit(5);
         }
         return pid;

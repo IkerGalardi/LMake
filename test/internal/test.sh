@@ -1,3 +1,3 @@
 #!/bin/sh
 
-lmake --internal-test
+$1 --internal-test

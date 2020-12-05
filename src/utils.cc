@@ -6,8 +6,6 @@
 
 #include "os/process_management.hh"
 
-#define DEBUG(x) std::cout << "[D] " << x << std::endl;
-
 namespace utils {
 
     bool compile(const std::string& compiler, const std::string& flags, const std::string& src, const std::string& out) {

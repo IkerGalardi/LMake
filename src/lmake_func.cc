@@ -32,10 +32,9 @@
 #include "os/process_management.hh"
 #include "lmake.hh"
 #include "utils.hh"
+#include "debug.hh"
 
 #define PRINT_IF(m, b) if(b) std::cout << m << std::endl
-
-#define DEBUG(x) std::cout << "[D] " << x << std::endl
 
 static struct {
     struct {
@@ -64,7 +63,7 @@ namespace lmake { namespace func {
 
     void compatibility_version(float compatibility_version) {
         if(compatibility_version != LMAKE_COMPAT_VERSION) {
-            std::cerr << "[E] Incompatible version\n";
+            ERROR("Incompatible version");
             std::exit(0);
         }
     }
@@ -82,7 +81,7 @@ namespace lmake { namespace func {
     void set_compiler_out(const std::string& out_regex) {
         PRINT_IF("[D] Compiler out set to " << out_regex, lmake_data.settings.debug);
         if(out_regex.find('%') == std::string::npos) {
-            std::cerr << "[E] No regex added.\n";
+            ERROR("No regex added.");
             std::exit(1);
         }
 
@@ -176,7 +175,7 @@ namespace lmake { namespace func {
         if(os::change_dir(dir.c_str())) {
             lmake_data.been_dirs.push(os::get_dir());
         } else {
-            std::cerr << "[E] Specified directory can't be entered.\n";
+            ERROR("Specified directory can't be entered.");
             std::exit(1);
         }
     }
@@ -187,7 +186,7 @@ namespace lmake { namespace func {
             
         // Check if it can go back a directory
         if(been_dirs.empty() || been_dirs.size() == 1) {
-            std::cerr << "[E] Can't go back a directory\n";
+            ERROR("Can't go back a directory");
             std::exit(1);
         }
 
@@ -197,7 +196,7 @@ namespace lmake { namespace func {
             
         // Change to the previous directory
         if(!os::change_dir(prev_dir)) {
-            std::cerr << "[E] Specified directory can't be entered.\n";
+            ERROR("Specified directory can't be entered.");
             std::exit(1);
         }
     }
@@ -206,7 +205,7 @@ namespace lmake { namespace func {
         auto splited_params = utils::string_split(command, ' ');
 
         if(splited_params.size() == 0) {
-            std::cerr << "[E] Unknown syntax.\n";
+            ERROR("Unknown syntax.");
             std::exit(1);
         }
 
@@ -219,7 +218,7 @@ namespace lmake { namespace func {
         } else if(os::file_exists("/usr/bin/" + splited_params[0])) {
             real_prog = "/usr/bin/" + splited_params[0];
         } else {
-            std::cerr << "[E] " << splited_params[0] << " was not found\n";
+            ERROR("%s was not found.", splited_params[0].c_str());
         }
 
         std::string params;
@@ -238,7 +237,7 @@ namespace lmake { namespace func {
     }
 
     void error(const std::string& msg) {
-        std::cout << "[E] " << msg << std::endl;
+        ERROR(msg.c_str());
         std::exit(2);
     }
 
@@ -284,7 +283,7 @@ namespace lmake { namespace func {
         std::string result;
         auto files = os::list_dir(path);
         if(files.empty()) {
-            std::cerr << "[E] Path of regex does not exist.\n";
+            ERROR("Path of regex does not exist.");
             std::exit(1);
         }
 
