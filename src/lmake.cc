@@ -215,4 +215,8 @@ namespace lmake {
 
         vm.execute_function(target);
     }
+    
+    void change_variable(const std::string& name, std::string& value) {
+        vm.change_variable(name, value);
+    }
 }

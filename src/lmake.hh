@@ -59,4 +59,12 @@ namespace lmake {
      * @return: true if success, false if something went wrong
      */
     void execute_target(std::string target);
+
+    /*
+     * Changes variable 'name' value to 'value' on luavm.
+     * 
+     * @param name: name of the lua variable
+     * @param value: new value of variable
+     */
+    void change_variable(const std::string& name, std::string& value);
 }

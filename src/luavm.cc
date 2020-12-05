@@ -17,6 +17,7 @@
 #include "luavm.hh"
 
 #include <iostream>
+#include <cstring>
 
 luavm::luavm() {
     vm = luaL_newstate();
@@ -60,6 +61,14 @@ void luavm::execute_function(std::string fn_name) {
     lua_pcall(vm, 0, 0, 0);
 }
 
+void luavm::change_variable(const std::string& name, const std::string& value) {
+    char* str = static_cast<char*>(std::calloc(value.size() + 1, sizeof(char)));
+    std::strcpy(str, value.c_str());
+    lua_getglobal(vm, name.c_str());
+    lua_remove(vm, 1);
+    lua_pushstring(vm, str);
+    lua_setglobal(vm, name.c_str());
+}
 
 std::string luavm::get_last_error() {
     return std::string("[LVM] ") + last_error;
