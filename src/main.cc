@@ -26,8 +26,6 @@
 
 #define LMAKE_CONFIG_PATH "./lmake.lua"
 
-#define DEBUG(x) std::cout << "[D] " << x << std::endl;
-
 int main(int argc, char** argv) {
     if(argc <= 1 || std::strcmp(argv[1], "--help") == 0) {
         std::cout << "[+] Usage: lmake <target> <flags>\n";
