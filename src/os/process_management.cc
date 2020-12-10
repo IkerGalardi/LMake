@@ -55,15 +55,14 @@ namespace os {
         if(pid == 0) { // child process
             std::string temp = std::string(prog) + " " + args;
             auto args = string_split_null_terminated(temp, ' ');
-            int err;
             if(prog.find("/") != std::string::npos) {
-                err = execv(prog.c_str(), args.data());
+                execv(prog.c_str(), args.data());
             } else {
-                err = execvp(prog.c_str(), args.data());
+                execvp(prog.c_str(), args.data());
             }
 
-            std::cerr << "[E] Cannot execute process\n";
-            std::exit(5);
+            std::cerr << "[E] Program " << prog << " could not be found\n";
+            std::exit(100);
         }
         return pid;
     }
