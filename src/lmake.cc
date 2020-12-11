@@ -166,18 +166,11 @@ namespace lmake {
             size_t single_pos = to_match.find("*");
             if(double_pos != std::string::npos) {
                 std::string result = lmake::func::find_recursive(to_match);
-                char* res = (char*) std::malloc((result.size() + 1) * sizeof(char));
-                std::strcpy(res, result.c_str());
-                res[result.size()] = '\0';
-
-                lua_pushstring(vm, res);
+                lua_pushstring(vm, result.c_str());
                 return 1;
             } else if(single_pos != std::string::npos) {
                 std::string result = lmake::func::find(to_match);
-                char* res = (char*) std::malloc((result.size() + 1) * sizeof(char));
-                std::strcpy(res, result.c_str());
-                res[result.size()] = '\0';
-                lua_pushstring(vm, res);
+                lua_pushstring(vm, result.c_str());
                 return 1;
             } else {
                 ERROR("There is no regex in: %s", to_match);

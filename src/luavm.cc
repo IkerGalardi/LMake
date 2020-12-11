@@ -62,11 +62,9 @@ void luavm::execute_function(std::string fn_name) {
 }
 
 void luavm::change_variable(const std::string& name, const std::string& value) {
-    char* str = static_cast<char*>(std::calloc(value.size() + 1, sizeof(char)));
-    std::strcpy(str, value.c_str());
     lua_getglobal(vm, name.c_str());
     lua_remove(vm, 1);
-    lua_pushstring(vm, str);
+    lua_pushstring(vm, value.c_str());
     lua_setglobal(vm, name.c_str());
 }
 
