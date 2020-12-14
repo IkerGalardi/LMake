@@ -29,8 +29,6 @@
 #include "filesystem.hh"
 #include "debug.hh"
 
-#define DEBUG(x) std::cout << "[D] " << x << std::endl
-
 static std::vector<char*> string_split_null_terminated(const std::string& str, char delimeter) {
     std::vector<char*> res;
     std::string temp;
@@ -49,18 +47,31 @@ static std::vector<char*> string_split_null_terminated(const std::string& str, c
     return res;
 }
 
+bool check_in_path(const std::string& prog) {
+    if(prog.find("/") != std::string::npos) {
+        return os::file_exists(prog);
+    }
+
+    std::istringstream stream(getenv("PATH"));
+    std::string tmp;
+    while(std::getline(stream, tmp, ':')) {
+        std::string program_path = tmp + "/" + prog;
+        if(os::file_exists(program_path)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 namespace os {
     process run_process(std::string prog, std::string args) {
-        pid_t pid = fork();
-
-<<<<<<< HEAD
-=======
-        if(!os::file_exists(prog)) {
-            ERROR("Process %s doesn't exist.", prog);
+        if(!check_in_path(prog)) {
+            ERROR("Process %s doesn't exist.", prog.c_str());
             std::exit(1);
         }
 
->>>>>>> origin/master
+        pid_t pid = fork();
         if(pid == 0) { // child process
             std::string temp = std::string(prog) + " " + args;
             auto args = string_split_null_terminated(temp, ' ');
@@ -70,13 +81,8 @@ namespace os {
                 execvp(prog.c_str(), args.data());
             }
 
-<<<<<<< HEAD
-            std::cerr << "[E] Program " << prog << " could not be found\n";
-            std::exit(100);
-=======
             ERROR("Cannot execute process.");
             std::exit(5);
->>>>>>> origin/master
         }
         return pid;
     }
