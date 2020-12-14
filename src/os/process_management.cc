@@ -27,6 +27,7 @@
 #include <stringtoolbox/stringtoolbox.hh>
 
 #include "filesystem.hh"
+#include "debug.hh"
 
 #define DEBUG(x) std::cout << "[D] " << x << std::endl
 
@@ -52,6 +53,14 @@ namespace os {
     process run_process(std::string prog, std::string args) {
         pid_t pid = fork();
 
+<<<<<<< HEAD
+=======
+        if(!os::file_exists(prog)) {
+            ERROR("Process %s doesn't exist.", prog);
+            std::exit(1);
+        }
+
+>>>>>>> origin/master
         if(pid == 0) { // child process
             std::string temp = std::string(prog) + " " + args;
             auto args = string_split_null_terminated(temp, ' ');
@@ -61,8 +70,13 @@ namespace os {
                 execvp(prog.c_str(), args.data());
             }
 
+<<<<<<< HEAD
             std::cerr << "[E] Program " << prog << " could not be found\n";
             std::exit(100);
+=======
+            ERROR("Cannot execute process.");
+            std::exit(5);
+>>>>>>> origin/master
         }
         return pid;
     }

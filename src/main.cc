@@ -22,6 +22,7 @@
 #include "os/filesystem.hh"
 #include "lmake.hh"
 #include "test/test.hh"
+#include "debug.hh"
 
 #define LMAKE_CONFIG_PATH "./lmake.lua"
 
@@ -48,7 +49,7 @@ int main(int argc, char** argv) {
     }
 
     if(!os::file_exists(LMAKE_CONFIG_PATH)) {
-        std::cerr << "[E] No lmake.lua file found.\n";
+        ERROR("No lmake.lua file found.");
         std::exit(1);
     }
 
@@ -61,16 +62,28 @@ int main(int argc, char** argv) {
         } else if(std::string(argv[i]) == std::string("--debug")) {
             settings.verbose = true;
             settings.debug = true;
-        }
+        } 
     }
 
     lmake::initialize(settings);
     lmake::load_from_file(LMAKE_CONFIG_PATH);
 
+    for (int i = 0; i < argc; i++) {
+        std::string argvi = std::string(argv[i]);
+        size_t equals_index = argvi.find("=");
+        if(equals_index != std::string::npos) {
+            std::string left_part = argvi.substr(0, equals_index);
+            std::string right_part = argvi.substr(equals_index + 1, argvi.size() - equals_index);
+
+            lmake::change_variable(left_part, right_part);
+        }
+    }
+    
+
     if(argc >= 1) {
         lmake::execute_target(argv[1]);
     } else {
-        std::cout << "[E] No target specified\n";
+        ERROR("No target specified.");
         std::exit(1);
     }
     
