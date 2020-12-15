@@ -38,6 +38,9 @@ void luavm::add_native_function(luafunc func, std::string name) {
 
 bool luavm::execute_script(std::string script) {
     this->script = script;
+
+    // Loads the script into lua virtual machine and tries to execute,
+    // if an error has ocurred last_error saves the lua execution error.
     luaL_loadstring(vm, script.c_str());
     if (lua_pcall(vm, 0, 0, 0) != LUA_OK) {
         last_error = std::string(lua_tostring(vm, -1));
@@ -48,6 +51,8 @@ bool luavm::execute_script(std::string script) {
 }
 
 bool luavm::function_exists(std::string fn_name) {
+    // Selects the given function name in the stack and checks if 
+    // its a function.
     lua_getglobal(vm, fn_name.c_str());
     if(lua_isfunction(vm, -1)) {
         return true;
@@ -57,13 +62,20 @@ bool luavm::function_exists(std::string fn_name) {
 }
 
 void luavm::execute_function(std::string fn_name) {
+    // Selects the given function and calls it
     lua_getglobal(vm, fn_name.c_str());
     lua_pcall(vm, 0, 0, 0);
 }
 
 void luavm::change_variable(const std::string& name, const std::string& value) {
+    // Selects the given variable
     lua_getglobal(vm, name.c_str());
+
+    // Removes the value from the stack
     lua_remove(vm, 1);
+
+    // Pushes the new value and sets name to that
+    // stack index
     lua_pushstring(vm, value.c_str());
     lua_setglobal(vm, name.c_str());
 }
