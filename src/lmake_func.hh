@@ -92,37 +92,56 @@ namespace lmake { namespace func {
     void set_linker_out(const std::string& out_regex);
 
     /*
+     * Links the specified object file into the finel executable
+     * using context flags and output path
      * 
+     * @param object_files: 
      */
     void link(const std::string& object_files);
 
     /*
+     * Changes the working directory and updates the been dirs.
      * 
+     * @param dir: directory to be changed to
      */
     void chdir(const std::string& dir);
 
     /*
-     * 
+     * Changes the working directory to the one before the current.
      */
     void last_dir();
 
     /*
+     * Executes the another process with the given path and command
+     * line arguments.
      * 
+     * @param command: bash like command with path and arguments 
+     *                 separated by spaces
      */
     int exec(const std::string& command);
 
     /*
+     * Prints the given message with the "[E]" tag and exits
+     * execution of the application.
      * 
+     * @param msg: message to print
      */
     void error(const std::string& msg);
 
     /*
+     * Finds all files in the given path including the regex. Regex
+     * function is similar to bash's one (* = all files in given 
+     * directory). 
      * 
+     * @param regex: bash like regex 
      */
     std::string find(const std::string& regex);
 
     /*
+     * Similar to find, but also searches in sub directories when 
+     * "**" is used instead of single astrisc.
      * 
+     * @param regex: bash like
      */
     std::string find_recursive(const std::string& regex);
 } }
