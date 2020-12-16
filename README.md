@@ -37,4 +37,4 @@ After that, if you want to install just execute the command `sudo ./install.sh`,
 You can contribute to the project in two ways: writing issues and contribute code. As a lmake user, if you want to report a bug or ask for a feature writing issues is the most efficient thing to do. Else, if you want to contribute code, you can create a pull request. For more information check the [contributing](docs/Contributing.md) document.
 
 ## Versioning scheme
-To learn more about the versioning check [this](docs/Versions.md) document.
+This project uses the semver versioning system, to learn more about the versioning check [this](docs/Versions.md) document.
