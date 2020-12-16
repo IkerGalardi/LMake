@@ -25,6 +25,14 @@ function build()
     lmake_link("build/main.c.o build/print.c.o")
 end
 ```
+## Getting started
+For compiling and installing lmake just clone the repository and compile it using make. You can do that with the next commands
+```bash
+git clone https://github.com/IkerGalardi/LMake
+cd LMake
+```
+After that, if you want to install just execute the command `sudo ./install.sh`, else if you want to simply compile by doing `make`.
+
 ## How to contribute
 You can contribute to the project in two ways: writing issues and contribute code. As a lmake user, if you want to report a bug or ask for a feature writing issues is the most efficient thing to do. Else, if you want to contribute code, you can create a pull request. For more information check the [contributing](docs/Contributing.md) document.
 
