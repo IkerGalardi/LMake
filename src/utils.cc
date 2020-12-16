@@ -9,8 +9,6 @@
 namespace utils {
 
     bool compile(const std::string& compiler, const std::string& flags, const std::string& src, const std::string& out) {
-        /// TODO: check if the files need to be compiled or not
-
         std::string args = std::string(src) + " -c " + flags + " -o " + out;
 
         os::process p = os::run_process(compiler, args.c_str());

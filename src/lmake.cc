@@ -44,7 +44,6 @@
 luavm vm;
 
 static std::string process_script(const std::string& file_contents, const std::string& containing_dir) {
-    /// TODO: preprocess all the lmake_include (mimic #include of c)
     std::stringstream stream(file_contents);
     std::string res;
 
@@ -75,8 +74,10 @@ static std::string process_script(const std::string& file_contents, const std::s
                 directory = substring.substr(0, last_slash_idx);
             }
 
+            // Adds the content of the included file
             res.append(std::string(included_file_contents.get()));
         } else {
+            // Appends the readed line
             res.append(temp);
             res.append("\n");
         }
@@ -162,6 +163,7 @@ namespace lmake {
         vm.add_native_function([](lua_State* vm) -> int {
             std::string to_match = std::string(lua_tostring(vm, -1));
 
+            // Checks what regex to use and calls the corresponding functions
             size_t double_pos = to_match.find("**");
             size_t single_pos = to_match.find("*");
             if(double_pos != std::string::npos) {

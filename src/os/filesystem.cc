@@ -69,6 +69,8 @@ namespace os {
         try {
             std::vector<std::string> res;
 
+            // Iterates through the directory files and adds them 
+            // to the result
             std::filesystem::directory_iterator iterator(dir);
             for(auto& entry : iterator) {
                 res.push_back(entry.path().string());
@@ -76,18 +78,19 @@ namespace os {
 
             return res;
         } catch(const std::exception& e) {
+            // When a filesystem exception occurs an empty
+            // string vector is returned
             return std::vector<std::string>();
         }
-        
-
     }
 
 
     std::string file_dir(const std::string& file) {
         std::string directory;
+        
+        // Gets the last "/" character and returns all the string before that
         const size_t last_slash_idx = file.rfind('/');
-        if (std::string::npos != last_slash_idx)
-        {
+        if (std::string::npos != last_slash_idx) {
             directory = file.substr(0, last_slash_idx);
         }
 

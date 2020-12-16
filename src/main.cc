@@ -27,6 +27,7 @@
 #define LMAKE_CONFIG_PATH "./lmake.lua"
 
 int main(int argc, char** argv) {
+    // Checks if "--help" flag is passed, if it is information is printed
     if(argc <= 1 || std::strcmp(argv[1], "--help") == 0) {
         std::cout << "[+] Usage: lmake <target> <flags>\n";
         std::cout << "    · target: lua function to be executed.\n";
@@ -48,11 +49,13 @@ int main(int argc, char** argv) {
         std::exit(0);
     }
 
+    // Checks if configuration file exists
     if(!os::file_exists(LMAKE_CONFIG_PATH)) {
         ERROR("No lmake.lua file found.");
         std::exit(1);
     }
 
+    // Setups the settings to be passed to lmake
     lmake::settings settings;
     for(int i = 0; i < argc; i++) {
         if(std::string(argv[i]) == std::string("--recompile")) {
@@ -65,21 +68,28 @@ int main(int argc, char** argv) {
         } 
     }
 
+    // Initializes lmake and loads the configuration file
     lmake::initialize(settings);
     lmake::load_from_file(LMAKE_CONFIG_PATH);
 
+    // Checks if variables need to be changed and changes 
+    // variable values if needed
     for (int i = 0; i < argc; i++) {
         std::string argvi = std::string(argv[i]);
         size_t equals_index = argvi.find("=");
         if(equals_index != std::string::npos) {
+            // Split the left and right parts of the equals 
             std::string left_part = argvi.substr(0, equals_index);
             std::string right_part = argvi.substr(equals_index + 1, argvi.size() - equals_index);
 
+            // Changes the left part named variable to value right_part
             lmake::change_variable(left_part, right_part);
         }
     }
     
 
+    // Executes the target given by the command line arguments
+    // if no target is specified an error message is printed
     if(argc >= 1) {
         lmake::execute_target(argv[1]);
     } else {

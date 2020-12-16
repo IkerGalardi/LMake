@@ -34,14 +34,15 @@ static std::vector<char*> string_split_null_terminated(const std::string& str, c
     std::string temp;
     std::istringstream stream(str.c_str());
 
+    // Converts the std::string vector to a char* vector
     while(std::getline(stream, temp, delimeter)) {
         if(temp.empty()) continue;
-        //res.push_back(std::malloc((temp.size() + 1) * sizeof(char)));
         void* mem = std::calloc(temp.size() + 1, sizeof(char));
         res.push_back(static_cast<char*>(mem));
         std::strcpy(res[res.size() - 1], temp.c_str());
     }
 
+    // Adds the end string necessary for the linux kernel
     res.push_back(static_cast<char*>(nullptr));
 
     return res;
@@ -75,6 +76,9 @@ namespace os {
         if(pid == 0) { // child process
             std::string temp = std::string(prog) + " " + args;
             auto args = string_split_null_terminated(temp, ' ');
+
+            // Checks if a path is passed, if it is no PATH variable
+            // is used, when no passed a PATH is used
             if(prog.find("/") != std::string::npos) {
                 execv(prog.c_str(), args.data());
             } else {
