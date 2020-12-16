@@ -48,26 +48,41 @@ static std::vector<char*> string_split_null_terminated(const std::string& str, c
     return res;
 }
 
+bool check_in_path(const std::string& prog) {
+    if(prog.find("/") != std::string::npos) {
+        return os::file_exists(prog);
+    }
+
+    std::istringstream stream(getenv("PATH"));
+    std::string tmp;
+    while(std::getline(stream, tmp, ':')) {
+        std::string program_path = tmp + "/" + prog;
+        if(os::file_exists(program_path)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 namespace os {
     process run_process(std::string prog, std::string args) {
-        pid_t pid = fork();
-
-        if(!os::file_exists(prog)) {
-            ERROR("Process %s doesn't exist.", prog);
+        if(!check_in_path(prog)) {
+            ERROR("Process %s doesn't exist.", prog.c_str());
             std::exit(1);
         }
 
+        pid_t pid = fork();
         if(pid == 0) { // child process
             std::string temp = std::string(prog) + " " + args;
             auto args = string_split_null_terminated(temp, ' ');
 
-            int err;
             // Checks if a path is passed, if it is no PATH variable
             // is used, when no passed a PATH is used
             if(prog.find("/") != std::string::npos) {
-                err = execv(prog.c_str(), args.data());
+                execv(prog.c_str(), args.data());
             } else {
-                err = execvp(prog.c_str(), args.data());
+                execvp(prog.c_str(), args.data());
             }
 
             ERROR("Cannot execute process.");
