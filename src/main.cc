@@ -49,24 +49,31 @@ int main(int argc, char** argv) {
         std::exit(0);
     }
 
+    // Setups the settings to be passed to lmake
+    lmake::settings settings;
+    for(int i = 0; i < argc; i++) {
+        std::string argvi(argv[i]);
+        if(argvi.find("--") != std::string::npos) {
+            if(std::string(argv[i]) == std::string("--recompile")) {
+                settings.force_recompile = true;
+            } else if(std::string(argv[i]) == std::string("--verbose")) {
+                settings.verbose = true;
+            } else if(std::string(argv[i]) == std::string("--debug")) {
+                settings.verbose = true;
+                settings.debug = true;
+            } else {
+                ERROR("Unknown flag passed");
+                std::exit(1);
+            } 
+        }
+    }
+
     // Checks if configuration file exists
     if(!os::file_exists(LMAKE_CONFIG_PATH)) {
         ERROR("No lmake.lua file found.");
         std::exit(1);
     }
 
-    // Setups the settings to be passed to lmake
-    lmake::settings settings;
-    for(int i = 0; i < argc; i++) {
-        if(std::string(argv[i]) == std::string("--recompile")) {
-            settings.force_recompile = true;
-        } else if(std::string(argv[i]) == std::string("--verbose")) {
-            settings.verbose = true;
-        } else if(std::string(argv[i]) == std::string("--debug")) {
-            settings.verbose = true;
-            settings.debug = true;
-        } 
-    }
 
     // Initializes lmake and loads the configuration file
     lmake::initialize(settings);
