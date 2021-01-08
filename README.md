@@ -1,5 +1,5 @@
 # LMake
-First of all, this project is currently on **heavy development**. As such, this software is not meant to be runned on production. The first stable release is planned for the end of the year. If you are using this software, all bug reports and suggestions are welcome!
+First of all, this project is currently on **heavy development**. As such, this software is not meant to be runned on production. The first stable release is planned for March. If you are using this software, all bug reports and suggestions are welcome!
 
 LuaMake or LMake is a statement based low level build system aimed to provide flexibility to modify all parts of how your binary is built. LMake is not a project generator, instead, invokes the compiler/linker when necesary.
 
