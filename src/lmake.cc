@@ -45,6 +45,7 @@ luavm vm;
 
 static std::string process_script(const std::string& file_contents, const std::string& containing_dir) {
     std::stringstream stream(file_contents);
+    std::stringstream result_stream("");
     std::string res;
 
     std::string temp;
@@ -75,14 +76,13 @@ static std::string process_script(const std::string& file_contents, const std::s
             }
 
             // Adds the content of the included file
-            res.append(std::string(included_file_contents.get()));
+            result_stream << std::string(included_file_contents.get()) << std::endl;
         } else {
             // Appends the readed line
-            res.append(temp);
-            res.append("\n");
+            result_stream << temp << std::endl;
         }
     }
-    return std::string(res);
+    return result_stream.str();
 }
 
 namespace lmake {
