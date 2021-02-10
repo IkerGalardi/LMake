@@ -46,7 +46,6 @@ luavm vm;
 static std::string process_script(const std::string& file_contents, const std::string& containing_dir) {
     std::stringstream stream(file_contents);
     std::stringstream result_stream("");
-    std::string res;
 
     std::string temp;
     while(std::getline(stream, temp)) {
