@@ -1,5 +1,7 @@
 #!/bin/sh
 
+make
+
 cd test
 
 lmake_executable="../build/lmake"
@@ -18,5 +20,11 @@ cd ..
 echo 
 echo "[+] Running variable changing test"
 cd chvar
+sh test.sh ../$lmake_executable
+cd ..
+
+echo 
+echo "[+] Running regex test"
+cd regex
 sh test.sh ../$lmake_executable
 cd ..
