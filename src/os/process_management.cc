@@ -25,9 +25,9 @@
 #include <sstream>
 
 #include <stringtoolbox/stringtoolbox.hh>
+#include <spdlog/spdlog.h>
 
 #include "filesystem.hh"
-#include "debug.hh"
 
 static std::vector<char*> string_split_null_terminated(const std::string& str, char delimeter) {
     std::vector<char*> res;
@@ -68,7 +68,7 @@ bool check_in_path(const std::string& prog) {
 namespace os {
     process run_process(std::string prog, std::string args) {
         if(!check_in_path(prog)) {
-            ERROR("Process %s doesn't exist.", prog.c_str());
+            spdlog::error("Process %s doesn't exist.", prog.c_str());
             std::exit(1);
         }
 
@@ -85,7 +85,7 @@ namespace os {
                 execvp(prog.c_str(), args.data());
             }
 
-            ERROR("Cannot execute process.");
+            spdlog::error("Cannot execute process.");
             std::exit(5);
         }
         return pid;

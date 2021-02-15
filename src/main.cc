@@ -18,15 +18,17 @@
 #include <cstring>
 
 #include <lua/lua.hpp>
+#include <spdlog/spdlog.h>
 
 #include "os/filesystem.hh"
 #include "lmake.hh"
 #include "test/test.hh"
-#include "debug.hh"
 
 #define LMAKE_CONFIG_PATH "./lmake.lua"
 
 int main(int argc, char** argv) {
+    spdlog::set_pattern("%^[%l] %v%$");
+
     // Checks if "--help" flag is passed, if it is information is printed
     if(argc <= 1 || std::strcmp(argv[1], "--help") == 0) {
         std::cout << "[+] Usage: lmake <target> <flags>\n";
@@ -62,7 +64,7 @@ int main(int argc, char** argv) {
                 settings.verbose = true;
                 settings.debug = true;
             } else {
-                ERROR("Unknown flag passed");
+                spdlog::error("Unknown flag passed");
                 std::exit(1);
             } 
         }
@@ -70,7 +72,7 @@ int main(int argc, char** argv) {
 
     // Checks if configuration file exists
     if(!os::file_exists(LMAKE_CONFIG_PATH)) {
-        ERROR("No lmake.lua file found.");
+        spdlog::error("No lmake.lua file found.");
         std::exit(1);
     }
 
@@ -100,7 +102,7 @@ int main(int argc, char** argv) {
     if(argc >= 1) {
         lmake::execute_target(argv[1]);
     } else {
-        ERROR("No target specified.");
+        spdlog::error("No target specified.");
         std::exit(1);
     }
     

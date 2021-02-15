@@ -26,15 +26,13 @@
 #include <string.h>
 
 #include <stringtoolbox/stringtoolbox.hh>
+#include <spdlog/spdlog.h>
 
 #include "luavm.hh"
 #include "os/filesystem.hh"
 #include "os/process_management.hh"
 #include "utils.hh"
 #include "lmake_func.hh"
-
-#define CONFIG_DEBUG
-#include "debug.hh"
 
 /// TODO: std::exit() wrong, stop executing script and set last error
 
@@ -61,7 +59,7 @@ static std::string process_script(const std::string& file_contents, const std::s
             // Check if file exists, if not, throw an error and quit
             if(!os::file_exists(substring.c_str())) {
                 /// TODO: maybe print the line in which the file is trying to be included
-                ERROR("The files %s can't be opened.", substring);
+                spdlog::error("The files {} can't be opened.", substring);
                 std::exit(1);
             }
 
@@ -175,7 +173,7 @@ namespace lmake {
                 lua_pushstring(vm, result.c_str());
                 return 1;
             } else {
-                ERROR("There is no regex in: %s", to_match);
+                spdlog::error("There is no regex in: {}", to_match);
                 std::exit(1);
             }
             return 1;
@@ -197,14 +195,14 @@ namespace lmake {
 
     void load_from_string(std::string config_string) {
         if(!vm.execute_script(config_string)) {
-            ERROR("An error has ocurred when executing script");
+            spdlog::error("An error has ocurred when executing script");
             std::exit(1);
         }
     }
 
     void execute_target(std::string target) {
         if(!vm.function_exists(target)) {
-            ERROR("Target %s does not exist.", target);
+            spdlog::error("Target {} does not exist.", target);
             std::exit(1);
         }
 
