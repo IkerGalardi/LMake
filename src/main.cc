@@ -27,7 +27,7 @@
 #define LMAKE_CONFIG_PATH "./lmake.lua"
 
 int main(int argc, char** argv) {
-    spdlog::set_pattern("%^%v%$");
+    spdlog::set_pattern("%^[%l] %v%$");
 
     // Checks if "--help" flag is passed, if it is information is printed
     if(argc <= 1 || std::strcmp(argv[1], "--help") == 0) {
