@@ -41,54 +41,31 @@
 
 luavm vm;
 
-static std::string process_script(const std::string& file_contents, const std::string& containing_dir) {
-    std::stringstream stream(file_contents);
-    std::string res;
-
-    std::string temp;
-    while(std::getline(stream, temp)) {
-        if(strncmp(temp.c_str(), "--", strlen("--")) == 0) {
-            continue;
-        }
-        if(temp.find("lmake_include") != std::string::npos) {
-            // Get the parameter passed to lmake_include command
-            size_t bracket_left_index = temp.find("(\"") + 2;
-            size_t substring_size = temp.find("\")")  - bracket_left_index;
-            std::string substring = temp.substr(bracket_left_index, substring_size);
-
-            // Check if file exists, if not, throw an error and quit
-            if(!os::file_exists(substring.c_str())) {
-                /// TODO: maybe print the line in which the file is trying to be included
-                spdlog::error("The files {} can't be opened.", substring);
-                std::exit(1);
-            }
-
-            auto included_file_contents = os::read_file(substring);
-
-            // Get the path to the included file
-            std::string directory;
-            const size_t last_slash_idx = substring.rfind('\\');
-            if (std::string::npos != last_slash_idx) {
-                directory = substring.substr(0, last_slash_idx);
-            }
-
-            // Adds the content of the included file
-            res.append(std::string(included_file_contents.get()));
-        } else {
-            // Appends the readed line
-            res.append(temp);
-            res.append("\n");
-        }
-    }
-    return std::string(res);
-}
-
 namespace lmake {
     void initialize(const settings& settings) {
         lmake::func::set_settings(settings);
 
         lmake::func::chdir(os::get_dir());
 
+        vm.add_native_function([](lua_State* vm) -> int {
+            const char* to_include_path = lua_tostring(vm, -1);
+
+            // Check if file exits, if not erro and exit
+            if(!os::file_exists(to_include_path)) {
+                spdlog::error("The files {} can't be opened.", to_include_path);
+                std::exit(1);
+            }
+
+            auto to_include = os::read_file(to_include_path);
+            luaL_loadstring(vm, to_include.get());
+            if(lua_pcall(vm, 0, 0, 0) != LUA_OK) {
+                spdlog::error("Error including file: {}", lua_tostring(vm, -1));
+                std::exit(1);
+            }
+
+            return 1;
+        }, "lmake_include");
+        
         vm.add_native_function([](lua_State* vm) -> int {
             auto version = lua_tonumber(vm, -1);
             lmake::func::compatibility_version(version);
@@ -189,8 +166,7 @@ namespace lmake {
 
     void load_from_file(std::string config_path) {
         auto file_buffer = os::read_file(config_path);
-        std::string processed = process_script(file_buffer.get(), config_path);
-        lmake::load_from_string(processed.c_str());
+        lmake::load_from_string(file_buffer.get());
     }
 
     void load_from_string(std::string config_string) {
