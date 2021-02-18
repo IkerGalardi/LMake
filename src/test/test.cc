@@ -14,6 +14,8 @@
  *    - Iker Galardi
  */
 
+#include "pch.hh"
+
 #include "test.hh"
 
 #include <unistd.h>
