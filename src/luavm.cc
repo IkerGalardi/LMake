@@ -14,6 +14,8 @@
  *    - Iker Galardi
  */
 
+#include "pch.hh"
+
 #include "luavm.hh"
 
 #include <iostream>

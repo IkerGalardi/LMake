@@ -15,6 +15,8 @@
  *    - Iñigo Gastesi
  */
 
+#include "pch.hh"
+
 #include "lmake_func.hh"
 
 #include <memory>

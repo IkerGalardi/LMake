@@ -20,3 +20,5 @@
 // Own includes
 #include "luavm.hh"
 #include "utils.hh"
+#include "os/filesystem.hh"
+#include "os/process_management.hh"
