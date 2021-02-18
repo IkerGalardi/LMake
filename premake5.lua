@@ -9,8 +9,8 @@ project "lmake"
     cppdialect "C++17"
     staticruntime "on"
 
-    pchheader "pch.hh"
-	pchsource "pch.cc"
+    pchheader "src/pch.hh"
+	pchsource "src/pch.cc"
 
     targetdir("build/")
     objdir("build/obj/")
