@@ -33,8 +33,6 @@
 #include "lmake.hh"
 #include "utils.hh" 
 
-#define PRINT_IF(m, b) if(b) std::cout << m << std::endl
-
 static struct {
     struct {
         std::string compiler;
@@ -182,7 +180,9 @@ namespace lmake { namespace func {
     }
 
     void chdir(const std::string& dir) {
-        PRINT_IF("[D] Changing the directory to " << dir, lmake_data.settings.debug);
+        if(lmake_data.settings.debug)
+            spdlog::info("Changing directory to: {}", dir);
+        
         if(os::change_dir(dir.c_str())) {
             lmake_data.been_dirs.push(os::get_dir());
         } else {
