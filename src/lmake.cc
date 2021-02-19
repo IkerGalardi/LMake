@@ -34,11 +34,6 @@
 #include "utils.hh"
 #include "lmake_func.hh"
 
-/// TODO: std::exit() wrong, stop executing script and set last error
-
-
-#define PRINT_IF(m, b) if(b) std::cout << m << std::endl
-
 luavm vm;
 
 namespace lmake {
