@@ -19,6 +19,8 @@
 #include <iostream>
 #include <cstring>
 
+#include <spdlog/spdlog.h>
+
 luavm::luavm() {
     vm = luaL_newstate();
     luaL_openlibs(vm);
@@ -36,6 +38,7 @@ void luavm::add_native_function(luafunc func, std::string name) {
     lua_setglobal(vm, name.c_str());
 }
 
+/// TODO: why return anything if always is true what you return
 bool luavm::execute_script(std::string script) {
     this->script = script;
 
@@ -43,8 +46,9 @@ bool luavm::execute_script(std::string script) {
     // if an error has ocurred last_error saves the lua execution error.
     luaL_loadstring(vm, script.c_str());
     if (lua_pcall(vm, 0, 0, 0) != LUA_OK) {
-        last_error = std::string(lua_tostring(vm, -1));
-        return false;
+        auto execution_error = std::string(lua_tostring(vm, -1));
+        spdlog::error("Script error: {}", execution_error);
+        std::exit(-1);
     }
     
     return true;
@@ -64,7 +68,11 @@ bool luavm::function_exists(std::string fn_name) {
 void luavm::execute_function(std::string fn_name) {
     // Selects the given function and calls it
     lua_getglobal(vm, fn_name.c_str());
-    lua_pcall(vm, 0, 0, 0);
+    if(lua_pcall(vm, 0, 0, 0) != LUA_OK) {
+        auto execution_error = std::string(lua_tostring(vm, -1));
+        spdlog::error("Script error: {}", execution_error);
+        std::exit(-1);
+    }
 }
 
 void luavm::change_variable(const std::string& name, const std::string& value) {
