@@ -18,5 +18,10 @@ project "lmake"
     libdirs {"lib/bin"}
     links {"lua53", "dl", "spdlog"}
 
-    filter "system:linux"
-        defines { "LMAKE_OS_LINUX" }
+    filter "configurations:Debug"
+        symbols "on"
+        optimize "off"
+    filter "configurations:Release"
+        optimize "on"
+        symbols "off"
+        runtime "Release"

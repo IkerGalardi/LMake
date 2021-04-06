@@ -21,16 +21,13 @@ endif
 RESCOMP = windres
 TARGETDIR = build
 TARGET = $(TARGETDIR)/lmake
-DEFINES += -DLMAKE_OS_LINUX
+DEFINES +=
 INCLUDES += -Ilib/include -Isrc
 FORCE_INCLUDE +=
 ALL_CPPFLAGS += $(CPPFLAGS) -MMD -MP $(DEFINES) $(INCLUDES)
-ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64
-ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -std=c++17
 ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)
-LIBS += -llua53 -ldl
+LIBS += -llua53 -ldl -lspdlog
 LDDEPS +=
-ALL_LDFLAGS += $(LDFLAGS) -Llib/bin -L/usr/lib64 -m64 -s
 LINKCMD = $(CXX) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
 define PREBUILDCMDS
 endef
@@ -41,9 +38,15 @@ endef
 
 ifeq ($(config),debug)
 OBJDIR = build/obj/Debug
+ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -O0 -g
+ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -O0 -g -std=c++17
+ALL_LDFLAGS += $(LDFLAGS) -Llib/bin -L/usr/lib64 -m64
 
 else ifeq ($(config),release)
 OBJDIR = build/obj/Release
+ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -O2
+ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -O2 -std=c++17
+ALL_LDFLAGS += $(LDFLAGS) -Llib/bin -L/usr/lib64 -m64 -s
 
 endif
 
