@@ -42,7 +42,7 @@ namespace os {
         std::fread(buffer.get(), length, 1, file_path);
         std::fclose(file_path);
 
-        buffer.get()[length + 1] = '\0';
+        buffer.get()[length] = '\0';
 
         return buffer;
     }
