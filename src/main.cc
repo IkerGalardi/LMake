@@ -19,6 +19,7 @@
 
 #include <lua/lua.hpp>
 #include <spdlog/spdlog.h>
+#include <spdlog/common.h>
 
 #include "os/filesystem.hh"
 #include "lmake.hh"
@@ -28,6 +29,10 @@
 
 int main(int argc, char** argv) {
     spdlog::set_pattern("%^[%l] %v%$");
+
+    #ifdef SPDLOG_HEADER_ONLY
+        spdlog::warn("spdlog is being used as a header only library");
+    #endif
 
     // Checks if "--help" flag is passed, if it is information is printed
     if(argc <= 1 || std::strcmp(argv[1], "--help") == 0) {
