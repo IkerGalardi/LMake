@@ -16,7 +16,9 @@ project "lmake"
     includedirs {"lib/include", "src"}
 
     libdirs {"lib/bin"}
-    links {"lua53", "dl", "spdlog"}
+    links {"lua53", "dl", "spdlog", "pthread"}
+
+    defines { "SPDLOG_COMPILED_LIB" }
 
     filter "configurations:Debug"
         symbols "on"
