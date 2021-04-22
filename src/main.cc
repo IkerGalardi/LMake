@@ -39,8 +39,13 @@ int main(int argc, char** argv) {
         std::cout << "[+] Usage: lmake <target> <flags>\n";
         std::cout << "    · target: lua function to be executed.\n";
         std::cout << "    · flags: aditional flags.\n";
+        std::cout << "        * --recompile\n";
+        std::cout << "        * --verbose\n";
+        std::cout << "        * --debug\n";
+        std::cout << std::endl;
         std::cout << "[+] Usage: lmake --help\n";
         std::cout << "    Shows this very helpful message\n";
+        std::cout << std::endl;
         std::cout << "[+] Usage: lmake --version\n";
         std::cout << "    Shows lmake and luavm versions\n";
         std::exit(0);
