@@ -21,12 +21,12 @@ endif
 RESCOMP = windres
 TARGETDIR = build
 TARGET = $(TARGETDIR)/lmake
-DEFINES +=
+DEFINES += -DSPDLOG_COMPILED_LIB
 INCLUDES += -Ilib/include -Isrc
 FORCE_INCLUDE +=
 ALL_CPPFLAGS += $(CPPFLAGS) -MMD -MP $(DEFINES) $(INCLUDES)
 ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)
-LIBS += -llua53 -ldl -lspdlog
+LIBS += -llua53 -ldl -lspdlog -lpthread
 LDDEPS +=
 LINKCMD = $(CXX) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
 define PREBUILDCMDS
