@@ -43,7 +43,13 @@ namespace lmake {
         lmake::func::chdir(os::get_dir());
 
         vm.add_native_function([](lua_State* vm) -> int {
-            const char* to_include_path = lua_tostring(vm, -1);
+            const char* to_include_path;
+            try {
+                to_include_path = lua_tostring(vm, -1);
+            } catch(const std::exception& e) {
+                spdlog::error("Incorrect parameters sent to lmake_include");
+                std::exit(-1);
+            }
 
             // Check if file exits, if not erro and exit
             if(!os::file_exists(to_include_path)) {
@@ -62,56 +68,120 @@ namespace lmake {
         }, "lmake_include");
         
         vm.add_native_function([](lua_State* vm) -> int {
-            auto version = lua_tonumber(vm, -1);
+            double version;
+            try {
+                version = lua_tonumber(vm, -1);
+            } catch(const std::exception& e) {
+                spdlog::error("Incorrect parameters sent to lmake_compatibility_version");
+                std::exit(-1);
+            }
             lmake::func::compatibility_version(version);
             return 1;
         }, "lmake_compatibility_version");
 
         vm.add_native_function([](lua_State* vm) -> int {
-            lmake::func::set_compiler(std::string(lua_tostring(vm, -1)));
+            std::string compiler;
+            try {
+                compiler = lua_tostring(vm, -1);
+            } catch(const std::exception& e) {
+                spdlog::error("Incorrect parameters sent to lmake_set_compiler");
+                std::exit(-1);
+            }
+            lmake::func::set_compiler(compiler);
             return 1;
         }, "lmake_set_compiler");
 
         vm.add_native_function([](lua_State* vm) -> int {
-            lmake::func::set_compiler_flags(std::string(lua_tostring(vm, -1)));
+            std::string compiler_flags;
+            try {
+                compiler_flags = lua_tostring(vm, -1);
+            } catch(const std::exception& e) {
+                spdlog::error("Incorrect parameters sent to lmake_set_compiler_flags");
+                std::exit(-1);
+            }
+            lmake::func::set_compiler_flags(compiler_flags);
             return 1;
         }, "lmake_set_compiler_flags");
 
         vm.add_native_function([](lua_State* vm) -> int {
-            std::string out_regex = std::string(lua_tostring(vm, -1));
+            std::string out_regex;
+            try {
+                out_regex = std::string(lua_tostring(vm, -1));
+            } catch(const std::exception& e) {
+                spdlog::error("Incorrect parameters sent to lmake_set_compiler_out");
+            }
             lmake::func::set_compiler_out(out_regex);
             return 1;
         }, "lmake_set_compiler_out");
 
         vm.add_native_function([](lua_State* vm) -> int {
-            std::string source_files = std::string(lua_tostring(vm, -1));
+            std::string source_files;
+            try {
+                source_files = std::string(lua_tostring(vm, -1));
+            } catch(const std::exception& e) {
+                spdlog::error("Incorrect parameters sent to lmake_compile");
+                std::exit(-1);
+            }
             lmake::func::compile(source_files);
             return 1;
         }, "lmake_compile");
 
         vm.add_native_function([](lua_State* vm) -> int {
-            lmake::func::set_linker(std::string(lua_tostring(vm, -1)));
+            std::string linker;
+            try {
+                linker = std::string(lua_tostring(vm, -1));
+            } catch(const std::exception& e) {
+                spdlog::error("Incorrect parameters sent to lmake_set_linker");
+                std::exit(-1);
+            }
+            lmake::func::set_linker(linker);
             return 1;
         }, "lmake_set_linker");
 
         vm.add_native_function([](lua_State* vm) -> int {
-            lmake::func::set_linker_flags(std::string(lua_tostring(vm, -1)));
+            std::string linker_flags;
+            try {
+                linker_flags = std::string(lua_tostring(vm, -1));
+            } catch(const std::exception& e) {
+                spdlog::error("Incorrect parameters sent to lmake_set_linker_flags");
+                std::exit(-1);
+            }
+            lmake::func::set_linker_flags(linker_flags);
             return 1;
         }, "lmake_set_linker_flags");
 
         vm.add_native_function([](lua_State* vm) -> int {
-            lmake::func::set_linker_out(std::string(lua_tostring(vm, -1)));
+            std::string linker_out;
+            try {
+                linker_out = std::string(lua_tostring(vm, -1));
+            } catch(const std::exception& e) {
+                spdlog::error("Incorrect parameters sent to lmake_set_linker_out");
+                std::exit(-1);
+            }
+            lmake::func::set_linker_out(linker_out);
             return 1;
         }, "lmake_set_linker_out");
 
         vm.add_native_function([](lua_State* vm) -> int {
-            std::string obj_files = std::string(lua_tostring(vm, -1));
+            std::string obj_files;
+            try {
+                obj_files = std::string(lua_tostring(vm, -1));
+            } catch(const std::exception& e) {
+                spdlog::error("Incorrect parameters sent to lmake_link");
+                std::exit(-1);
+            }
             lmake::func::link(obj_files);
             return 1;
         }, "lmake_link");
 
         vm.add_native_function([](lua_State* vm) -> int {
-            std::string dir = std::string(lua_tostring(vm, -1));
+            std::string dir;
+            try {
+                dir = std::string(lua_tostring(vm, -1));
+            } catch(const std::exception& e) {
+                spdlog::error("Incorrect parameters sent to lmake_chdir");
+                std::exit(-1);
+            }
             lmake::func::chdir(dir);
             return 1;
         }, "lmake_chdir");
@@ -123,7 +193,13 @@ namespace lmake {
 
 
         vm.add_native_function([](lua_State* vm) -> int {
-            std::string command = lua_tostring(vm, -1);
+            std::string command;
+            try {
+                command = lua_tostring(vm, -1);
+            } catch(const std::exception& e) {
+                spdlog::error("Incorrect parameters sent to lmake_exec");
+                std::exit(-1);
+            }
             int exit_code = lmake::func::exec(command);
             lua_pushnumber(vm, (lua_Number)exit_code);
 
@@ -131,7 +207,13 @@ namespace lmake {
         }, "lmake_exec");
        
         vm.add_native_function([](lua_State* vm) -> int {
-            std::string to_match = std::string(lua_tostring(vm, -1));
+            std::string to_match;
+            try {
+                to_match = std::string(lua_tostring(vm, -1));
+            } catch(const std::exception& e) {
+                spdlog::error("Incorrect parameters sent to lmake_find");
+                std::exit(-1);
+            }
 
             // Checks what regex to use and calls the corresponding functions
             size_t double_pos = to_match.find("**");
@@ -153,7 +235,12 @@ namespace lmake {
 
 
         vm.add_native_function([](lua_State* vm) -> int {
-            std::string msg = std::string(lua_tostring(vm, -1));
+            std::string msg;
+            try {
+                msg = std::string(lua_tostring(vm, -1));
+            } catch(const std::exception& e) {
+                spdlog::error("Incorrect parameters sent to lmake_error");
+            }
             lmake::func::error(msg); 
             return 1;
         }, "lmake_error");
