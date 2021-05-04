@@ -62,7 +62,13 @@ namespace lmake {
         }, "lmake_include");
         
         vm.add_native_function([](lua_State* vm) -> int {
-            auto version = lua_tonumber(vm, -1);
+            std::string version;
+            try {
+                version = lua_tostring(vm, -1);
+            } catch(const std::exception& e) {
+                spdlog::error("Incorrect parameters passed to lmake_compatibility_version");
+                std::exit(-1);
+            }
             lmake::func::compatibility_version(version);
             return 1;
         }, "lmake_compatibility_version");
