@@ -1,4 +1,4 @@
-lmake_compatibility_version(1)
+lmake_compatibility_version("1.0.0")
 
 function build()
     -- Compile the source files
