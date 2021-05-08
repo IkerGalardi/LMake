@@ -28,3 +28,9 @@ echo "[+] Running regex test"
 cd regex
 sh test.sh ../$lmake_executable
 cd ..
+
+echo 
+echo "[+] Parameter tests"
+cd params
+sh test.sh ../$lmake_executable
+cd ..
