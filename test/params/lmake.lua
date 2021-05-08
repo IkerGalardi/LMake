@@ -1,25 +1,51 @@
-function test_noparams()
-    lmake_compatibility_version()
-    
-    -- Test compilation functions
+function test_noparams1()
     lmake_set_compiler()
+end
+
+function test_noparams2()
     lmake_set_compiler_flags()
+end
+
+function test_noparams3()
     lmake_set_compiler_out()
+end
+
+function test_noparams4()
     lmake_compile()
-    
-    -- Test linking functions
+end
+
+function test_noparams5()
     lmake_set_linker()
+end
+
+function test_noparams6()
     lmake_set_linker_flags()
+end
+
+function test_noparams7()
     lmake_set_linker_out()
+end
+
+function test_noparams8()
     lmake_link()
+end
 
-    -- Test directory function
+function test_noparams9()
     lmake_chdir()
+end
+
+function test_noparams10()
     lmake_last_dir()
+end
 
+function test_noparams11()
     lmake_exec()
+end
 
+function test_noparams12()
     lmake_error()
+end
 
+function test_noparams13()
     lmake_find()
 end
