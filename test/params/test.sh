@@ -27,14 +27,11 @@ $1 test_noparams8
 echo "-- lmake_chdir"
 $1 test_noparams9
 
-echo "-- lmake_last_dir"
+echo "-- lmake_exec"
 $1 test_noparams10
 
-echo "-- lmake_exec"
+echo "-- lmake_error"
 $1 test_noparams11
 
-echo "-- lmake_error"
-$1 test_noparams12
-
 echo "-- lmake_find"
-$1 test_noparams13
+$1 test_noparams12

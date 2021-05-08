@@ -35,17 +35,13 @@ function test_noparams9()
 end
 
 function test_noparams10()
-    lmake_last_dir()
-end
-
-function test_noparams11()
     lmake_exec()
 end
 
-function test_noparams12()
+function test_noparams11()
     lmake_error()
 end
 
-function test_noparams13()
+function test_noparams12()
     lmake_find()
 end
