@@ -58,10 +58,23 @@ namespace lmake { namespace func {
         lmake_data.settings = settings;
     }
 
-    void compatibility_version(float compatibility_version) {
-        if(compatibility_version != LMAKE_COMPAT_VERSION) {
-            spdlog::error("Incompatible version");
-            std::exit(0);
+    void compatibility_version(const std::string& version) {
+        auto versions = stringtoolbox::split(version, '.');
+        if(versions.size() != 3) {
+            spdlog::error("Incorrect formatting of version");
+            std::exit(-1);
+        }
+        try {
+            if(std::stoi(versions[0]) != LMAKE_VERSION_MAJOR) {
+                spdlog::error("Major versions differ, incompatible file");
+                std::exit(-1);
+            } else if(std::stoi(versions[1]) < LMAKE_VERSION_MINOR) {
+                spdlog::error("Minor version is smaller, some functions might not be implemented");
+                std::exit(-1);
+            }
+        } catch(const std::exception& e) {
+            spdlog::error("Incorrect formatting of version");
+            std::exit(-1);
         }
     }
 

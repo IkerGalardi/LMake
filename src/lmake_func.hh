@@ -35,7 +35,7 @@ namespace lmake { namespace func {
      * 
      * @param compatibility_version: version major.minor format
      */
-    void compatibility_version(float compatibility_version);
+    void compatibility_version(const std::string& compatibility_version);
 
     /*
      * Sets the compiler specified on the context
