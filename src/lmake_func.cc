@@ -118,7 +118,7 @@ namespace lmake { namespace func {
             }
 
             if(lmake_data.settings.verbose) {
-                std::cout << "[+]" << compiler + " " + files[i] + " -c " + flags + " -o " + obj_name << std::endl;
+                std::cout << "[+] " << compiler + " " + files[i] + " -c " + flags + " -o " + obj_name << std::endl;
             } else {
                 std::cout << "[+] Compiling " << files[i] << std::endl;
             }
