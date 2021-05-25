@@ -21,6 +21,7 @@
 constexpr int LMAKE_VERSION_MAJOR = 1;
 constexpr int LMAKE_VERSION_MINOR = 0;
 constexpr int LMAKE_VERSION_PATCH = 0;
+const std::string LMAKE_VERSION_TYPE("BETA");
 
 namespace lmake {
     struct settings {
