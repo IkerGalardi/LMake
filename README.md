@@ -1,4 +1,6 @@
 # LMake
+This branch is where all the stable versions reside, if you want to check development versions go to check the 'dev' branch.
+
 LuaMake or LMake is a statement based low level build system aimed to provide flexibility to modify all parts of how your binary is built. LMake is not a project generator, instead, invokes the compiler/linker when necesary.
 
 LMake takes low level seriously, this means that you are able to modify the build commands down to the flags passed to the compiler or linker. This gives you the flexibility needed to, for example, create the build system to compile and link an entire operating system. The only thing LMake takes care off is not to recompile files that haven't been edited.
