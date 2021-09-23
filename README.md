@@ -1,6 +1,4 @@
 # LMake
-First of all, this project is currently on **heavy development**. If you are using this software, all bug reports and suggestions are welcome!
-
 LuaMake or LMake is a statement based low level build system aimed to provide flexibility to modify all parts of how your binary is built. LMake is not a project generator, instead, invokes the compiler/linker when necesary.
 
 LMake takes low level seriously, this means that you are able to modify the build commands down to the flags passed to the compiler or linker. This gives you the flexibility needed to, for example, create the build system to compile and link an entire operating system. The only thing LMake takes care off is not to recompile files that haven't been edited.
