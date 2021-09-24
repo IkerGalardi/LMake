@@ -296,7 +296,7 @@ namespace lmake { namespace func {
             "\\."
         );
 
-        std::regex regex_obj(regex_complete);
+        const std::regex regex_obj(regex_complete);
         std::smatch match;
         std::string path = os::file_dir(regex);
 
@@ -306,20 +306,17 @@ namespace lmake { namespace func {
             path = "./";
         }
 
-        // Checks if there are any files on the corresponding directory, if not
-        // returns with an error
+        /// TODO: error checking from directory iterator??
         std::string result;
-        auto files = os::list_dir(path);
-        if(files.empty()) {
-            spdlog::error("Path of regex does not exist.");
-            std::exit(1);
-        }
+        std::filesystem::directory_iterator dir_iterator(path);
+        for(auto& dir_entry : dir_iterator) {
+            if(dir_entry.is_directory()) 
+                continue;
 
-        // Loops through the files and tests the regex
-        for(std::string file : files) {
-            if (std::regex_search(file, match, regex_obj)) {
-                result.append(file + " ");
-            }
+            // Check if the regex matches, if its true add it to the result list
+            const auto& entry_string = dir_entry.path().string();
+            if(std::regex_search(entry_string, match, regex_obj))
+                result.append(entry_string + " ");
         }
 
         return result;
