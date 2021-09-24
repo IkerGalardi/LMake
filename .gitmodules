@@ -1,0 +1,6 @@
+[submodule "lib/sources/spdlog"]
+	path = lib/sources/spdlog
+	url = https://github.com/gabime/spdlog
+[submodule "lib/sources/lua"]
+	path = lib/sources/lua
+	url = https://github.com/lua/lua
