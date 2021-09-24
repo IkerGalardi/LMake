@@ -9,28 +9,48 @@ ifndef verbose
 endif
 
 ifeq ($(config),debug)
+  own_spdlog_config = debug
+  own_lua_config = debug
   lmake_config = debug
 
 else ifeq ($(config),release)
+  own_spdlog_config = release
+  own_lua_config = release
   lmake_config = release
 
 else
   $(error "invalid configuration $(config)")
 endif
 
-PROJECTS := lmake
+PROJECTS := own_spdlog own_lua lmake
 
-.PHONY: all clean help $(PROJECTS) 
+.PHONY: all clean help $(PROJECTS) deps
 
 all: $(PROJECTS)
 
-lmake:
+deps: own_lua own_spdlog
+
+own_spdlog:
+ifneq (,$(own_spdlog_config))
+	@echo "==== Building own_spdlog ($(own_spdlog_config)) ===="
+	@${MAKE} --no-print-directory -C lib -f own_spdlog.make config=$(own_spdlog_config)
+endif
+
+own_lua:
+ifneq (,$(own_lua_config))
+	@echo "==== Building own_lua ($(own_lua_config)) ===="
+	@${MAKE} --no-print-directory -C lib -f own_lua.make config=$(own_lua_config)
+endif
+
+lmake: own_lua own_spdlog
 ifneq (,$(lmake_config))
 	@echo "==== Building lmake ($(lmake_config)) ===="
 	@${MAKE} --no-print-directory -C . -f lmake.make config=$(lmake_config)
 endif
 
 clean:
+	@${MAKE} --no-print-directory -C lib -f own_spdlog.make clean
+	@${MAKE} --no-print-directory -C lib -f own_lua.make clean
 	@${MAKE} --no-print-directory -C . -f lmake.make clean
 
 help:
@@ -43,6 +63,8 @@ help:
 	@echo "TARGETS:"
 	@echo "   all (default)"
 	@echo "   clean"
+	@echo "   own_spdlog"
+	@echo "   own_lua"
 	@echo "   lmake"
 	@echo ""
 	@echo "For more information, see https://github.com/premake/premake-core/wiki"

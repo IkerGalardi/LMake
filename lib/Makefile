@@ -19,16 +19,16 @@ endif
 # #############################################
 
 RESCOMP = windres
-TARGETDIR = build
-TARGET = $(TARGETDIR)/lmake
+TARGETDIR = bin
+TARGET = $(TARGETDIR)/libown_spdlog.a
 DEFINES += -DSPDLOG_COMPILED_LIB
-INCLUDES += -Ilib/sources -Ilib/sources/spdlog/include -Isrc
+INCLUDES += -Ilib/sources/spdlog/include
 FORCE_INCLUDE +=
 ALL_CPPFLAGS += $(CPPFLAGS) -MMD -MP $(DEFINES) $(INCLUDES)
 ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)
-LIBS += lib/bin/libown_lua.a lib/bin/libown_spdlog.a -ldl
-LDDEPS += lib/bin/libown_lua.a lib/bin/libown_spdlog.a
-LINKCMD = $(CXX) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
+LIBS +=
+LDDEPS +=
+LINKCMD = $(AR) -rcs "$@" $(OBJECTS)
 define PREBUILDCMDS
 endef
 define PRELINKCMDS
@@ -37,16 +37,16 @@ define POSTBUILDCMDS
 endef
 
 ifeq ($(config),debug)
-OBJDIR = build/obj/Debug
+OBJDIR = bin/spdlog_obj/Debug
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -O0 -g
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -O0 -g -std=c++17
-ALL_LDFLAGS += $(LDFLAGS) -Llib/bin -L/usr/lib64 -m64
+ALL_LDFLAGS += $(LDFLAGS) -L/usr/lib64 -m64
 
 else ifeq ($(config),release)
-OBJDIR = build/obj/Release
+OBJDIR = bin/spdlog_obj/Release
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -O2
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -O2 -std=c++17
-ALL_LDFLAGS += $(LDFLAGS) -Llib/bin -L/usr/lib64 -m64 -s
+ALL_LDFLAGS += $(LDFLAGS) -L/usr/lib64 -m64 -s
 
 endif
 
@@ -60,22 +60,20 @@ endif
 GENERATED :=
 OBJECTS :=
 
-GENERATED += $(OBJDIR)/filesystem.o
-GENERATED += $(OBJDIR)/lmake.o
-GENERATED += $(OBJDIR)/lmake_func.o
-GENERATED += $(OBJDIR)/luavm.o
-GENERATED += $(OBJDIR)/main.o
-GENERATED += $(OBJDIR)/process_management.o
-GENERATED += $(OBJDIR)/test.o
-GENERATED += $(OBJDIR)/utils.o
-OBJECTS += $(OBJDIR)/filesystem.o
-OBJECTS += $(OBJDIR)/lmake.o
-OBJECTS += $(OBJDIR)/lmake_func.o
-OBJECTS += $(OBJDIR)/luavm.o
-OBJECTS += $(OBJDIR)/main.o
-OBJECTS += $(OBJDIR)/process_management.o
-OBJECTS += $(OBJDIR)/test.o
-OBJECTS += $(OBJDIR)/utils.o
+GENERATED += $(OBJDIR)/async.o
+GENERATED += $(OBJDIR)/cfg.o
+GENERATED += $(OBJDIR)/color_sinks.o
+GENERATED += $(OBJDIR)/file_sinks.o
+GENERATED += $(OBJDIR)/fmt.o
+GENERATED += $(OBJDIR)/spdlog.o
+GENERATED += $(OBJDIR)/stdout_sinks.o
+OBJECTS += $(OBJDIR)/async.o
+OBJECTS += $(OBJDIR)/cfg.o
+OBJECTS += $(OBJDIR)/color_sinks.o
+OBJECTS += $(OBJDIR)/file_sinks.o
+OBJECTS += $(OBJDIR)/fmt.o
+OBJECTS += $(OBJDIR)/spdlog.o
+OBJECTS += $(OBJDIR)/stdout_sinks.o
 
 # Rules
 # #############################################
@@ -85,7 +83,7 @@ all: $(TARGET)
 
 $(TARGET): $(GENERATED) $(OBJECTS) $(LDDEPS) | $(TARGETDIR)
 	$(PRELINKCMDS)
-	@echo Linking lmake
+	@echo Linking own_spdlog
 	$(SILENT) $(LINKCMD)
 	$(POSTBUILDCMDS)
 
@@ -106,7 +104,7 @@ else
 endif
 
 clean:
-	@echo Cleaning lmake
+	@echo Cleaning own_spdlog
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) rm -f  $(TARGET)
 	$(SILENT) rm -rf $(GENERATED)
@@ -139,28 +137,25 @@ endif
 # File Rules
 # #############################################
 
-$(OBJDIR)/lmake.o: src/lmake.cc
+$(OBJDIR)/async.o: sources/spdlog/src/async.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/lmake_func.o: src/lmake_func.cc
+$(OBJDIR)/cfg.o: sources/spdlog/src/cfg.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/luavm.o: src/luavm.cc
+$(OBJDIR)/color_sinks.o: sources/spdlog/src/color_sinks.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/main.o: src/main.cc
+$(OBJDIR)/file_sinks.o: sources/spdlog/src/file_sinks.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/filesystem.o: src/os/filesystem.cc
+$(OBJDIR)/fmt.o: sources/spdlog/src/fmt.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/process_management.o: src/os/process_management.cc
+$(OBJDIR)/spdlog.o: sources/spdlog/src/spdlog.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/test.o: src/test/test.cc
-	@echo $(notdir $<)
-	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/utils.o: src/utils.cc
+$(OBJDIR)/stdout_sinks.o: sources/spdlog/src/stdout_sinks.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 

@@ -3,27 +3,31 @@ workspace "lmake"
     configurations {"Debug", "Release"}
     flags {"MultiProcessorCompile"}
 
-project "lmake"
-    kind "ConsoleApp"
-    language "C++"
-    cppdialect "C++17"
-    staticruntime "on"
+    group "deps"
+        include "lib"
 
-    targetdir("build/")
-    objdir("build/obj/")
+    group ""
+        project "lmake"
+            kind "ConsoleApp"
+            language "C++"
+            cppdialect "C++17"
+            staticruntime "on"
 
-    files {"src/**.cc", "src/**.hh"}
-    includedirs {"lib/sources/", "lib/sources/spdlog/include/", "src"}
+            targetdir("build/")
+            objdir("build/obj/")
 
-    libdirs {"lib/bin"}
-    links {"lua53", "dl", "spdlog", "pthread"}
+            files {"src/**.cc", "src/**.hh"}
+            includedirs {"lib/sources/", "lib/sources/spdlog/include/", "src"}
 
-    defines { "SPDLOG_COMPILED_LIB" }
+            libdirs {"lib/bin"}
+            links {"own_lua", "dl", "own_spdlog"}
 
-    filter "configurations:Debug"
-        symbols "on"
-        optimize "off"
-    filter "configurations:Release"
-        optimize "on"
-        symbols "off"
-        runtime "Release"
+            defines { "SPDLOG_COMPILED_LIB" }
+
+            filter "configurations:Debug"
+                symbols "on"
+                optimize "off"
+            filter "configurations:Release"
+                optimize "on"
+                symbols "off"
+                runtime "Release"
