@@ -197,7 +197,8 @@ namespace lmake { namespace func {
             spdlog::info("Changing directory to: {}", dir);
         
         if(os::change_dir(dir.c_str())) {
-            lmake_data.been_dirs.push(os::get_dir());
+            const auto& current_path = std::filesystem::current_path();
+            lmake_data.been_dirs.push(current_path.string());
         } else {
             spdlog::error("Specified directory can't be entered.");
             std::exit(1);

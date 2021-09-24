@@ -51,13 +51,6 @@ namespace os {
          return chdir(dir.c_str()) == 0;
     }
 
-    std::string get_dir() {
-        char* tmp = getcwd(NULL, 0);
-        std::string res(tmp);
-        std::free(tmp);
-        return res;
-    }
-
     bool compare_file_dates(const std::string& file_a, const std::string& file_b) {
         auto edited_a = std::filesystem::last_write_time(file_a);
         auto edited_b = std::filesystem::last_write_time(file_b);

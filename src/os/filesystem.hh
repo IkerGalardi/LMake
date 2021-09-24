@@ -43,13 +43,6 @@ namespace os {
     bool change_dir(const std::string& dir);
 
     /*
-     * Gets the working directory
-     * 
-     * @return: working directory path
-     */
-    std::string get_dir();
-
-    /*
      * Compares the dates of two files
      * 
      * @return: true if file_a is older than file_b, false if not
