@@ -16,74 +16,33 @@
 
 #include "filesystem.hh"
 
+#include <sys/mman.h>
+#include <fcntl.h>
+
 #include <cstdio>
 #include <unistd.h>
+#include <cstdlib>
+#include <cstring>
 #include <iostream>
 #include <filesystem>
 
 namespace os {
-    bool file_exists(const std::string& path) {
-        FILE *file;
-        if ((file = fopen(path.c_str(), "r"))) {
-            fclose(file);
-            return true;
-        }
-        return false;
-    }
-
     std::shared_ptr<char> read_file(const std::string& path) {
-        FILE* file_path = std::fopen(path.c_str(), "r");
-
-        std::fseek(file_path, 0, SEEK_END);
-        int length = std::ftell(file_path);
-        std::fseek(file_path, 0, SEEK_SET);
+        size_t file_size = std::filesystem::file_size(path);
         
-        std::shared_ptr<char> buffer(new char[length + 1], std::default_delete<char[]>());
-        std::fread(buffer.get(), length, 1, file_path);
-        std::fclose(file_path);
+        std::shared_ptr<char> buffer(new char[file_size + 1], std::default_delete<char[]>());
 
-        buffer.get()[length] = '\0';
+        // Map the file to address space
+        int fd = open(path.c_str(), O_RDONLY);
+        void* mapped_file_addr = mmap(NULL, file_size, PROT_READ, MAP_PRIVATE, fd, 0);
+
+        std::memcpy(buffer.get(), mapped_file_addr, file_size);
+
+        munmap(mapped_file_addr, file_size);
+        close(fd);
 
         return buffer;
     }
-
-    bool change_dir(const std::string& dir) {
-         return chdir(dir.c_str()) == 0;
-    }
-
-    std::string get_dir() {
-        char* tmp = getcwd(NULL, 0);
-        std::string res(tmp);
-        std::free(tmp);
-        return res;
-    }
-
-    bool compare_file_dates(const std::string& file_a, const std::string& file_b) {
-        auto edited_a = std::filesystem::last_write_time(file_a);
-        auto edited_b = std::filesystem::last_write_time(file_b);
-
-        return edited_a < edited_b;
-    }
-
-    std::vector<std::string> list_dir(const std::string& dir) {
-        try {
-            std::vector<std::string> res;
-
-            // Iterates through the directory files and adds them 
-            // to the result
-            std::filesystem::directory_iterator iterator(dir);
-            for(auto& entry : iterator) {
-                res.push_back(entry.path().string());
-            }
-
-            return res;
-        } catch(const std::exception& e) {
-            // When a filesystem exception occurs an empty
-            // string vector is returned
-            return std::vector<std::string>();
-        }
-    }
-
 
     std::string file_dir(const std::string& file) {
         std::string directory;

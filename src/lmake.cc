@@ -40,7 +40,7 @@ namespace lmake {
     void initialize(const settings& settings) {
         lmake::func::set_settings(settings);
 
-        lmake::func::chdir(os::get_dir());
+        lmake::func::chdir(std::filesystem::current_path().string());
 
         vm.add_native_function([](lua_State* vm) -> int {
             const char* to_include_path;
@@ -52,7 +52,7 @@ namespace lmake {
             }
 
             // Check if file exits, if not erro and exit
-            if(!os::file_exists(to_include_path)) {
+            if(!std::filesystem::exists(to_include_path)) {
                 spdlog::error("The files {} can't be opened.", to_include_path);
                 std::exit(1);
             }

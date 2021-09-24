@@ -17,16 +17,8 @@
 #pragma once 
 
 #include <memory>
-#include <vector>
 
 namespace os {
-
-    /*
-     * Check if the file exists on the filesystem
-     * 
-     * @param path: path to the file
-     */
-    bool file_exists(const std::string& path);
 
     /*
      * Reads the file and returns the buffer
@@ -34,36 +26,6 @@ namespace os {
      * @param path: path to the file
      */
     std::shared_ptr<char> read_file(const std::string& path);
-
-    /*
-     * Changes the directory of the process
-     * 
-     * @param path: path to the directory
-     */
-    bool change_dir(const std::string& dir);
-
-    /*
-     * Gets the working directory
-     * 
-     * @return: working directory path
-     */
-    std::string get_dir();
-
-    /*
-     * Compares the dates of two files
-     * 
-     * @return: true if file_a is older than file_b, false if not
-     */
-    bool compare_file_dates(const std::string& file_a, const std::string& file_b);
-
-    /*
-     * Returns an array of files and folders of a directory
-     * 
-     * @param dir: directory of folder to search
-     * 
-     * @return: Array of files and folders
-     */
-    std::vector<std::string> list_dir(const std::string& dir);
 
     /*
      * Returns the path to the specified file

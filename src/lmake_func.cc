@@ -122,9 +122,12 @@ namespace lmake { namespace func {
 
             /// TODO: rewrite this pls
             if(!lmake_data.settings.force_recompile) {
-                if(os::file_exists(obj_name)) {
-                    // Check file dates and if files exists
-                    if(os::file_exists(files[i]) && !os::compare_file_dates(obj_name, files[i])) {
+                // If the source file is newer than the object file, or the file object file does not
+                // exist, the source file should be compiled.
+                if(std::filesystem::exists(obj_name)) {
+                    const auto& obj_file_last_write = std::filesystem::last_write_time(obj_name);
+                    const auto& src_file_last_write = std::filesystem::last_write_time(files[i]);
+                    if(std::filesystem::exists(files[i]) && (obj_file_last_write > src_file_last_write)) {
                         continue;
                     }
                 }
@@ -196,9 +199,11 @@ namespace lmake { namespace func {
         if(lmake_data.settings.debug)
             spdlog::info("Changing directory to: {}", dir);
         
-        if(os::change_dir(dir.c_str())) {
-            lmake_data.been_dirs.push(os::get_dir());
-        } else {
+        try {
+            std::filesystem::current_path(dir);
+            const auto &current_path = std::filesystem::current_path();
+            lmake_data.been_dirs.push(current_path.string());
+        } catch(const std::exception& e) {
             spdlog::error("Specified directory can't be entered.");
             std::exit(1);
         }
@@ -221,7 +226,9 @@ namespace lmake { namespace func {
         std::string prev_dir = been_dirs.top();
             
         // Change to the previous directory
-        if(!os::change_dir(prev_dir)) {
+        try {
+            std::filesystem::current_path(prev_dir);
+        } catch (const std::exception& e) {
             spdlog::error("Specified directory can't be entered.");
             std::exit(1);
         }
@@ -237,11 +244,11 @@ namespace lmake { namespace func {
 
         /// TODO: maybe look inside PATH instead of manual checks
         std::string real_prog;
-        if(os::file_exists(splited_params[0])) {
+        if(std::filesystem::exists(splited_params[0])) {
             real_prog = splited_params[0];
-        } else if(os::file_exists("/bin/" + splited_params[0])) {
+        } else if(std::filesystem::exists("/bin/" + splited_params[0])) {
             real_prog = "/bin/" + splited_params[0];
-        } else if(os::file_exists("/usr/bin/" + splited_params[0])) {
+        } else if(std::filesystem::exists("/usr/bin/" + splited_params[0])) {
             real_prog = "/usr/bin/" + splited_params[0];
         } else {
             spdlog::error("%s was not found.", splited_params[0].c_str());
@@ -309,17 +316,19 @@ namespace lmake { namespace func {
         // Checks if there are any files on the corresponding directory, if not
         // returns with an error
         std::string result;
-        auto files = os::list_dir(path);
-        if(files.empty()) {
-            spdlog::error("Path of regex does not exist.");
-            std::exit(1);
-        }
-
-        // Loops through the files and tests the regex
-        for(std::string file : files) {
-            if (std::regex_search(file, match, regex_obj)) {
-                result.append(file + " ");
+        try {
+            // Loops through the files and tests the regex
+            std::filesystem::directory_iterator files(path);
+            for (auto& file : files) {
+                const auto& file_string = file.path().string();
+                if (std::regex_search(file_string, match, regex_obj)) {
+                    result.append(file_string + " ");
+                }
             }
+        }
+        catch (const std::exception &e) {
+            spdlog::error("Path of regex does not exist");
+            std::exit(1);
         }
 
         return result;
@@ -335,10 +344,10 @@ namespace lmake { namespace func {
 
         // Find recursivelly the files
         std::string result = "";
-        auto files = os::list_dir(left_part);
-        for(std::string& file : files) {
-            if(std::filesystem::is_directory(file)) {
-                std::string new_regex = file + "/**" + right_part;
+        std::filesystem::directory_iterator files(left_part);
+        for(auto& file : files) {
+            if(file.is_directory()) {
+                std::string new_regex = file.path().string() + "/**" + right_part;
                 result.append(find_recursive(new_regex));
             }
         }

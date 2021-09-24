@@ -23,6 +23,7 @@
 #include <iostream>
 #include <cstring>
 #include <sstream>
+#include <filesystem>
 
 #include <stringtoolbox/stringtoolbox.hh>
 #include <spdlog/spdlog.h>
@@ -50,14 +51,14 @@ static std::vector<char*> string_split_null_terminated(const std::string& str, c
 
 bool check_in_path(const std::string& prog) {
     if(prog.find("/") != std::string::npos) {
-        return os::file_exists(prog);
+        return std::filesystem::exists(prog);
     }
 
     std::istringstream stream(getenv("PATH"));
     std::string tmp;
     while(std::getline(stream, tmp, ':')) {
         std::string program_path = tmp + "/" + prog;
-        if(os::file_exists(program_path)) {
+        if(std::filesystem::exists(program_path)) {
             return true;
         }
     }
