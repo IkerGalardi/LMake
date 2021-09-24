@@ -20,7 +20,7 @@ workspace "lmake"
             includedirs {"lib/sources/", "lib/sources/spdlog/include/", "src"}
 
             libdirs {"lib/bin"}
-            links {"own_lua", "dl", "own_spdlog"}
+            links {"own_lua", "dl", "own_spdlog", "pthread"}
 
             defines { "SPDLOG_COMPILED_LIB" }
 

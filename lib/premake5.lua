@@ -8,7 +8,7 @@ project "own_spdlog"
     objdir("bin/spdlog_obj/")
 
     files {"sources/spdlog/src/**.cpp", "sources/spdlog/include/**.hh"}
-    includedirs {"lib/sources/spdlog/include/"}
+    includedirs {"sources/spdlog/include"}
 
     defines { "SPDLOG_COMPILED_LIB" }
 
@@ -29,7 +29,7 @@ project "own_lua"
     objdir("bin/lua_obj/")
 
     files {"sources/lua/**.c", "sources/lua/**.h"}
-    includedirs {"lib/sources/lua/"}
+    includedirs {"sources/lua/"}
 
     filter "configurations:Debug"
         symbols "on"
