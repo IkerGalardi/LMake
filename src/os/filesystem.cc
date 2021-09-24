@@ -65,26 +65,6 @@ namespace os {
         return edited_a < edited_b;
     }
 
-    std::vector<std::string> list_dir(const std::string& dir) {
-        try {
-            std::vector<std::string> res;
-
-            // Iterates through the directory files and adds them 
-            // to the result
-            std::filesystem::directory_iterator iterator(dir);
-            for(auto& entry : iterator) {
-                res.push_back(entry.path().string());
-            }
-
-            return res;
-        } catch(const std::exception& e) {
-            // When a filesystem exception occurs an empty
-            // string vector is returned
-            return std::vector<std::string>();
-        }
-    }
-
-
     std::string file_dir(const std::string& file) {
         std::string directory;
         

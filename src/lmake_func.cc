@@ -309,17 +309,19 @@ namespace lmake { namespace func {
         // Checks if there are any files on the corresponding directory, if not
         // returns with an error
         std::string result;
-        auto files = os::list_dir(path);
-        if(files.empty()) {
-            spdlog::error("Path of regex does not exist.");
-            std::exit(1);
-        }
-
-        // Loops through the files and tests the regex
-        for(std::string file : files) {
-            if (std::regex_search(file, match, regex_obj)) {
-                result.append(file + " ");
+        try {
+            // Loops through the files and tests the regex
+            std::filesystem::directory_iterator files(path);
+            for (auto& file : files) {
+                const auto& file_string = file.path().string();
+                if (std::regex_search(file_string, match, regex_obj)) {
+                    result.append(file_string + " ");
+                }
             }
+        }
+        catch (const std::exception &e) {
+            spdlog::error("Path of regex does not exist");
+            std::exit(1);
         }
 
         return result;
@@ -335,10 +337,10 @@ namespace lmake { namespace func {
 
         // Find recursivelly the files
         std::string result = "";
-        auto files = os::list_dir(left_part);
-        for(std::string& file : files) {
-            if(std::filesystem::is_directory(file)) {
-                std::string new_regex = file + "/**" + right_part;
+        std::filesystem::directory_iterator files(left_part);
+        for(auto& file : files) {
+            if(file.is_directory()) {
+                std::string new_regex = file.path().string() + "/**" + right_part;
                 result.append(find_recursive(new_regex));
             }
         }

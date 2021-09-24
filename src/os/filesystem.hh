@@ -57,15 +57,6 @@ namespace os {
     bool compare_file_dates(const std::string& file_a, const std::string& file_b);
 
     /*
-     * Returns an array of files and folders of a directory
-     * 
-     * @param dir: directory of folder to search
-     * 
-     * @return: Array of files and folders
-     */
-    std::vector<std::string> list_dir(const std::string& dir);
-
-    /*
      * Returns the path to the specified file
      * 
      * @param file: path to the file
