@@ -49,6 +49,8 @@ static struct {
     std::string last_error;
 
     lmake::settings settings;
+
+    const std::string template_regex_complete = "^%[a-zA-Z0-9_.]*?$";
 } lmake_data;
 
 
@@ -271,8 +273,6 @@ namespace lmake { namespace func {
         if(lmake_data.settings.debug)
             spdlog::info("Finding with regex: {}", regex);
         
-        const std::string template_regex_complete = "^%[a-zA-Z0-9_.]*?$"; // % by left part, ? by right part
-
         size_t single_pos = regex.find("*");
 
         // Gets the left and right parts of the "*" to search in the necessary files
@@ -281,7 +281,7 @@ namespace lmake { namespace func {
 
         // Builds the C++ regex from the custom one
         auto regex_complete = utils::string_replace(
-            template_regex_complete,
+            lmake_data.template_regex_complete,
             "%",
             left_part
         );
