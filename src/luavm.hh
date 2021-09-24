@@ -19,8 +19,9 @@
 #include <string>
 #include <memory>
 
-#include <lua/lua.hpp>
-
+#include <lua/lua.h>
+#include <lua/lauxlib.h>
+#include <lua/lualib.h>
 
 /* 
  * Function signature of native functions

@@ -27,6 +27,8 @@
 
 #include <stringtoolbox/stringtoolbox.hh>
 #include <spdlog/spdlog.h>
+#include <lua/lua.h>
+#include <lua/lauxlib.h>
 
 #include "luavm.hh"
 #include "os/filesystem.hh"

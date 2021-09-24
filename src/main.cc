@@ -17,7 +17,7 @@
 #include <iostream>
 #include <cstring>
 
-#include <lua/lua.hpp>
+#include <lua/lua.h>
 #include <spdlog/spdlog.h>
 #include <spdlog/common.h>
 

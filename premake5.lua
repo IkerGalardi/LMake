@@ -13,7 +13,7 @@ project "lmake"
     objdir("build/obj/")
 
     files {"src/**.cc", "src/**.hh"}
-    includedirs {"lib/include", "src"}
+    includedirs {"lib/sources/", "lib/sources/spdlog/include/", "src"}
 
     libdirs {"lib/bin"}
     links {"lua53", "dl", "spdlog", "pthread"}
