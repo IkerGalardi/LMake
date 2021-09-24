@@ -308,15 +308,21 @@ namespace lmake { namespace func {
 
         /// TODO: error checking from directory iterator??
         std::string result;
-        std::filesystem::directory_iterator dir_iterator(path);
-        for(auto& dir_entry : dir_iterator) {
-            if(dir_entry.is_directory()) 
-                continue;
+        try {
+            std::filesystem::directory_iterator dir_iterator(path);
+            for (auto &dir_entry : dir_iterator)
+            {
+                if (dir_entry.is_directory())
+                    continue;
 
-            // Check if the regex matches, if its true add it to the result list
-            const auto& entry_string = dir_entry.path().string();
-            if(std::regex_search(entry_string, match, regex_obj))
-                result.append(entry_string + " ");
+                // Check if the regex matches, if its true add it to the result list
+                const auto &entry_string = dir_entry.path().string();
+                if (std::regex_search(entry_string, match, regex_obj))
+                    result.append(entry_string + " ");
+            }
+        } catch(const std::exception& e) {
+            spdlog::error("Path of regex '{}' does not exist", regex);
+            std::exit(1);
         }
 
         return result;
