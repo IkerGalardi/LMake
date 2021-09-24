@@ -52,7 +52,7 @@ namespace lmake {
             }
 
             // Check if file exits, if not erro and exit
-            if(!os::file_exists(to_include_path)) {
+            if(!std::filesystem::exists(to_include_path)) {
                 spdlog::error("The files {} can't be opened.", to_include_path);
                 std::exit(1);
             }

@@ -16,6 +16,7 @@
 
 #include <iostream>
 #include <cstring>
+#include <filesystem>
 
 #include <lua/lua.hpp>
 #include <spdlog/spdlog.h>
@@ -84,7 +85,7 @@ int main(int argc, char** argv) {
     }
 
     // Checks if configuration file exists
-    if(!os::file_exists(LMAKE_CONFIG_PATH)) {
+    if(!std::filesystem::exists(LMAKE_CONFIG_PATH)) {
         spdlog::error("No lmake.lua file found.");
         std::exit(1);
     }

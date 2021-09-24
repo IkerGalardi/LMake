@@ -22,15 +22,6 @@
 #include <filesystem>
 
 namespace os {
-    bool file_exists(const std::string& path) {
-        FILE *file;
-        if ((file = fopen(path.c_str(), "r"))) {
-            fclose(file);
-            return true;
-        }
-        return false;
-    }
-
     std::shared_ptr<char> read_file(const std::string& path) {
         FILE* file_path = std::fopen(path.c_str(), "r");
 

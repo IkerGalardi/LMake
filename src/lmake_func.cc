@@ -122,9 +122,9 @@ namespace lmake { namespace func {
 
             /// TODO: rewrite this pls
             if(!lmake_data.settings.force_recompile) {
-                if(os::file_exists(obj_name)) {
+                if(std::filesystem::exists(obj_name)) {
                     // Check file dates and if files exists
-                    if(os::file_exists(files[i]) && !os::compare_file_dates(obj_name, files[i])) {
+                    if(std::filesystem::exists(files[i]) && !os::compare_file_dates(obj_name, files[i])) {
                         continue;
                     }
                 }
@@ -241,11 +241,11 @@ namespace lmake { namespace func {
 
         /// TODO: maybe look inside PATH instead of manual checks
         std::string real_prog;
-        if(os::file_exists(splited_params[0])) {
+        if(std::filesystem::exists(splited_params[0])) {
             real_prog = splited_params[0];
-        } else if(os::file_exists("/bin/" + splited_params[0])) {
+        } else if(std::filesystem::exists("/bin/" + splited_params[0])) {
             real_prog = "/bin/" + splited_params[0];
-        } else if(os::file_exists("/usr/bin/" + splited_params[0])) {
+        } else if(std::filesystem::exists("/usr/bin/" + splited_params[0])) {
             real_prog = "/usr/bin/" + splited_params[0];
         } else {
             spdlog::error("%s was not found.", splited_params[0].c_str());
