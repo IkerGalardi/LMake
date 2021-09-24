@@ -196,10 +196,11 @@ namespace lmake { namespace func {
         if(lmake_data.settings.debug)
             spdlog::info("Changing directory to: {}", dir);
         
-        if(os::change_dir(dir.c_str())) {
-            const auto& current_path = std::filesystem::current_path();
+        try {
+            std::filesystem::current_path(dir);
+            const auto &current_path = std::filesystem::current_path();
             lmake_data.been_dirs.push(current_path.string());
-        } else {
+        } catch(const std::exception& e) {
             spdlog::error("Specified directory can't be entered.");
             std::exit(1);
         }
@@ -222,7 +223,9 @@ namespace lmake { namespace func {
         std::string prev_dir = been_dirs.top();
             
         // Change to the previous directory
-        if(!os::change_dir(prev_dir)) {
+        try {
+            std::filesystem::current_path(prev_dir);
+        } catch (const std::exception& e) {
             spdlog::error("Specified directory can't be entered.");
             std::exit(1);
         }

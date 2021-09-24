@@ -36,13 +36,6 @@ namespace os {
     std::shared_ptr<char> read_file(const std::string& path);
 
     /*
-     * Changes the directory of the process
-     * 
-     * @param path: path to the directory
-     */
-    bool change_dir(const std::string& dir);
-
-    /*
      * Compares the dates of two files
      * 
      * @return: true if file_a is older than file_b, false if not
