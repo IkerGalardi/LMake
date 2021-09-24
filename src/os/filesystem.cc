@@ -16,24 +16,30 @@
 
 #include "filesystem.hh"
 
+#include <sys/mman.h>
+#include <fcntl.h>
+
 #include <cstdio>
 #include <unistd.h>
+#include <cstdlib>
+#include <cstring>
 #include <iostream>
 #include <filesystem>
 
 namespace os {
     std::shared_ptr<char> read_file(const std::string& path) {
-        FILE* file_path = std::fopen(path.c_str(), "r");
-
-        std::fseek(file_path, 0, SEEK_END);
-        int length = std::ftell(file_path);
-        std::fseek(file_path, 0, SEEK_SET);
+        size_t file_size = std::filesystem::file_size(path);
         
-        std::shared_ptr<char> buffer(new char[length + 1], std::default_delete<char[]>());
-        std::fread(buffer.get(), length, 1, file_path);
-        std::fclose(file_path);
+        std::shared_ptr<char> buffer(new char[file_size + 1], std::default_delete<char[]>());
 
-        buffer.get()[length] = '\0';
+        // Map the file to address space
+        int fd = open(path.c_str(), O_RDONLY);
+        void* mapped_file_addr = mmap(NULL, file_size, PROT_READ, MAP_PRIVATE, fd, 0);
+
+        std::memcpy(buffer.get(), mapped_file_addr, file_size);
+
+        munmap(mapped_file_addr, file_size);
+        close(fd);
 
         return buffer;
     }
