@@ -44,13 +44,6 @@ namespace os {
         return buffer;
     }
 
-    bool compare_file_dates(const std::string& file_a, const std::string& file_b) {
-        auto edited_a = std::filesystem::last_write_time(file_a);
-        auto edited_b = std::filesystem::last_write_time(file_b);
-
-        return edited_a < edited_b;
-    }
-
     std::string file_dir(const std::string& file) {
         std::string directory;
         

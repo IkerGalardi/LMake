@@ -17,7 +17,6 @@
 #pragma once 
 
 #include <memory>
-#include <vector>
 
 namespace os {
 
@@ -27,13 +26,6 @@ namespace os {
      * @param path: path to the file
      */
     std::shared_ptr<char> read_file(const std::string& path);
-
-    /*
-     * Compares the dates of two files
-     * 
-     * @return: true if file_a is older than file_b, false if not
-     */
-    bool compare_file_dates(const std::string& file_a, const std::string& file_b);
 
     /*
      * Returns the path to the specified file

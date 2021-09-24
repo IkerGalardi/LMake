@@ -122,9 +122,12 @@ namespace lmake { namespace func {
 
             /// TODO: rewrite this pls
             if(!lmake_data.settings.force_recompile) {
+                // If the source file is newer than the object file, or the file object file does not
+                // exist, the source file should be compiled.
                 if(std::filesystem::exists(obj_name)) {
-                    // Check file dates and if files exists
-                    if(std::filesystem::exists(files[i]) && !os::compare_file_dates(obj_name, files[i])) {
+                    const auto& obj_file_last_write = std::filesystem::last_write_time(obj_name);
+                    const auto& src_file_last_write = std::filesystem::last_write_time(files[i]);
+                    if(std::filesystem::exists(files[i]) && (obj_file_last_write > src_file_last_write)) {
                         continue;
                     }
                 }
