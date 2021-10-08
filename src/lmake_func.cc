@@ -306,7 +306,6 @@ namespace lmake { namespace func {
             path = "./";
         }
 
-        /// TODO: error checking from directory iterator??
         std::string result;
         try {
             std::filesystem::directory_iterator dir_iterator(path);
