@@ -49,6 +49,8 @@ static struct {
     std::string last_error;
 
     lmake::settings settings;
+
+    const std::string template_regex_complete = "^%[a-zA-Z0-9_.]*?$";
 } lmake_data;
 
 
@@ -271,8 +273,6 @@ namespace lmake { namespace func {
         if(lmake_data.settings.debug)
             spdlog::info("Finding with regex: {}", regex);
         
-        const std::string template_regex_complete = "^%[a-zA-Z0-9_.]*?$"; // % by left part, ? by right part
-
         size_t single_pos = regex.find("*");
 
         // Gets the left and right parts of the "*" to search in the necessary files
@@ -281,7 +281,7 @@ namespace lmake { namespace func {
 
         // Builds the C++ regex from the custom one
         auto regex_complete = utils::string_replace(
-            template_regex_complete,
+            lmake_data.template_regex_complete,
             "%",
             left_part
         );
@@ -296,7 +296,7 @@ namespace lmake { namespace func {
             "\\."
         );
 
-        std::regex regex_obj(regex_complete);
+        const std::regex regex_obj(regex_complete);
         std::smatch match;
         std::string path = os::file_dir(regex);
 
@@ -306,20 +306,22 @@ namespace lmake { namespace func {
             path = "./";
         }
 
-        // Checks if there are any files on the corresponding directory, if not
-        // returns with an error
         std::string result;
-        auto files = os::list_dir(path);
-        if(files.empty()) {
-            spdlog::error("Path of regex does not exist.");
-            std::exit(1);
-        }
+        try {
+            std::filesystem::directory_iterator dir_iterator(path);
+            for (auto &dir_entry : dir_iterator)
+            {
+                if (dir_entry.is_directory())
+                    continue;
 
-        // Loops through the files and tests the regex
-        for(std::string file : files) {
-            if (std::regex_search(file, match, regex_obj)) {
-                result.append(file + " ");
+                // Check if the regex matches, if its true add it to the result list
+                const auto &entry_string = dir_entry.path().string();
+                if (std::regex_search(entry_string, match, regex_obj))
+                    result.append(entry_string + " ");
             }
+        } catch(const std::exception& e) {
+            spdlog::error("Path of regex '{}' does not exist", regex);
+            std::exit(1);
         }
 
         return result;
